@@ -8,7 +8,6 @@ import { score } from '../analyzer';
 const md = new MarkdownIt({ html: false, linkify: true, breaks: false, typographer: false });
 import { parseSections, replaceSection, removeSection, sectionBody, type Section } from './sections';
 import { scoreSection, type SectionScore } from './sectionScore';
-import { listVersions, snapshot, restore, formatAge, type Version } from './versions';
 import { listPerSkillFiles } from '../instructionsDetector';
 import { log } from '../logger';
 import { buildHtml } from './view';
@@ -46,7 +45,6 @@ interface PayloadDto {
     frontmatterError?: { message: string; line?: number; column?: number; snippet?: string } | null;
   };
   sections: SectionDto[];
-  versions: Array<Version & { age: string }>;
   aux: Array<{ name: string; abs: string; size: number; age: string }>;
   toc: Array<{ id: string; label: string; level: number; score: number }>;
 }
@@ -54,6 +52,14 @@ interface PayloadDto {
 function renderMd(input: string): string {
   if (!input) return '';
   return md.render(input);
+}
+
+function ageString(ms: number): string {
+  const d = (Date.now() - ms) / 1000;
+  if (d < 60) return `${Math.floor(d)}s ago`;
+  if (d < 3600) return `${Math.floor(d / 60)}m ago`;
+  if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
+  return `${Math.floor(d / 86400)}d ago`;
 }
 
 // ── State per open panel ────────────────────────────────────────────────
@@ -136,12 +142,9 @@ function buildPayload(p: PreviewPayload): PayloadDto | null {
   const total = score({ name: p.name, dir: p.dir, mdPath });
   const st = fs.statSync(mdPath);
 
-  const versionsRaw = listVersions(mdPath);
-  const versions = versionsRaw.map(v => ({ ...v, age: formatAge(v.mtime) }));
-
   const aux = listPerSkillFiles(p.dir)
     .filter(f => f.label !== 'SKILL.md')
-    .map(f => ({ name: f.label, abs: f.abs, size: f.size, age: formatAge(f.mtime) }));
+    .map(f => ({ name: f.label, abs: f.abs, size: f.size, age: ageString(f.mtime) }));
 
   return {
     meta: {
@@ -165,7 +168,6 @@ function buildPayload(p: PreviewPayload): PayloadDto | null {
       frontmatterError: info.frontmatterError
     },
     sections,
-    versions,
     aux,
     toc: sections.map(s => ({
       id: s.id,
@@ -264,40 +266,10 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
         vscode.window.showErrorMessage(`Save aborted: ${result.error}`);
         return;
       }
-      snapshot(mdPath, { tag: 'edit', sectionId: msg.sectionId });
       fs.writeFileSync(mdPath, result.next, 'utf8');
       s.editingSections.delete(msg.sectionId);
       vscode.window.setStatusBarMessage(`Saved section "${msg.sectionId}"`, 2500);
       sendPayload(s, 'saved');
-      return;
-    }
-
-    case 'restore-version': {
-      if (readOnly) return;
-      const versions = listVersions(mdPath);
-      const v = versions.find(x => x.id === msg.versionId);
-      if (!v) {
-        vscode.window.showWarningMessage('Version not found');
-        return;
-      }
-      restore(mdPath, v);
-      vscode.window.setStatusBarMessage(`Restored ${formatAge(v.mtime)} version`, 2500);
-      sendPayload(s, 'saved');
-      return;
-    }
-
-    case 'diff-version': {
-      const versions = listVersions(mdPath);
-      const v = versions.find(x => x.id === msg.versionId);
-      if (!v) return;
-      const current = vscode.Uri.file(mdPath);
-      const older = vscode.Uri.file(v.abs);
-      await vscode.commands.executeCommand(
-        'vscode.diff',
-        older,
-        current,
-        `${path.basename(mdPath)} ↔ ${formatAge(v.mtime)}`
-      );
       return;
     }
 
@@ -317,8 +289,6 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
         send(s.panel, 'save-error', { error: 'Skill is read-only.' });
         return;
       }
-      // Snapshot first, then try fix
-      snapshot(mdPath, { tag: 'edit', sectionId: 'frontmatter' });
       const result = tryAutoFixFrontmatter(mdPath);
       if (!result.applied) {
         send(s.panel, 'save-error', {
@@ -354,7 +324,6 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
       }
       const original = fs.readFileSync(mdPath, 'utf8');
       try {
-        snapshot(mdPath, { tag: 'edit', sectionId: msg.sectionId });
         const next = removeSection(original, msg.sectionId);
         fs.writeFileSync(mdPath, next, 'utf8');
         s.editingSections.delete(msg.sectionId);
@@ -393,7 +362,6 @@ function applyQuickFix(mdPath: string, sectionId: string, fix: string): boolean 
       return false;
   }
   if (newRaw === target.raw) return false;
-  snapshot(mdPath, { tag: 'edit', sectionId });
   const next = replaceSection(original, sectionId, newRaw);
   fs.writeFileSync(mdPath, next, 'utf8');
   return true;

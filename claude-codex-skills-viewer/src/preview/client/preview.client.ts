@@ -26,15 +26,6 @@ interface Section {
   rendered: string;
   score: SectionScore;
 }
-interface Version {
-  id: string;
-  filename: string;
-  mtime: number;
-  size: number;
-  tag: string;
-  sectionId?: string;
-  age: string;
-}
 interface AuxFile {
   name: string;
   abs: string;
@@ -62,7 +53,6 @@ interface TocEntry {
 interface Payload {
   meta: Meta;
   sections: Section[];
-  versions: Version[];
   aux: AuxFile[];
   toc: TocEntry[];
 }
@@ -73,7 +63,6 @@ const vscode = acquireVsCodeApi();
 let payload: Payload | null = null;
 const editing = new Set<string>();
 const collapsedRules = new Set<string>(); // rules visible by default; user can collapse
-const showVersions = new Set<string>();
 const confirmingDelete = new Set<string>();
 let externalDirty = false;
 
@@ -196,8 +185,6 @@ function renderFrontmatterForm(s: Section): string {
 function renderSection(s: Section): string {
   const isEditing = editing.has(s.id);
   const rulesCollapsed = collapsedRules.has(s.id);
-  const showVer = showVersions.has(s.id);
-  const versions = (payload!.versions || []).filter(v => v.sectionId === s.id || !v.sectionId);
   const kind = s.canonical || s.kind;
   const label = s.heading || (s.canonical === 'frontmatter' ? 'Frontmatter' : 'Section');
   const ro = readOnly();
@@ -226,7 +213,6 @@ function renderSection(s: Section): string {
       </span>
       <span class="section-actions">
         <button class="sa" data-sect-act="toggle-rules" data-id="${esc(s.id)}" title="${rulesCollapsed ? 'Show breakdown' : 'Hide breakdown'}">${ico(rulesCollapsed ? 'chevron-down' : 'chevron-up')}</button>
-        <button class="sa" data-sect-act="versions" data-id="${esc(s.id)}" title="History">${ico('history')}</button>
         ${editButtons}
         ${deleteButton}
       </span>
@@ -273,7 +259,7 @@ function renderSection(s: Section): string {
         <div class="dc-icon">${ico('warning')}</div>
         <div class="dc-text">
           <div class="dc-title">Delete this section?</div>
-          <div class="dc-desc">A snapshot will be saved first — you can restore it from history later. The section header and its body will be removed from <code>SKILL.md</code>.</div>
+          <div class="dc-desc">The section header and its body will be removed from <code>SKILL.md</code>. This cannot be undone from inside the extension — make sure your editor / VCS has it.</div>
           <div class="dc-target">${esc(s.canonical || s.kind)} · ${esc(s.heading || s.id)}</div>
         </div>
         <div class="dc-actions">
@@ -293,34 +279,12 @@ function renderSection(s: Section): string {
     bodyHtml = `<div class="rendered">${s.rendered}</div>`;
   }
 
-  const versionsHtml =
-    showVer && versions.length
-      ? `<div class="versions">
-        <div class="versions-title">History (${versions.length})</div>
-        ${versions
-          .slice(0, 10)
-          .map(
-            v => `
-          <div class="ver">
-            <span class="ver-tag">${esc(v.tag)}</span>
-            <span class="ver-age">${esc(v.age)} · ${(v.size / 1024).toFixed(1)}KB</span>
-            <span class="ver-actions">
-              <button data-sect-act="diff" data-id="${esc(s.id)}" data-ver="${esc(v.id)}">Diff</button>
-              ${ro ? '' : `<button data-sect-act="restore" data-id="${esc(s.id)}" data-ver="${esc(v.id)}">Restore</button>`}
-            </span>
-          </div>`
-          )
-          .join('')}
-      </div>`
-      : '';
-
   const classes = ['section', lowScore ? 'low-score' : '', isConfirming ? 'confirming' : ''].filter(Boolean).join(' ');
   return `<section class="${classes}" data-section="${esc(s.id)}" id="sect-${esc(s.id)}">
     ${head}
     <div class="section-body">
       ${isConfirming ? '' : rulesHtml}
       ${bodyHtml}
-      ${isConfirming ? '' : versionsHtml}
     </div>
   </section>`;
 }
@@ -433,7 +397,7 @@ function render(): void {
     </div>`;
 
   main.querySelectorAll<HTMLButtonElement>('[data-sect-act]').forEach(btn => {
-    btn.onclick = () => handleSectionAction(btn.dataset.sectAct!, btn.dataset.id!, btn.dataset.ver, btn.dataset.fix);
+    btn.onclick = () => handleSectionAction(btn.dataset.sectAct!, btn.dataset.id!, btn.dataset.fix);
   });
   main.querySelectorAll<HTMLElement>('[data-aux]').forEach(el => {
     el.onclick = () => vscode.postMessage({ type: 'open-file', path: el.dataset.aux });
@@ -448,7 +412,7 @@ function render(): void {
         }
         if (
           confirm(
-            'Try to auto-fix frontmatter by quoting risky values?\n\nA snapshot will be saved first — you can restore it from history if anything goes wrong.'
+            'Try to auto-fix frontmatter by quoting risky values?\n\nThis will overwrite the file in place — undo via your editor / VCS if needed.'
           )
         ) {
           vscode.postMessage({ type: 'autofix-frontmatter' });
@@ -476,7 +440,7 @@ function render(): void {
   });
 }
 
-function handleSectionAction(act: string, id: string, ver?: string, fix?: string): void {
+function handleSectionAction(act: string, id: string, fix?: string): void {
   switch (act) {
     case 'toggle-rules':
       if (collapsedRules.has(id)) collapsedRules.delete(id);
@@ -496,11 +460,6 @@ function handleSectionAction(act: string, id: string, ver?: string, fix?: string
       // User confirmed inline — send delete request with confirmed flag.
       vscode.postMessage({ type: 'delete-section', sectionId: id, confirmed: true });
       confirmingDelete.delete(id);
-      break;
-    case 'versions':
-      if (showVersions.has(id)) showVersions.delete(id);
-      else showVersions.add(id);
-      render();
       break;
     case 'edit':
       editing.add(id);
@@ -536,15 +495,6 @@ function handleSectionAction(act: string, id: string, ver?: string, fix?: string
       vscode.postMessage({ type: 'editing-stop', sectionId: id });
       break;
     }
-    case 'restore':
-      if (!ver) return;
-      if (confirm('Restore this version? Current state will be snapshotted first.')) {
-        vscode.postMessage({ type: 'restore-version', versionId: ver });
-      }
-      break;
-    case 'diff':
-      vscode.postMessage({ type: 'diff-version', versionId: ver, sectionId: id });
-      break;
     case 'quick-fix':
       if (!fix) return;
       vscode.postMessage({ type: 'quick-fix', sectionId: id, fix });

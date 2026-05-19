@@ -230,29 +230,3 @@ export interface CommandDef {
   needs?: 'workspace' | 'editor';
 }
 
-// ============ Canonical (pull from GitLab / any URL) ============
-
-export interface CanonicalSource {
-  id: string; // stable, derived from url+target
-  label: string;
-  url: string; // GitLab raw URL or any HTTPS URL
-  target: string; // workspace-relative, absolute, or starts with ~/
-  ref?: string; // branch/tag — default 'main' (advisory; bundled into URL by user usually)
-  autoSync?: boolean;
-}
-
-export interface CanonicalSyncMeta {
-  lastSync?: number;
-  lastError?: string;
-  lastHash?: string;
-}
-
-export interface PullResult {
-  source: CanonicalSource;
-  ok: boolean;
-  target: string;
-  bytes?: number;
-  unchanged?: boolean;
-  error?: string;
-  snapshotId?: string;
-}

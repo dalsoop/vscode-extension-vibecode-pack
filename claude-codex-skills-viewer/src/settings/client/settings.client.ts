@@ -9,31 +9,11 @@ interface CcSkillsConfig {
   extraWorkspaceRoots: string[];
   instructionFormat: 'ref' | 'compact' | 'full' | 'legacy';
   githubToken: string;
-  autoSyncCanonicalOnStartup: boolean;
-}
-interface CanonicalSourceView {
-  id: string;
-  label: string;
-  url: string;
-  target: string;
-  ref?: string;
-  autoSync?: boolean;
-  meta: { lastSync?: number; lastError?: string; lastHash?: string };
-  lastAge?: string;
-}
-interface StorageInfo {
-  historyRoot: string;
-  historyExists: boolean;
-  totalBytes: number;
-  totalFiles: number;
-  projects: number;
 }
 interface Payload {
   config: CcSkillsConfig;
-  storage: StorageInfo;
   favoritesCount: number;
   extensionVersion: string;
-  canonicalSources: CanonicalSourceView[];
 }
 
 declare function acquireVsCodeApi(): { postMessage(msg: any): void };
@@ -45,12 +25,6 @@ const $ = (id: string): HTMLElement => document.getElementById(id) as HTMLElemen
 const esc = (s: any): string =>
   String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] as string);
 const ico = (n: string): string => `<span class="codicon codicon-${n}"></span>`;
-
-function fmtBytes(n: number): string {
-  if (n < 1024) return `${n}B`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)}KB`;
-  return `${(n / 1024 / 1024).toFixed(2)}MB`;
-}
 
 const TOOLS = ['all', 'claude', 'codex', 'copilot', 'cursor', 'gemini', 'windsurf', 'cline', 'agents'];
 const FORMATS: Array<['ref' | 'compact' | 'full' | 'legacy', string]> = [
@@ -95,71 +69,10 @@ function listEl(key: 'extraGlobalRoots' | 'extraWorkspaceRoots', label: string, 
   </div>`;
 }
 
-function renderCanonical(): string {
-  if (!payload) return '';
-  const auto = payload.config.autoSyncCanonicalOnStartup;
-  const sources = payload.canonicalSources;
-
-  const sourceCards = sources.length
-    ? sources
-        .map(s => {
-          const err = s.meta.lastError ? `<div class="cs-error">${ico('error')} ${esc(s.meta.lastError)}</div>` : '';
-          const status = s.lastAge
-            ? `<span class="cs-status ok">${ico('check')} ${esc(s.lastAge)}</span>`
-            : `<span class="cs-status pending">${ico('history')} never pulled</span>`;
-          return `<div class="cs-card" data-id="${esc(s.id)}">
-          <div class="cs-head">
-            <div class="cs-title">${esc(s.label)}</div>
-            ${status}
-          </div>
-          <div class="cs-meta">
-            <div><span class="cs-label">URL</span> <code class="path">${esc(s.url)}</code></div>
-            <div><span class="cs-label">Target</span> <code class="path">${esc(s.target)}</code></div>
-          </div>
-          ${err}
-          <div class="cs-actions">
-            <label class="switch small">
-              <input type="checkbox" data-cs-autosync data-id="${esc(s.id)}" ${s.autoSync ? 'checked' : ''}>
-              <span>Auto-sync on startup</span>
-            </label>
-            <span style="flex:1"></span>
-            <button class="btn" data-cs-act="open" data-target="${esc(s.target)}">${ico('go-to-file')} Open</button>
-            <button class="btn" data-cs-act="pull" data-id="${esc(s.id)}">${ico('cloud-download')} Pull</button>
-            <button class="btn danger" data-cs-act="remove" data-id="${esc(s.id)}">${ico('trash')}</button>
-          </div>
-        </div>`;
-        })
-        .join('')
-    : '<div class="cs-empty">No canonical sources yet. Add one below — e.g., a GitLab raw URL pointing at AGENTS.md.</div>';
-
-  return `<section>
-    <h2>${ico('cloud-download')} Canonical Sync</h2>
-    <div class="body">
-      <div class="row">
-        <label class="switch">
-          <input type="checkbox" data-key="autoSyncCanonicalOnStartup" ${auto ? 'checked' : ''}>
-          <span>
-            <span class="row-label">Auto-sync on startup</span><br>
-            <span class="row-hint">Pull all sources marked autoSync=true when the extension activates</span>
-          </span>
-        </label>
-      </div>
-      <div class="cs-list">${sourceCards}</div>
-      <div class="cs-add">
-        <input class="input" id="cs-add-url" placeholder="https://gitlab.ranode.net/workspace/rules/-/raw/main/AGENTS.md">
-        <input class="input" id="cs-add-target" placeholder="AGENTS.md (workspace-relative, absolute, or ~/path)">
-        <label class="switch small"><input type="checkbox" id="cs-add-autosync"><span>Auto-sync</span></label>
-        <button class="btn primary" id="cs-add-btn">${ico('add')} Add source</button>
-        <button class="btn" id="cs-pull-all-btn">${ico('sync')} Pull all</button>
-      </div>
-    </div>
-  </section>`;
-}
-
 function render(): void {
   if (!payload) return;
   $('version').textContent = `v${payload.extensionVersion}`;
-  const { config, storage, favoritesCount } = payload;
+  const { config, favoritesCount } = payload;
 
   $('main').innerHTML = `
     <section>
@@ -223,22 +136,14 @@ function render(): void {
       </div>
     </section>
 
-    ${renderCanonical()}
-
     <section>
-      <h2>${ico('database')} Storage</h2>
+      <h2>${ico('star')} Favorites</h2>
       <div class="body">
         <dl class="info-grid">
-          <dt>Snapshot history</dt>
-          <dd><code class="path">${esc(storage.historyRoot)}</code></dd>
-          <dt>Size</dt>
-          <dd>${fmtBytes(storage.totalBytes)} · ${storage.totalFiles} files · ${storage.projects} projects</dd>
-          <dt>Favorites</dt>
-          <dd>${favoritesCount} pinned</dd>
+          <dt>Pinned skills</dt>
+          <dd>${favoritesCount}</dd>
         </dl>
         <div class="actions">
-          <button class="btn" data-action="open-history-folder">${ico('folder-opened')} Open folder</button>
-          <button class="btn danger" data-action="clear-history" ${storage.historyExists ? '' : 'disabled'}>${ico('trash')} Clear all history</button>
           <button class="btn danger" data-action="clear-favorites" ${favoritesCount === 0 ? 'disabled' : ''}>${ico('star-empty')} Clear favorites</button>
         </div>
       </div>
@@ -268,41 +173,6 @@ function bind(): void {
   document.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-key]').forEach(el => {
     el.onchange = () => setKey(el.dataset.key as any, el.checked);
   });
-
-  // canonical autoSync toggle per source
-  document.querySelectorAll<HTMLInputElement>('input[data-cs-autosync]').forEach(el => {
-    el.onchange = () =>
-      vscode.postMessage({ type: 'canonical-toggle-autosync', id: el.dataset.id, autoSync: el.checked });
-  });
-  // canonical per-source action buttons
-  document.querySelectorAll<HTMLButtonElement>('[data-cs-act]').forEach(btn => {
-    btn.onclick = () => {
-      const act = btn.dataset.csAct!;
-      if (act === 'remove') {
-        if (!confirm('Remove this canonical source? Target file stays — only the sync entry is removed.')) return;
-        vscode.postMessage({ type: 'canonical-remove', id: btn.dataset.id });
-      } else if (act === 'pull') {
-        vscode.postMessage({ type: 'canonical-pull', id: btn.dataset.id });
-      } else if (act === 'open') {
-        vscode.postMessage({ type: 'canonical-open-target', target: btn.dataset.target });
-      }
-    };
-  });
-  // canonical add form
-  const addBtn = document.getElementById('cs-add-btn') as HTMLButtonElement | null;
-  if (addBtn)
-    addBtn.onclick = () => {
-      const url = (document.getElementById('cs-add-url') as HTMLInputElement)?.value.trim();
-      const target = (document.getElementById('cs-add-target') as HTMLInputElement)?.value.trim();
-      const autoSync = (document.getElementById('cs-add-autosync') as HTMLInputElement)?.checked;
-      if (!url || !target) {
-        alert('URL and target are required.');
-        return;
-      }
-      vscode.postMessage({ type: 'canonical-add', url, target, autoSync });
-    };
-  const pullAllBtn = document.getElementById('cs-pull-all-btn') as HTMLButtonElement | null;
-  if (pullAllBtn) pullAllBtn.onclick = () => vscode.postMessage({ type: 'canonical-pull-all' });
 
   // tools select
   document.querySelectorAll<HTMLSelectElement>('select[data-key="tools"]').forEach(el => {

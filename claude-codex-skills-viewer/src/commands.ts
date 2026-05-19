@@ -8,9 +8,7 @@ import * as instructions from './instructions';
 import * as mem from './memory';
 import { readConfig } from './config';
 import * as settingsPanel from './settings/controller';
-import { pullAll, pullOne } from './sync/puller';
-import { withId, deriveLabel } from './sync/targets';
-import type { CommandDef, SkillCommandArg, FileCommandArg, PreviewArg, CanonicalSource } from './types';
+import type { CommandDef, SkillCommandArg, FileCommandArg, PreviewArg } from './types';
 
 interface AnyProvider {
   refresh?: () => void;
@@ -174,79 +172,6 @@ function build(providers: Providers): CommandDef[] {
       id: 'claudeCodexSkills.openSettings',
       handler: () => {
         if (extContext) settingsPanel.open(extContext);
-      }
-    },
-
-    {
-      id: 'claudeCodexSkills.pullCanonical',
-      handler: async () => {
-        if (!extContext) return;
-        const cfg = vscode.workspace.getConfiguration('claudeCodexSkills');
-        const sources = cfg.get<CanonicalSource[]>('canonicalSources', []);
-        if (!sources.length) {
-          vscode.window.showInformationMessage(
-            'No canonical sources configured. Open Settings → Canonical Sync to add one.'
-          );
-          return;
-        }
-        await vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: `Pulling ${sources.length} canonical source(s)…`
-          },
-          async () => {
-            const results = await pullAll(extContext, sources);
-            const ok = results.filter(r => r.ok).length;
-            const changed = results.filter(r => r.ok && !r.unchanged).length;
-            const failed = results.filter(r => !r.ok);
-            if (failed.length) {
-              vscode.window.showWarningMessage(
-                `Pulled ${ok}/${sources.length}. ${changed} changed. ${failed.length} failed: ${failed.map(f => f.error).join(', ')}`
-              );
-            } else {
-              vscode.window.showInformationMessage(`Pulled ${ok} source(s). ${changed} file(s) updated.`);
-            }
-            refreshAll();
-          }
-        );
-      }
-    },
-
-    {
-      id: 'claudeCodexSkills.addCanonicalSource',
-      handler: async () => {
-        if (!extContext) return;
-        const url = await vscode.window.showInputBox({
-          prompt: 'Canonical source URL',
-          placeHolder: 'https://gitlab.ranode.net/workspace/rules/-/raw/main/AGENTS.md'
-        });
-        if (!url) return;
-        const target = await vscode.window.showInputBox({
-          prompt: 'Target file path (workspace-relative, absolute, or ~/path)',
-          value: 'AGENTS.md'
-        });
-        if (!target) return;
-        const labelInput = await vscode.window.showInputBox({
-          prompt: 'Label (optional)',
-          value: deriveLabel(url)
-        });
-        const autoSyncPick = await vscode.window.showQuickPick(['Yes', 'No'], {
-          placeHolder: 'Auto-sync on extension start?'
-        });
-        const source = withId({
-          url,
-          target,
-          label: labelInput || deriveLabel(url),
-          autoSync: autoSyncPick === 'Yes'
-        });
-        const cfg = vscode.workspace.getConfiguration('claudeCodexSkills');
-        const current = cfg.get<CanonicalSource[]>('canonicalSources', []);
-        const next = [...current.filter(s => s.id !== source.id), source];
-        await cfg.update('canonicalSources', next, vscode.ConfigurationTarget.Global);
-        const result = await pullOne(extContext, source);
-        if (result.ok) vscode.window.showInformationMessage(`Added + pulled: ${source.label}`);
-        else vscode.window.showErrorMessage(`Added but pull failed: ${result.error}`);
-        refreshAll();
       }
     }
   ];

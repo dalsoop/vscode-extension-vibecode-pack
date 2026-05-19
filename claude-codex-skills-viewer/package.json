@@ -2,7 +2,7 @@
   "name": "claude-codex-skills-viewer",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
-  "version": "1.13.0",
+  "version": "2.0.0",
   "publisher": "dalsoop",
   "engines": {
     "vscode": "^1.95.0"
@@ -221,16 +221,6 @@
         "command": "claudeCodexSkills.openSettings",
         "title": "%cmd.openSettings%",
         "icon": "$(settings-gear)"
-      },
-      {
-        "command": "claudeCodexSkills.pullCanonical",
-        "title": "%cmd.pullCanonical%",
-        "icon": "$(cloud-download)"
-      },
-      {
-        "command": "claudeCodexSkills.addCanonicalSource",
-        "title": "%cmd.addCanonicalSource%",
-        "icon": "$(add)"
       }
     ],
     "menus": {
@@ -685,39 +675,6 @@
           "type": "string",
           "default": "",
           "description": "%cfg.githubToken%"
-        },
-        "claudeCodexSkills.canonicalSources": {
-          "type": "array",
-          "default": [],
-          "description": "%cfg.canonicalSources%",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "label": {
-                "type": "string"
-              },
-              "url": {
-                "type": "string"
-              },
-              "target": {
-                "type": "string"
-              },
-              "ref": {
-                "type": "string"
-              },
-              "autoSync": {
-                "type": "boolean"
-              }
-            }
-          }
-        },
-        "claudeCodexSkills.autoSyncCanonicalOnStartup": {
-          "type": "boolean",
-          "default": false,
-          "description": "%cfg.autoSyncCanonicalOnStartup%"
         }
       }
     }

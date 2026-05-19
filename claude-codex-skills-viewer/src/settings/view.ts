@@ -39,25 +39,6 @@ export const STYLE = `
   .info-grid dt { color: var(--vscode-descriptionForeground); }
   .info-grid dd { font-family: ui-monospace, monospace; }
   code.path { font-family: ui-monospace, monospace; font-size: 11px; color: var(--vscode-descriptionForeground); word-break: break-all; }
-  .switch.small { font-size: 11px; }
-  .switch.small input { width: 14px; height: 14px; }
-
-  /* Canonical Sources */
-  .cs-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-  .cs-card { border: 1px solid var(--vscode-panel-border); border-radius: 5px; padding: 10px 12px; background: var(--vscode-input-background); }
-  .cs-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-  .cs-title { font-weight: 600; font-size: 12px; flex: 1; }
-  .cs-status { font-size: 10px; padding: 2px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; }
-  .cs-status.ok { background: #1e7d3a44; color: #6bd58a; }
-  .cs-status.pending { background: var(--vscode-badge-background); color: var(--vscode-descriptionForeground); }
-  .cs-meta { font-size: 11px; line-height: 1.5; }
-  .cs-meta > div { display: flex; gap: 6px; align-items: baseline; }
-  .cs-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--vscode-descriptionForeground); min-width: 50px; }
-  .cs-error { margin-top: 6px; padding: 6px 10px; background: rgba(255, 99, 99, 0.08); border: 1px solid rgba(255, 99, 99, 0.4); border-radius: 4px; font-size: 11px; color: #ff6363; }
-  .cs-actions { display: flex; gap: 6px; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--vscode-panel-border); }
-  .cs-empty { padding: 14px; text-align: center; color: var(--vscode-descriptionForeground); font-style: italic; font-size: 11px; }
-  .cs-add { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 14px; padding: 10px; background: var(--vscode-input-background); border-radius: 4px; }
-  .cs-add .input { flex: 1; min-width: 240px; }
 `;
 
 export function buildHtml(webview: vscode.Webview, extensionPath: string): string {
