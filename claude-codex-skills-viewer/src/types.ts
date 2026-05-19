@@ -230,3 +230,11 @@ export interface CommandDef {
   needs?: 'workspace' | 'editor';
 }
 
+// ============ Mirror Groups (parallel file sync) ============
+
+export interface MirrorGroup {
+  id: string;
+  label: string;
+  paths: string[]; // absolute or ~/-prefixed
+}
+

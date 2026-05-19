@@ -9,6 +9,7 @@ const md = new MarkdownIt({ html: false, linkify: true, breaks: false, typograph
 import { parseSections, replaceSection, removeSection, sectionBody, type Section } from './sections';
 import { scoreSection, type SectionScore } from './sectionScore';
 import { readConfig } from '../config';
+import { findMirrors, mirrorWrite } from '../mirrors';
 import { listPerSkillFiles } from '../instructionsDetector';
 import { log } from '../logger';
 import { buildHtml } from './view';
@@ -45,6 +46,7 @@ interface PayloadDto {
     ageDays: number;
     frontmatterError?: { message: string; line?: number; column?: number; snippet?: string } | null;
     showScoreBreakdown: boolean;
+    mirrors: Array<{ source: 'group' | 'skill-by-name'; groupLabel?: string; targets: string[] }>;
   };
   sections: SectionDto[];
   aux: Array<{ name: string; abs: string; size: number; age: string }>;
@@ -169,7 +171,12 @@ function buildPayload(p: PreviewPayload): PayloadDto | null {
       chars: raw.length,
       ageDays: (Date.now() - st.mtimeMs) / (1000 * 60 * 60 * 24),
       frontmatterError: info.frontmatterError,
-      showScoreBreakdown: readConfig().showScoreBreakdown
+      showScoreBreakdown: readConfig().showScoreBreakdown,
+      mirrors: findMirrors(mdPath).map(m => ({
+        source: m.source,
+        groupLabel: m.groupLabel,
+        targets: m.targets
+      }))
     },
     sections,
     aux,
@@ -278,8 +285,27 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
         return;
       }
       fs.writeFileSync(mdPath, result.next, 'utf8');
+
+      // Mirror to peers if requested (client only sets this when user confirms).
+      if (msg.mirror) {
+        const targets = findMirrors(mdPath).flatMap(m => m.targets);
+        if (targets.length) {
+          const wr = mirrorWrite(mdPath, targets, result.next);
+          const msgs: string[] = [];
+          if (wr.written.length) msgs.push(`mirrored to ${wr.written.length}`);
+          if (wr.skipped.length) msgs.push(`${wr.skipped.length} skipped`);
+          vscode.window.setStatusBarMessage(`Saved + ${msgs.join(', ')}`, 3500);
+          if (wr.skipped.length) {
+            const detail = wr.skipped.map(x => `${x.path}: ${x.reason}`).join('\n');
+            vscode.window.showWarningMessage(`Some mirror targets skipped:\n${detail}`);
+          }
+        } else {
+          vscode.window.setStatusBarMessage(`Saved section "${msg.sectionId}"`, 2500);
+        }
+      } else {
+        vscode.window.setStatusBarMessage(`Saved section "${msg.sectionId}"`, 2500);
+      }
       s.editingSections.delete(msg.sectionId);
-      vscode.window.setStatusBarMessage(`Saved section "${msg.sectionId}"`, 2500);
       sendPayload(s, 'saved');
       return;
     }

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import type { ToolFilter } from './types';
+import type { ToolFilter, MirrorGroup } from './types';
 
 export type InstructionFormat = 'ref' | 'compact' | 'full' | 'legacy';
 
@@ -13,6 +13,8 @@ export interface CcSkillsConfig {
   instructionFormat: InstructionFormat;
   githubToken: string;
   showScoreBreakdown: boolean;
+  mirrorGroups: MirrorGroup[];
+  mirrorSkillsByName: boolean;
 }
 
 export function readConfig(): CcSkillsConfig {
@@ -26,6 +28,8 @@ export function readConfig(): CcSkillsConfig {
     extraWorkspaceRoots: c.get<string[]>('extraWorkspaceRoots', []),
     instructionFormat: c.get<InstructionFormat>('instructionFormat', 'ref'),
     githubToken: c.get<string>('githubToken', '') || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '',
-    showScoreBreakdown: c.get<boolean>('showScoreBreakdown', true)
+    showScoreBreakdown: c.get<boolean>('showScoreBreakdown', true),
+    mirrorGroups: c.get<MirrorGroup[]>('mirrorGroups', []),
+    mirrorSkillsByName: c.get<boolean>('mirrorSkillsByName', false)
   };
 }

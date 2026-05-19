@@ -1,5 +1,10 @@
 // Settings webview client. Compiled via tsconfig.settings-client.json.
 
+interface MirrorGroup {
+  id: string;
+  label: string;
+  paths: string[];
+}
 interface CcSkillsConfig {
   includeWorkspace: boolean;
   includeGlobal: boolean;
@@ -10,6 +15,8 @@ interface CcSkillsConfig {
   instructionFormat: 'ref' | 'compact' | 'full' | 'legacy';
   githubToken: string;
   showScoreBreakdown: boolean;
+  mirrorGroups: MirrorGroup[];
+  mirrorSkillsByName: boolean;
 }
 interface Payload {
   config: CcSkillsConfig;
@@ -68,6 +75,32 @@ function listEl(key: 'extraGlobalRoots' | 'extraWorkspaceRoots', label: string, 
       <button class="btn" data-action="add" data-key="${key}">${ico('add')} Add path</button>
     </div>
   </div>`;
+}
+
+function renderMirrorGroups(): string {
+  const groups = payload?.config.mirrorGroups || [];
+  const cards = groups
+    .map((g, i) => {
+      const pathRows = g.paths
+        .map(
+          (p, pi) => `<div class="list-row">
+            <input class="input" data-mg-path data-i="${i}" data-pi="${pi}" value="${esc(p)}">
+            <button class="btn danger" data-mg-act="rm-path" data-i="${i}" data-pi="${pi}">${ico('trash')}</button>
+          </div>`
+        )
+        .join('');
+      return `<div class="mg-card" data-i="${i}">
+        <div class="mg-head">
+          <input class="input mg-label" data-mg-label data-i="${i}" value="${esc(g.label)}" placeholder="Group label">
+          <button class="btn danger" data-mg-act="rm-group" data-i="${i}">${ico('trash')} Remove group</button>
+        </div>
+        <div class="list">${pathRows || '<span class="row-hint">No paths in this group</span>'}</div>
+        <button class="btn" data-mg-act="add-path" data-i="${i}">${ico('add')} Add path to this group</button>
+      </div>`;
+    })
+    .join('');
+  return `<div class="mg-list">${cards || '<div class="cs-empty">No mirror groups yet.</div>'}</div>
+    <button class="btn primary" data-mg-act="add-group">${ico('add')} Add mirror group</button>`;
 }
 
 function render(): void {
@@ -132,6 +165,18 @@ function render(): void {
     </section>
 
     <section>
+      <h2>${ico('link')} Mirror Groups</h2>
+      <div class="body">
+        <p class="row-hint" style="margin-bottom: 10px;">
+          Files in the same group share content — saving any one writes the same full content
+          to the others. Useful when CLAUDE.md / AGENTS.md / GEMINI.md hold the same instructions.
+        </p>
+        ${switchEl('mirrorSkillsByName', 'Auto-mirror skills by name', 'If a skill directory of the same name exists under multiple AI tool roots (e.g. ~/.claude/skills/foo and ~/.codex/skills/foo), treat their SKILL.md files as one group. Off by default — opt-in.')}
+        ${renderMirrorGroups()}
+      </div>
+    </section>
+
+    <section>
       <h2>${ico('github')} Remote Catalog</h2>
       <div class="body">
         <div class="row">
@@ -176,11 +221,67 @@ function render(): void {
   bind();
 }
 
+function commitMirrorGroups(groups: MirrorGroup[]): void {
+  setKey('mirrorGroups', groups);
+}
+
+function bindMirrorGroups(): void {
+  const groups = (payload?.config.mirrorGroups || []).map(g => ({ ...g, paths: [...g.paths] }));
+
+  document.querySelectorAll<HTMLInputElement>('input[data-mg-label]').forEach(el => {
+    el.onblur = () => {
+      const i = parseInt(el.dataset.i || '0', 10);
+      if (!groups[i]) return;
+      groups[i].label = el.value.trim();
+      commitMirrorGroups(groups);
+    };
+  });
+  document.querySelectorAll<HTMLInputElement>('input[data-mg-path]').forEach(el => {
+    el.onblur = () => {
+      const i = parseInt(el.dataset.i || '0', 10);
+      const pi = parseInt(el.dataset.pi || '0', 10);
+      if (!groups[i]) return;
+      groups[i].paths[pi] = el.value.trim();
+      groups[i].paths = groups[i].paths.filter(p => p.length);
+      commitMirrorGroups(groups);
+    };
+  });
+  document.querySelectorAll<HTMLButtonElement>('button[data-mg-act]').forEach(btn => {
+    btn.onclick = () => {
+      const act = btn.dataset.mgAct!;
+      const i = parseInt(btn.dataset.i || '0', 10);
+      const pi = parseInt(btn.dataset.pi || '0', 10);
+      if (act === 'add-group') {
+        const label = prompt('Group label (e.g. "Global agent instructions"):');
+        if (!label) return;
+        groups.push({ id: `g-${Date.now()}`, label: label.trim(), paths: [] });
+        commitMirrorGroups(groups);
+      } else if (act === 'rm-group') {
+        if (!confirm(`Remove group "${groups[i]?.label || ''}"? Target files stay untouched.`)) return;
+        groups.splice(i, 1);
+        commitMirrorGroups(groups);
+      } else if (act === 'add-path') {
+        const p = prompt('Path to add (absolute or ~/...):');
+        if (!p) return;
+        if (!groups[i]) return;
+        groups[i].paths.push(p.trim());
+        commitMirrorGroups(groups);
+      } else if (act === 'rm-path') {
+        if (!groups[i]) return;
+        groups[i].paths.splice(pi, 1);
+        commitMirrorGroups(groups);
+      }
+    };
+  });
+}
+
 function bind(): void {
   // boolean switches
   document.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-key]').forEach(el => {
     el.onchange = () => setKey(el.dataset.key as any, el.checked);
   });
+
+  bindMirrorGroups();
 
   // tools select
   document.querySelectorAll<HTMLSelectElement>('select[data-key="tools"]').forEach(el => {

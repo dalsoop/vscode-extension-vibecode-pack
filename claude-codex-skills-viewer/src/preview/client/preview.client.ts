@@ -44,6 +44,7 @@ interface Meta {
   ageDays: number;
   frontmatterError?: { message: string; line?: number; column?: number; snippet?: string } | null;
   showScoreBreakdown: boolean;
+  mirrors: Array<{ source: 'group' | 'skill-by-name'; groupLabel?: string; targets: string[] }>;
 }
 interface TocEntry {
   id: string;
@@ -88,6 +89,19 @@ function readOnly(): boolean {
   return !!payload?.meta.source.readOnly;
 }
 
+function askMirror(): boolean {
+  const mirrors = payload?.meta.mirrors || [];
+  const count = mirrors.reduce((a, m) => a + m.targets.length, 0);
+  if (count === 0) return false;
+  const summary = mirrors
+    .map(m => {
+      const label = m.source === 'group' ? m.groupLabel || 'Group' : 'Skills sharing this name';
+      return `[${label}]\n  ` + m.targets.join('\n  ');
+    })
+    .join('\n\n');
+  return confirm(`Apply the same full-file content to ${count} mirror target(s)?\n\n${summary}\n\nOK = write to all mirrors. Cancel = save only this file.`);
+}
+
 function renderHeader(): void {
   if (!payload) return;
   const { meta } = payload;
@@ -96,11 +110,20 @@ function renderHeader(): void {
     ? '<span class="badge ro" title="Bundled by extension — cannot edit">read-only</span>'
     : '';
   const extBadge = externalDirty ? '<span class="badge warn">⚠ external change</span>' : '';
+  const mirrorCount = (meta.mirrors || []).reduce((a, m) => a + m.targets.length, 0);
+  const mirrorBadge = mirrorCount
+    ? `<span class="badge mirror" title="${esc(
+        (meta.mirrors || [])
+          .map(m => `${m.source === 'group' ? m.groupLabel || 'Group' : 'Skill by name'}:\n  ${m.targets.join('\n  ')}`)
+          .join('\n\n')
+      )}">${ico('link')} mirrored ×${mirrorCount}</span>`
+    : '';
   $('meta').innerHTML = [
     `<span class="badge">${esc(meta.source.label)}</span>`,
     `<span class="badge">${esc(meta.source.scope)}</span>`,
     roBadge,
     extBadge,
+    mirrorBadge,
     ...meta.categories.map(c => `<span class="badge">${esc(c)}</span>`),
     `<span class="score ${meta.totalScore.color}" title="${esc(meta.totalScore.issues.join('\n') || 'No issues')}">${meta.totalScore.pct}/100 ${meta.totalScore.grade}</span>`,
     `<span style="opacity:0.7">${meta.lines} lines · ${(meta.chars / 1024).toFixed(1)}KB · ${Math.floor(meta.ageDays)}d old</span>`
@@ -485,7 +508,8 @@ function handleSectionAction(act: string, id: string, fix?: string): void {
     case 'save': {
       const ta = document.querySelector<HTMLTextAreaElement>(`textarea.editor[data-id="${CSS.escape(id)}"]`);
       if (!ta) return;
-      vscode.postMessage({ type: 'save-section', sectionId: id, content: ta.value });
+      const mirror = askMirror();
+      vscode.postMessage({ type: 'save-section', sectionId: id, content: ta.value, mirror });
       editing.delete(id);
       vscode.postMessage({ type: 'editing-stop', sectionId: id });
       break;
@@ -501,7 +525,8 @@ function handleSectionAction(act: string, id: string, fix?: string): void {
         .filter(Boolean);
       const extra = form.querySelector<HTMLTextAreaElement>('[data-field="extra"]')?.value || '';
       const yaml = buildFmYaml({ name, description, categories: cats, extra });
-      vscode.postMessage({ type: 'save-section', sectionId: id, content: yaml });
+      const mirror = askMirror();
+      vscode.postMessage({ type: 'save-section', sectionId: id, content: yaml, mirror });
       editing.delete(id);
       vscode.postMessage({ type: 'editing-stop', sectionId: id });
       break;

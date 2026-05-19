@@ -112,6 +112,7 @@ export const STYLE = `
   /* v1.6/1.7 additions */
   .badge.ro   { background: #aa6c0044; color: #e09b3a; border: 1px solid #aa6c00; }
   .badge.warn { background: #c66a0044; color: #ff9d3a; border: 1px solid #c66a00; }
+  .badge.mirror { background: #2a5f9e44; color: #7eb8f0; border: 1px solid #2a5f9e; cursor: help; display: inline-flex; align-items: center; gap: 4px; }
   .section.low-score { border-left: 3px solid #ff9d3a; }
   .sa[disabled] { opacity: 0.4; cursor: not-allowed; }
   .rules li { align-items: center; }

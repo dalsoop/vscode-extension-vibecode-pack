@@ -39,6 +39,13 @@ export const STYLE = `
   .info-grid dt { color: var(--vscode-descriptionForeground); }
   .info-grid dd { font-family: ui-monospace, monospace; }
   code.path { font-family: ui-monospace, monospace; font-size: 11px; color: var(--vscode-descriptionForeground); word-break: break-all; }
+
+  /* Mirror Groups */
+  .mg-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
+  .mg-card { border: 1px solid var(--vscode-panel-border); border-radius: 5px; padding: 10px 12px; background: var(--vscode-input-background); }
+  .mg-head { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .mg-head .input.mg-label { flex: 1; font-weight: 600; }
+  .cs-empty { padding: 14px; text-align: center; color: var(--vscode-descriptionForeground); font-style: italic; font-size: 11px; }
 `;
 
 export function buildHtml(webview: vscode.Webview, extensionPath: string): string {
