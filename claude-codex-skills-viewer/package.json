@@ -2,91 +2,386 @@
   "name": "claude-codex-skills-viewer",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
-  "version": "0.5.0",
+  "version": "1.13.0",
   "publisher": "dalsoop",
-  "engines": { "vscode": "^1.95.0" },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
   "l10n": "./l10n",
-  "categories": ["Other", "AI", "Chat"],
+  "categories": [
+    "Other",
+    "AI",
+    "Chat"
+  ],
   "activationEvents": [
     "onStartupFinished",
-    "onView:ccskills.installed",
-    "onView:ccskills.userGlobal",
-    "onView:ccskills.categories",
-    "onView:ccskills.browse",
-    "onView:ccskills.instructions"
+    "onView:ccskills.hub"
   ],
-  "main": "./extension.js",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "node scripts/build-ext.mjs --production && tsc -p tsconfig.client.json && tsc -p tsconfig.preview-client.json && tsc -p tsconfig.settings-client.json && node scripts/copy-codicons.mjs",
+    "build:dev": "node scripts/build-ext.mjs && tsc -p tsconfig.client.json && tsc -p tsconfig.preview-client.json && tsc -p tsconfig.settings-client.json && node scripts/copy-codicons.mjs",
+    "build:ext": "node scripts/build-ext.mjs",
+    "build:client": "tsc -p tsconfig.client.json && tsc -p tsconfig.preview-client.json && tsc -p tsconfig.settings-client.json && node scripts/copy-codicons.mjs",
+    "watch": "node scripts/build-ext.mjs --watch",
+    "typecheck": "tsc -p . --noEmit && tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.preview-client.json --noEmit && tsc -p tsconfig.settings-client.json --noEmit",
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package --no-dependencies --allow-missing-repository --skip-license"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.4",
+    "@typescript-eslint/parser": "^8.59.4",
+    "@vscode/codicons": "^0.0.45",
+    "esbuild": "^0.28.0",
+    "eslint": "^9.39.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "mocha": "^11.7.5",
+    "prettier": "^3.8.3",
+    "tsx": "^4.22.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
   "contributes": {
     "viewsContainers": {
       "activitybar": [
-        { "id": "ccskills", "title": "%view.container.title%", "icon": "icons/tools/claude.svg" }
+        {
+          "id": "ccskills",
+          "title": "%view.container.title%",
+          "icon": "icons/tools/claude.svg"
+        }
       ]
     },
     "views": {
       "ccskills": [
-        { "id": "ccskills.installed",    "name": "%view.installed%" },
-        { "id": "ccskills.userGlobal",   "name": "%view.userGlobal%" },
-        { "id": "ccskills.categories",   "name": "%view.categories%" },
-        { "id": "ccskills.instructions", "name": "%view.instructions%" },
-        { "id": "ccskills.browse",       "name": "%view.browse%" }
+        {
+          "id": "ccskills.hub",
+          "name": "%view.hub%",
+          "type": "webview"
+        }
       ]
     },
     "commands": [
-      { "command": "claudeCodexSkills.refresh",                 "title": "%cmd.refresh%",                "icon": "$(refresh)" },
-      { "command": "claudeCodexSkills.search",                  "title": "%cmd.search%",                 "icon": "$(search)" },
-      { "command": "claudeCodexSkills.clearFilter",             "title": "%cmd.clearFilter%",            "icon": "$(clear-all)" },
-      { "command": "claudeCodexSkills.previewSkill",            "title": "%cmd.previewSkill%" },
-      { "command": "claudeCodexSkills.openSkillFile",           "title": "%cmd.openSkillFile%",          "icon": "$(go-to-file)" },
-      { "command": "claudeCodexSkills.revealInFinder",          "title": "%cmd.revealInFinder%",         "icon": "$(folder-opened)" },
-      { "command": "claudeCodexSkills.copyPath",                "title": "%cmd.copyPath%",               "icon": "$(copy)" },
-      { "command": "claudeCodexSkills.copyContent",             "title": "%cmd.copyContent%" },
-      { "command": "claudeCodexSkills.openInTerminal",          "title": "%cmd.openInTerminal%",         "icon": "$(terminal)" },
-      { "command": "claudeCodexSkills.openSourceFolder",        "title": "%cmd.openSourceFolder%",       "icon": "$(folder-opened)" },
-      { "command": "claudeCodexSkills.toggleFavorite",          "title": "%cmd.toggleFavorite%",         "icon": "$(star-empty)" },
-      { "command": "claudeCodexSkills.createSkill",             "title": "%cmd.createSkill%",            "icon": "$(add)" },
-      { "command": "claudeCodexSkills.deleteSkill",             "title": "%cmd.deleteSkill%",            "icon": "$(trash)" },
-      { "command": "claudeCodexSkills.installRemoteSkill",      "title": "%cmd.installRemoteSkill%",     "icon": "$(cloud-download)" },
-      { "command": "claudeCodexSkills.searchGithub",            "title": "%cmd.searchGithub%",           "icon": "$(github)" },
-      { "command": "claudeCodexSkills.refreshRemote",           "title": "%cmd.refreshRemote%",          "icon": "$(refresh)" },
-      { "command": "claudeCodexSkills.syncInstructions",        "title": "%cmd.syncInstructions%",       "icon": "$(sync)" },
-      { "command": "claudeCodexSkills.syncInstructionsAll",     "title": "%cmd.syncInstructionsAll%" },
-      { "command": "claudeCodexSkills.removeInstructionBlock",  "title": "%cmd.removeInstructionBlock%" },
-      { "command": "claudeCodexSkills.reportBug",               "title": "%cmd.reportBug%",              "icon": "$(bug)" },
-      { "command": "claudeCodexSkills.openCatalog",             "title": "%cmd.openCatalog%" },
-      { "command": "claudeCodexSkills.openInstructionFile",     "title": "%cmd.openInstructionFile%",    "icon": "$(go-to-file)" },
-      { "command": "claudeCodexSkills.syncToThisFile",          "title": "%cmd.syncToThisFile%",         "icon": "$(sync)" },
-      { "command": "claudeCodexSkills.removeBlockFromThisFile", "title": "%cmd.removeBlockFromThisFile%","icon": "$(trash)" },
-      { "command": "claudeCodexSkills.createInstructionFile",   "title": "%cmd.createInstructionFile%",  "icon": "$(add)" }
+      {
+        "command": "claudeCodexSkills.refresh",
+        "title": "%cmd.refresh%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "claudeCodexSkills.search",
+        "title": "%cmd.search%",
+        "icon": "$(search)"
+      },
+      {
+        "command": "claudeCodexSkills.clearFilter",
+        "title": "%cmd.clearFilter%",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "claudeCodexSkills.previewSkill",
+        "title": "%cmd.previewSkill%"
+      },
+      {
+        "command": "claudeCodexSkills.openSkillFile",
+        "title": "%cmd.openSkillFile%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "claudeCodexSkills.revealInFinder",
+        "title": "%cmd.revealInFinder%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "claudeCodexSkills.copyPath",
+        "title": "%cmd.copyPath%",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "claudeCodexSkills.copyContent",
+        "title": "%cmd.copyContent%"
+      },
+      {
+        "command": "claudeCodexSkills.openInTerminal",
+        "title": "%cmd.openInTerminal%",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "claudeCodexSkills.openSourceFolder",
+        "title": "%cmd.openSourceFolder%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "claudeCodexSkills.toggleFavorite",
+        "title": "%cmd.toggleFavorite%",
+        "icon": "$(star-empty)"
+      },
+      {
+        "command": "claudeCodexSkills.createSkill",
+        "title": "%cmd.createSkill%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "claudeCodexSkills.deleteSkill",
+        "title": "%cmd.deleteSkill%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "claudeCodexSkills.installRemoteSkill",
+        "title": "%cmd.installRemoteSkill%",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "claudeCodexSkills.searchGithub",
+        "title": "%cmd.searchGithub%",
+        "icon": "$(github)"
+      },
+      {
+        "command": "claudeCodexSkills.refreshRemote",
+        "title": "%cmd.refreshRemote%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "claudeCodexSkills.syncInstructions",
+        "title": "%cmd.syncInstructions%",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "claudeCodexSkills.syncInstructionsAll",
+        "title": "%cmd.syncInstructionsAll%"
+      },
+      {
+        "command": "claudeCodexSkills.removeInstructionBlock",
+        "title": "%cmd.removeInstructionBlock%"
+      },
+      {
+        "command": "claudeCodexSkills.reportBug",
+        "title": "%cmd.reportBug%",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "claudeCodexSkills.openCatalog",
+        "title": "%cmd.openCatalog%"
+      },
+      {
+        "command": "claudeCodexSkills.openInstructionFile",
+        "title": "%cmd.openInstructionFile%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "claudeCodexSkills.syncToThisFile",
+        "title": "%cmd.syncToThisFile%",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "claudeCodexSkills.removeBlockFromThisFile",
+        "title": "%cmd.removeBlockFromThisFile%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "claudeCodexSkills.createInstructionFile",
+        "title": "%cmd.createInstructionFile%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "claudeCodexSkills.openMemoryFile",
+        "title": "%cmd.openMemoryFile%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "claudeCodexSkills.openMemoryFolder",
+        "title": "%cmd.openMemoryFolder%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "claudeCodexSkills.openMemoryIndex",
+        "title": "%cmd.openMemoryIndex%",
+        "icon": "$(book)"
+      },
+      {
+        "command": "claudeCodexSkills.openSettings",
+        "title": "%cmd.openSettings%",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "claudeCodexSkills.pullCanonical",
+        "title": "%cmd.pullCanonical%",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "claudeCodexSkills.addCanonicalSource",
+        "title": "%cmd.addCanonicalSource%",
+        "icon": "$(add)"
+      }
     ],
     "menus": {
       "view/title": [
-        { "command": "claudeCodexSkills.createSkill",   "when": "view == ccskills.installed",  "group": "navigation@0" },
-        { "command": "claudeCodexSkills.search",        "when": "view =~ /ccskills\\./",       "group": "navigation@1" },
-        { "command": "claudeCodexSkills.clearFilter",   "when": "view =~ /ccskills\\./",       "group": "navigation@2" },
-        { "command": "claudeCodexSkills.refresh",       "when": "view =~ /ccskills\\./ && view != ccskills.browse", "group": "navigation@3" },
-        { "command": "claudeCodexSkills.refreshRemote", "when": "view == ccskills.browse",     "group": "navigation@3" },
-        { "command": "claudeCodexSkills.searchGithub",  "when": "view == ccskills.browse",     "group": "navigation@4" },
-        { "command": "claudeCodexSkills.syncInstructions","when": "view == ccskills.installed","group": "1_more@1" },
-        { "command": "claudeCodexSkills.syncInstructionsAll","when": "view == ccskills.instructions","group": "navigation@2" },
-        { "command": "claudeCodexSkills.openCatalog",   "when": "view == ccskills.browse",     "group": "1_more@1" },
-        { "command": "claudeCodexSkills.reportBug",     "when": "view =~ /ccskills\\./",       "group": "9_about@1" }
+        {
+          "command": "claudeCodexSkills.createSkill",
+          "when": "view == ccskills.installed",
+          "group": "navigation@0"
+        },
+        {
+          "command": "claudeCodexSkills.search",
+          "when": "view =~ /ccskills\\./",
+          "group": "navigation@1"
+        },
+        {
+          "command": "claudeCodexSkills.clearFilter",
+          "when": "view =~ /ccskills\\./",
+          "group": "navigation@2"
+        },
+        {
+          "command": "claudeCodexSkills.refresh",
+          "when": "view =~ /ccskills\\./ && view != ccskills.browse",
+          "group": "navigation@3"
+        },
+        {
+          "command": "claudeCodexSkills.openMemoryIndex",
+          "when": "view == ccskills.memory",
+          "group": "navigation@0"
+        },
+        {
+          "command": "claudeCodexSkills.refreshRemote",
+          "when": "view == ccskills.browse",
+          "group": "navigation@3"
+        },
+        {
+          "command": "claudeCodexSkills.searchGithub",
+          "when": "view == ccskills.browse",
+          "group": "navigation@4"
+        },
+        {
+          "command": "claudeCodexSkills.syncInstructions",
+          "when": "view == ccskills.installed",
+          "group": "1_more@1"
+        },
+        {
+          "command": "claudeCodexSkills.syncInstructionsAll",
+          "when": "view == ccskills.rootmd",
+          "group": "navigation@2"
+        },
+        {
+          "command": "claudeCodexSkills.openCatalog",
+          "when": "view == ccskills.browse",
+          "group": "1_more@1"
+        },
+        {
+          "command": "claudeCodexSkills.openSettings",
+          "when": "view == ccskills.hub",
+          "group": "navigation@5"
+        },
+        {
+          "command": "claudeCodexSkills.reportBug",
+          "when": "view =~ /ccskills\\./",
+          "group": "9_about@1"
+        }
       ],
       "view/item/context": [
-        { "command": "claudeCodexSkills.openSkillFile",     "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",                  "group": "inline@1" },
-        { "command": "claudeCodexSkills.toggleFavorite",    "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",                  "group": "inline@2" },
-        { "command": "claudeCodexSkills.previewSkill",      "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",                  "group": "1_open@1" },
-        { "command": "claudeCodexSkills.revealInFinder",    "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",                  "group": "1_open@2" },
-        { "command": "claudeCodexSkills.openInTerminal",    "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",                  "group": "1_open@3" },
-        { "command": "claudeCodexSkills.copyPath",          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",                  "group": "2_copy@1" },
-        { "command": "claudeCodexSkills.copyContent",       "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",                  "group": "2_copy@2" },
-        { "command": "claudeCodexSkills.deleteSkill",       "when": "view =~ /ccskills\\./ && viewItem =~ /writable/",               "group": "9_danger@1" },
-        { "command": "claudeCodexSkills.openSourceFolder",  "when": "view =~ /ccskills\\./ && viewItem =~ /source/",                 "group": "inline@1" },
-        { "command": "claudeCodexSkills.installRemoteSkill","when": "view == ccskills.browse && viewItem == remote-skill",           "group": "inline@1" },
-        { "command": "claudeCodexSkills.refreshRemote",     "when": "view == ccskills.browse && viewItem == remote-source",          "group": "inline@1" },
-        { "command": "claudeCodexSkills.openInstructionFile",      "when": "view == ccskills.instructions && viewItem =~ /inst-file/ && viewItem =~ /exists/",  "group": "inline@1" },
-        { "command": "claudeCodexSkills.syncToThisFile",           "when": "view == ccskills.instructions && viewItem =~ /inst-file/",                          "group": "inline@2" },
-        { "command": "claudeCodexSkills.createInstructionFile",    "when": "view == ccskills.instructions && viewItem =~ /missing/",                            "group": "1_open@1" },
-        { "command": "claudeCodexSkills.removeBlockFromThisFile",  "when": "view == ccskills.instructions && viewItem =~ /hasBlock/",                           "group": "9_danger@1" }
+        {
+          "command": "claudeCodexSkills.openSkillFile",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "group": "inline@1"
+        },
+        {
+          "command": "claudeCodexSkills.toggleFavorite",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "group": "inline@2"
+        },
+        {
+          "command": "claudeCodexSkills.previewSkill",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "group": "1_open@1"
+        },
+        {
+          "command": "claudeCodexSkills.revealInFinder",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "group": "1_open@2"
+        },
+        {
+          "command": "claudeCodexSkills.openInTerminal",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "group": "1_open@3"
+        },
+        {
+          "command": "claudeCodexSkills.copyPath",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "group": "2_copy@1"
+        },
+        {
+          "command": "claudeCodexSkills.copyContent",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "group": "2_copy@2"
+        },
+        {
+          "command": "claudeCodexSkills.deleteSkill",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /writable/",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "claudeCodexSkills.openSourceFolder",
+          "when": "view =~ /ccskills\\./ && viewItem =~ /source/",
+          "group": "inline@1"
+        },
+        {
+          "command": "claudeCodexSkills.installRemoteSkill",
+          "when": "view == ccskills.browse && viewItem == remote-skill",
+          "group": "inline@1"
+        },
+        {
+          "command": "claudeCodexSkills.refreshRemote",
+          "when": "view == ccskills.browse && viewItem == remote-source",
+          "group": "inline@1"
+        },
+        {
+          "command": "claudeCodexSkills.openInstructionFile",
+          "when": "view == ccskills.rootmd && viewItem =~ /inst-file/ && viewItem =~ /exists/",
+          "group": "inline@1"
+        },
+        {
+          "command": "claudeCodexSkills.syncToThisFile",
+          "when": "view == ccskills.rootmd && viewItem =~ /inst-file/",
+          "group": "inline@2"
+        },
+        {
+          "command": "claudeCodexSkills.createInstructionFile",
+          "when": "view == ccskills.rootmd && viewItem =~ /missing/",
+          "group": "1_open@1"
+        },
+        {
+          "command": "claudeCodexSkills.removeBlockFromThisFile",
+          "when": "view == ccskills.rootmd && viewItem =~ /hasBlock/",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "claudeCodexSkills.openMemoryFile",
+          "when": "view == ccskills.memory && viewItem =~ /mem-file/",
+          "group": "inline@1"
+        },
+        {
+          "command": "claudeCodexSkills.openMemoryFolder",
+          "when": "view == ccskills.memory && viewItem =~ /mem-project|mem-ws/",
+          "group": "inline@1"
+        }
       ]
     },
     "chatParticipants": [
@@ -97,12 +392,30 @@
         "description": "%chat.description%",
         "isSticky": true,
         "commands": [
-          { "name": "list",       "description": "List installed skills" },
-          { "name": "search",     "description": "Search skills by keyword" },
-          { "name": "preview",    "description": "Preview a skill by name" },
-          { "name": "recommend",  "description": "Recommend skills for a goal" },
-          { "name": "categories", "description": "List categories" },
-          { "name": "help",       "description": "Show help" }
+          {
+            "name": "list",
+            "description": "List installed skills"
+          },
+          {
+            "name": "search",
+            "description": "Search skills by keyword"
+          },
+          {
+            "name": "preview",
+            "description": "Preview a skill by name"
+          },
+          {
+            "name": "recommend",
+            "description": "Recommend skills for a goal"
+          },
+          {
+            "name": "categories",
+            "description": "List categories"
+          },
+          {
+            "name": "help",
+            "description": "Show help"
+          }
         ]
       }
     ],
@@ -112,15 +425,45 @@
         "displayName": "%tool.list.displayName%",
         "modelDescription": "List all locally installed Claude/Codex/Copilot/etc. skills with name, source (global/workspace/extension), description, and path. Use to discover what skills the user has available.",
         "userDescription": "%tool.list.userDescription%",
-        "tags": ["skills", "claude", "codex", "agent", "list"],
+        "tags": [
+          "skills",
+          "claude",
+          "codex",
+          "agent",
+          "list"
+        ],
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "listSkills",
         "icon": "$(list-tree)",
         "inputSchema": {
           "type": "object",
           "properties": {
-            "scope": { "type": "string", "enum": ["all","global","workspace","extension"], "default": "all" },
-            "tool":  { "type": "string", "enum": ["all","claude","codex","copilot","cursor","windsurf","cline","agents","extension","custom"], "default": "all" }
+            "scope": {
+              "type": "string",
+              "enum": [
+                "all",
+                "global",
+                "workspace",
+                "extension"
+              ],
+              "default": "all"
+            },
+            "tool": {
+              "type": "string",
+              "enum": [
+                "all",
+                "claude",
+                "codex",
+                "copilot",
+                "cursor",
+                "windsurf",
+                "cline",
+                "agents",
+                "extension",
+                "custom"
+              ],
+              "default": "all"
+            }
           }
         }
       },
@@ -129,16 +472,28 @@
         "displayName": "%tool.search.displayName%",
         "modelDescription": "Search locally installed skills by keyword. Searches the skill name, description, when-to-use, and categories. Returns matches ranked by relevance.",
         "userDescription": "%tool.search.userDescription%",
-        "tags": ["skills","search"],
+        "tags": [
+          "skills",
+          "search"
+        ],
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "searchSkills",
         "icon": "$(search)",
         "inputSchema": {
           "type": "object",
-          "required": ["query"],
+          "required": [
+            "query"
+          ],
           "properties": {
-            "query": { "type": "string" },
-            "limit": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 }
+            "query": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
           }
         }
       },
@@ -147,14 +502,23 @@
         "displayName": "%tool.read.displayName%",
         "modelDescription": "Read the full SKILL.md content of a specific locally installed skill by name.",
         "userDescription": "%tool.read.userDescription%",
-        "tags": ["skills","read"],
+        "tags": [
+          "skills",
+          "read"
+        ],
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "readSkill",
         "icon": "$(book)",
         "inputSchema": {
           "type": "object",
-          "required": ["name"],
-          "properties": { "name": { "type": "string" } }
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
         }
       },
       {
@@ -162,14 +526,23 @@
         "displayName": "%tool.recommend.displayName%",
         "modelDescription": "Given a user goal description, recommend the most relevant installed skills (top 5 by keyword overlap).",
         "userDescription": "%tool.recommend.userDescription%",
-        "tags": ["skills","recommend"],
+        "tags": [
+          "skills",
+          "recommend"
+        ],
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "recommendSkills",
         "icon": "$(lightbulb)",
         "inputSchema": {
           "type": "object",
-          "required": ["goal"],
-          "properties": { "goal": { "type": "string" } }
+          "required": [
+            "goal"
+          ],
+          "properties": {
+            "goal": {
+              "type": "string"
+            }
+          }
         }
       },
       {
@@ -177,25 +550,40 @@
         "displayName": "%tool.listCategories.displayName%",
         "modelDescription": "List all categories present across installed skills, with counts.",
         "userDescription": "%tool.listCategories.userDescription%",
-        "tags": ["skills","categories"],
+        "tags": [
+          "skills",
+          "categories"
+        ],
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "listSkillCategories",
         "icon": "$(tag)",
-        "inputSchema": { "type": "object", "properties": {} }
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
       },
       {
         "name": "claudeCodexSkills_inCategory",
         "displayName": "%tool.inCategory.displayName%",
         "modelDescription": "List installed skills belonging to a specific category.",
         "userDescription": "%tool.inCategory.userDescription%",
-        "tags": ["skills","categories"],
+        "tags": [
+          "skills",
+          "categories"
+        ],
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "skillsInCategory",
         "icon": "$(symbol-class)",
         "inputSchema": {
           "type": "object",
-          "required": ["category"],
-          "properties": { "category": { "type": "string" } }
+          "required": [
+            "category"
+          ],
+          "properties": {
+            "category": {
+              "type": "string"
+            }
+          }
         }
       },
       {
@@ -203,64 +591,139 @@
         "displayName": "%tool.listSources.displayName%",
         "modelDescription": "List all skill sources (locations) being scanned with the count of skills in each.",
         "userDescription": "%tool.listSources.userDescription%",
-        "tags": ["skills","sources"],
+        "tags": [
+          "skills",
+          "sources"
+        ],
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "listSkillSources",
         "icon": "$(folder)",
-        "inputSchema": { "type": "object", "properties": {} }
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
       },
       {
         "name": "claudeCodexSkills_status",
         "displayName": "%tool.status.displayName%",
         "modelDescription": "Get aggregate counts of installed skills by scope and tool.",
         "userDescription": "%tool.status.userDescription%",
-        "tags": ["skills","status"],
+        "tags": [
+          "skills",
+          "status"
+        ],
         "canBeReferencedInPrompt": true,
         "toolReferenceName": "skillsStatus",
         "icon": "$(graph)",
-        "inputSchema": { "type": "object", "properties": {} }
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
       }
     ],
     "configuration": {
       "title": "%cfg.title%",
       "properties": {
         "claudeCodexSkills.includeWorkspace": {
-          "type": "boolean", "default": true,
+          "type": "boolean",
+          "default": true,
           "description": "%cfg.includeWorkspace%"
         },
         "claudeCodexSkills.includeGlobal": {
-          "type": "boolean", "default": true,
+          "type": "boolean",
+          "default": true,
           "description": "%cfg.includeGlobal%"
         },
         "claudeCodexSkills.includeExtensions": {
-          "type": "boolean", "default": true,
+          "type": "boolean",
+          "default": true,
           "description": "%cfg.includeExtensions%"
         },
         "claudeCodexSkills.tools": {
           "type": "string",
-          "enum": ["all","claude","codex","copilot","cursor","windsurf","cline","agents"],
+          "enum": [
+            "all",
+            "claude",
+            "codex",
+            "copilot",
+            "cursor",
+            "windsurf",
+            "cline",
+            "agents"
+          ],
           "default": "all",
           "description": "%cfg.tools%"
         },
         "claudeCodexSkills.extraGlobalRoots": {
-          "type": "array", "items": { "type": "string" }, "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
           "description": "%cfg.extraGlobalRoots%"
         },
         "claudeCodexSkills.extraWorkspaceRoots": {
-          "type": "array", "items": { "type": "string" }, "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
           "description": "%cfg.extraWorkspaceRoots%"
         },
         "claudeCodexSkills.instructionFormat": {
           "type": "string",
-          "enum": ["ref","compact","full","legacy"],
+          "enum": [
+            "ref",
+            "compact",
+            "full",
+            "legacy"
+          ],
           "default": "ref",
           "description": "%cfg.instructionFormat%"
         },
         "claudeCodexSkills.githubToken": {
-          "type": "string", "default": "",
+          "type": "string",
+          "default": "",
           "description": "%cfg.githubToken%"
+        },
+        "claudeCodexSkills.canonicalSources": {
+          "type": "array",
+          "default": [],
+          "description": "%cfg.canonicalSources%",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "ref": {
+                "type": "string"
+              },
+              "autoSync": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "claudeCodexSkills.autoSyncCanonicalOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "%cfg.autoSyncCanonicalOnStartup%"
         }
       }
     }
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.1",
+    "yaml": "^2.9.0"
   }
 }

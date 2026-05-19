@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Runs lint-staged (eslint --fix + prettier --write on changed files)
+# and a project-wide typecheck. Aborts commit on failure.
+npx lint-staged || exit 1
+npm run typecheck || exit 1

@@ -1,0 +1,7 @@
+{
+  "extension": ["ts"],
+  "spec": ["tests/unit/**/*.test.ts"],
+  "require": ["tsx/cjs", "./tests/setup.cjs"],
+  "timeout": 5000,
+  "reporter": "spec"
+}

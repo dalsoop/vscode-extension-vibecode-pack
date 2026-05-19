@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.vsix
+icons/
+resources/
+package-lock.json
+*.md
