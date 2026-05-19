@@ -8,6 +8,7 @@ import { score } from '../analyzer';
 const md = new MarkdownIt({ html: false, linkify: true, breaks: false, typographer: false });
 import { parseSections, replaceSection, removeSection, sectionBody, type Section } from './sections';
 import { scoreSection, type SectionScore } from './sectionScore';
+import { readConfig } from '../config';
 import { listPerSkillFiles } from '../instructionsDetector';
 import { log } from '../logger';
 import { buildHtml } from './view';
@@ -43,6 +44,7 @@ interface PayloadDto {
     chars: number;
     ageDays: number;
     frontmatterError?: { message: string; line?: number; column?: number; snippet?: string } | null;
+    showScoreBreakdown: boolean;
   };
   sections: SectionDto[];
   aux: Array<{ name: string; abs: string; size: number; age: string }>;
@@ -68,6 +70,7 @@ interface PanelState {
   payload: PreviewPayload;
   watcher: fs.FSWatcher | null;
   editingSections: Set<string>;
+  configListener?: vscode.Disposable;
 }
 let active: PanelState | null = null;
 
@@ -165,7 +168,8 @@ function buildPayload(p: PreviewPayload): PayloadDto | null {
       lines: raw.split('\n').length,
       chars: raw.length,
       ageDays: (Date.now() - st.mtimeMs) / (1000 * 60 * 60 * 24),
-      frontmatterError: info.frontmatterError
+      frontmatterError: info.frontmatterError,
+      showScoreBreakdown: readConfig().showScoreBreakdown
     },
     sections,
     aux,
@@ -228,6 +232,13 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
     case 'editing-stop':
       if (msg.sectionId) s.editingSections.delete(msg.sectionId);
       return;
+
+    case 'toggle-score-breakdown': {
+      const cfg = vscode.workspace.getConfiguration('claudeCodexSkills');
+      await cfg.update('showScoreBreakdown', !!msg.value, vscode.ConfigurationTarget.Global);
+      sendPayload(s);
+      return;
+    }
 
     case 'open':
       await vscode.window.showTextDocument(vscode.Uri.file(mdPath));
@@ -399,11 +410,16 @@ export function open(payload: PreviewPayload, extensionPath: string): void {
   active = state;
   setupWatcher(state);
 
+  state.configListener = vscode.workspace.onDidChangeConfiguration(e => {
+    if (e.affectsConfiguration('claudeCodexSkills.showScoreBreakdown')) sendPayload(state);
+  });
+
   panel.webview.onDidReceiveMessage(msg => {
     handleMessage(msg, state).catch(e => log.error('preview msg', e));
   });
   panel.onDidDispose(() => {
     if (state.watcher) state.watcher.close();
+    if (state.configListener) state.configListener.dispose();
     if (active === state) active = null;
   });
 }

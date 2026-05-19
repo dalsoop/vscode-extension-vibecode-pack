@@ -32,6 +32,7 @@
   "cmd.openMemoryFolder": "Open Memory Folder",
   "cmd.openMemoryIndex": "Open MEMORY.md Index",
   "cmd.openSettings": "Open Settings",
+  "cfg.showScoreBreakdown": "Show per-section score breakdown (Lost points / Earned rules) in preview by default",
   "chat.description": "Discover, preview, and recommend Claude/Codex skills",
   "tool.list.displayName": "List Skills",
   "tool.list.userDescription": "List all installed Claude/Codex skills",

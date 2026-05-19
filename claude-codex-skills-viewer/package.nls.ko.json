@@ -32,6 +32,7 @@
   "cmd.openMemoryFolder": "메모리 폴더 열기",
   "cmd.openMemoryIndex": "MEMORY.md 인덱스 열기",
   "cmd.openSettings": "설정 열기",
+  "cfg.showScoreBreakdown": "프리뷰에서 섹션별 점수 브레이크다운(감점·득점) 기본 표시",
   "chat.description": "Claude/Codex 스킬을 탐색·미리보기·추천",
   "tool.list.displayName": "스킬 목록",
   "tool.list.userDescription": "설치된 Claude/Codex 스킬 전체 목록",

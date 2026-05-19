@@ -2,7 +2,7 @@
   "name": "claude-codex-skills-viewer",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "publisher": "dalsoop",
   "engines": {
     "vscode": "^1.95.0"
@@ -675,6 +675,11 @@
           "type": "string",
           "default": "",
           "description": "%cfg.githubToken%"
+        },
+        "claudeCodexSkills.showScoreBreakdown": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.showScoreBreakdown%"
         }
       }
     }

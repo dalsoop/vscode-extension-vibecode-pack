@@ -43,6 +43,7 @@ interface Meta {
   chars: number;
   ageDays: number;
   frontmatterError?: { message: string; line?: number; column?: number; snippet?: string } | null;
+  showScoreBreakdown: boolean;
 }
 interface TocEntry {
   id: string;
@@ -104,18 +105,27 @@ function renderHeader(): void {
     `<span class="score ${meta.totalScore.color}" title="${esc(meta.totalScore.issues.join('\n') || 'No issues')}">${meta.totalScore.pct}/100 ${meta.totalScore.grade}</span>`,
     `<span style="opacity:0.7">${meta.lines} lines · ${(meta.chars / 1024).toFixed(1)}KB · ${Math.floor(meta.ageDays)}d old</span>`
   ].join('');
+  const showScore = meta.showScoreBreakdown;
   $('toolbar').innerHTML = [
     `<button class="tbtn" data-act="open">${ico('go-to-file')} Open</button>`,
     `<button class="tbtn" data-act="copy-md">${ico('copy')} Copy MD</button>`,
     `<button class="tbtn" data-act="copy-path">${ico('files')} Copy Path</button>`,
     `<button class="tbtn" data-act="finder">${ico('folder-opened')} Finder</button>`,
     `<button class="tbtn" data-act="terminal">${ico('terminal')} Terminal</button>`,
+    `<button class="tbtn ${showScore ? 'active' : ''}" data-act="toggle-score" title="Toggle score breakdowns (sticky)">${ico(showScore ? 'eye' : 'eye-closed')} ${showScore ? 'Hide scores' : 'Show scores'}</button>`,
     `<button class="tbtn" data-act="refresh">${ico('refresh')} Refresh</button>`
   ].join('');
   $('toolbar')
     .querySelectorAll<HTMLButtonElement>('.tbtn')
     .forEach(b => {
-      b.onclick = () => vscode.postMessage({ type: b.dataset.act });
+      b.onclick = () => {
+        const a = b.dataset.act;
+        if (a === 'toggle-score') {
+          vscode.postMessage({ type: 'toggle-score-breakdown', value: !showScore });
+        } else {
+          vscode.postMessage({ type: a });
+        }
+      };
     });
 }
 
@@ -184,7 +194,8 @@ function renderFrontmatterForm(s: Section): string {
 
 function renderSection(s: Section): string {
   const isEditing = editing.has(s.id);
-  const rulesCollapsed = collapsedRules.has(s.id);
+  const globallyHidden = payload && !payload.meta.showScoreBreakdown;
+  const rulesCollapsed = globallyHidden || collapsedRules.has(s.id);
   const kind = s.canonical || s.kind;
   const label = s.heading || (s.canonical === 'frontmatter' ? 'Frontmatter' : 'Section');
   const ro = readOnly();

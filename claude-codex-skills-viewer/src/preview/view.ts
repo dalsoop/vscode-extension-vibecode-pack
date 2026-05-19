@@ -12,6 +12,7 @@ export const STYLE = `
   .tbtn { padding: 4px 10px; border: 1px solid var(--vscode-panel-border); background: transparent; color: var(--vscode-foreground); cursor: pointer; font-size: 11px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; }
   .tbtn:hover { background: var(--vscode-toolbar-hoverBackground); }
   .tbtn.danger { color: var(--vscode-errorForeground); }
+  .tbtn.active { background: var(--vscode-toolbar-activeBackground, var(--vscode-button-secondaryBackground)); border-color: var(--vscode-focusBorder); }
   main { padding: 16px 28px 60px; }
   .layout { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 24px; }
   @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } #toc { display: none; } }

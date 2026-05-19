@@ -9,6 +9,7 @@ interface CcSkillsConfig {
   extraWorkspaceRoots: string[];
   instructionFormat: 'ref' | 'compact' | 'full' | 'legacy';
   githubToken: string;
+  showScoreBreakdown: boolean;
 }
 interface Payload {
   config: CcSkillsConfig;
@@ -120,6 +121,13 @@ function render(): void {
             ).join('')}
           </div>
         </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>${ico('eye')} Preview</h2>
+      <div class="body">
+        ${switchEl('showScoreBreakdown', 'Show score breakdown by default', 'When opening a skill preview, expand the per-section "Lost points / Earned" rule lists. You can also toggle per-preview from the toolbar.')}
       </div>
     </section>
 

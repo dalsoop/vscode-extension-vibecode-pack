@@ -12,6 +12,7 @@ export interface CcSkillsConfig {
   extraWorkspaceRoots: string[];
   instructionFormat: InstructionFormat;
   githubToken: string;
+  showScoreBreakdown: boolean;
 }
 
 export function readConfig(): CcSkillsConfig {
@@ -24,6 +25,7 @@ export function readConfig(): CcSkillsConfig {
     extraGlobalRoots: c.get<string[]>('extraGlobalRoots', []),
     extraWorkspaceRoots: c.get<string[]>('extraWorkspaceRoots', []),
     instructionFormat: c.get<InstructionFormat>('instructionFormat', 'ref'),
-    githubToken: c.get<string>('githubToken', '') || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || ''
+    githubToken: c.get<string>('githubToken', '') || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '',
+    showScoreBreakdown: c.get<boolean>('showScoreBreakdown', true)
   };
 }
