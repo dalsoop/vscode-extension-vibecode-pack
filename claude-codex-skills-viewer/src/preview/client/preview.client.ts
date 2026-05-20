@@ -44,7 +44,13 @@ interface Meta {
   ageDays: number;
   frontmatterError?: { message: string; line?: number; column?: number; snippet?: string } | null;
   showScoreBreakdown: boolean;
-  mirrors: Array<{ source: 'group' | 'skill-by-name'; groupLabel?: string; targets: string[] }>;
+  mirrors: Array<{
+    source: 'group' | 'skill-by-name';
+    groupLabel?: string;
+    alwaysMirror?: boolean;
+    targets: string[];
+  }>;
+  mirrorDrift: Array<{ path: string; exists: boolean; inSync: boolean }>;
 }
 interface TocEntry {
   id: string;
@@ -93,10 +99,14 @@ function askMirror(): boolean {
   const mirrors = payload?.meta.mirrors || [];
   const count = mirrors.reduce((a, m) => a + m.targets.length, 0);
   if (count === 0) return false;
+  // If every mirror entry is marked alwaysMirror, skip the prompt.
+  const allAlways = mirrors.every(m => !!m.alwaysMirror);
+  if (allAlways) return true;
   const summary = mirrors
     .map(m => {
       const label = m.source === 'group' ? m.groupLabel || 'Group' : 'Skills sharing this name';
-      return `[${label}]\n  ` + m.targets.join('\n  ');
+      const tag = m.alwaysMirror ? ' (always)' : '';
+      return `[${label}${tag}]\n  ` + m.targets.join('\n  ');
     })
     .join('\n\n');
   return confirm(`Apply the same full-file content to ${count} mirror target(s)?\n\n${summary}\n\nOK = write to all mirrors. Cancel = save only this file.`);
@@ -111,13 +121,28 @@ function renderHeader(): void {
     : '';
   const extBadge = externalDirty ? '<span class="badge warn">⚠ external change</span>' : '';
   const mirrorCount = (meta.mirrors || []).reduce((a, m) => a + m.targets.length, 0);
-  const mirrorBadge = mirrorCount
-    ? `<span class="badge mirror" title="${esc(
-        (meta.mirrors || [])
-          .map(m => `${m.source === 'group' ? m.groupLabel || 'Group' : 'Skill by name'}:\n  ${m.targets.join('\n  ')}`)
-          .join('\n\n')
-      )}">${ico('link')} mirrored ×${mirrorCount}</span>`
-    : '';
+  const drift = (meta.mirrorDrift || []).filter(d => !d.inSync);
+  const driftCount = drift.length;
+  let mirrorBadge = '';
+  if (mirrorCount) {
+    const tooltip = (meta.mirrors || [])
+      .map(m => {
+        const tag = m.alwaysMirror ? ' [always]' : '';
+        const label = (m.source === 'group' ? m.groupLabel || 'Group' : 'Skill by name') + tag;
+        const lines = m.targets.map(t => {
+          const driftEntry = (meta.mirrorDrift || []).find(d => d.path === t);
+          const mark = !driftEntry ? '?' : !driftEntry.exists ? '✗ missing' : driftEntry.inSync ? '✓' : '⚠ differs';
+          return `  ${mark} ${t}`;
+        });
+        return `${label}:\n${lines.join('\n')}`;
+      })
+      .join('\n\n');
+    if (driftCount > 0) {
+      mirrorBadge = `<span class="badge mirror drift" title="${esc(tooltip)}">${ico('warning')} drift ${driftCount}/${mirrorCount}</span>`;
+    } else {
+      mirrorBadge = `<span class="badge mirror ok" title="${esc(tooltip)}">${ico('link')} mirrored ×${mirrorCount} ✓</span>`;
+    }
+  }
   $('meta').innerHTML = [
     `<span class="badge">${esc(meta.source.label)}</span>`,
     `<span class="badge">${esc(meta.source.scope)}</span>`,
@@ -129,6 +154,22 @@ function renderHeader(): void {
     `<span style="opacity:0.7">${meta.lines} lines · ${(meta.chars / 1024).toFixed(1)}KB · ${Math.floor(meta.ageDays)}d old</span>`
   ].join('');
   const showScore = meta.showScoreBreakdown;
+  const driftPeers = (meta.mirrorDrift || []).filter(d => !d.inSync);
+  const mirrorButtons: string[] = [];
+  if (mirrorCount > 0) {
+    if (driftPeers.length > 0) {
+      mirrorButtons.push(
+        `<button class="tbtn danger" data-act="mirror-sync" title="Overwrite all peers with this file's content">${ico('cloud-upload')} Sync ${driftPeers.length} peer${driftPeers.length > 1 ? 's' : ''} from here</button>`
+      );
+      // Diff with first drifted peer
+      const firstDrift = driftPeers.find(d => d.exists);
+      if (firstDrift) {
+        mirrorButtons.push(
+          `<button class="tbtn" data-act="mirror-diff" data-peer="${esc(firstDrift.path)}" title="Open diff with ${esc(firstDrift.path)}">${ico('diff')} Diff peer</button>`
+        );
+      }
+    }
+  }
   $('toolbar').innerHTML = [
     `<button class="tbtn" data-act="open">${ico('go-to-file')} Open</button>`,
     `<button class="tbtn" data-act="copy-md">${ico('copy')} Copy MD</button>`,
@@ -136,6 +177,7 @@ function renderHeader(): void {
     `<button class="tbtn" data-act="finder">${ico('folder-opened')} Finder</button>`,
     `<button class="tbtn" data-act="terminal">${ico('terminal')} Terminal</button>`,
     `<button class="tbtn ${showScore ? 'active' : ''}" data-act="toggle-score" title="Toggle score breakdowns (sticky)">${ico(showScore ? 'eye' : 'eye-closed')} ${showScore ? 'Hide scores' : 'Show scores'}</button>`,
+    ...mirrorButtons,
     `<button class="tbtn" data-act="refresh">${ico('refresh')} Refresh</button>`
   ].join('');
   $('toolbar')
@@ -145,6 +187,17 @@ function renderHeader(): void {
         const a = b.dataset.act;
         if (a === 'toggle-score') {
           vscode.postMessage({ type: 'toggle-score-breakdown', value: !showScore });
+        } else if (a === 'mirror-sync') {
+          if (
+            confirm(
+              `Overwrite ${driftPeers.length} peer file(s) with THIS file's current content?\n\n` +
+                driftPeers.map(d => `  • ${d.path}${d.exists ? '' : ' (will be created)'}`).join('\n')
+            )
+          ) {
+            vscode.postMessage({ type: 'mirror-sync-from-here' });
+          }
+        } else if (a === 'mirror-diff') {
+          vscode.postMessage({ type: 'mirror-diff', peer: b.dataset.peer });
         } else {
           vscode.postMessage({ type: a });
         }

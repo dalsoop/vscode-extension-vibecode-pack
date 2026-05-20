@@ -236,5 +236,6 @@ export interface MirrorGroup {
   id: string;
   label: string;
   paths: string[]; // absolute or ~/-prefixed
+  alwaysMirror?: boolean; // skip Save confirm; auto-write to peers
 }
 

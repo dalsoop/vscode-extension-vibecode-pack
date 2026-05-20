@@ -2,7 +2,7 @@
   "name": "claude-codex-skills-viewer",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "publisher": "dalsoop",
   "engines": {
     "vscode": "^1.95.0"
@@ -691,7 +691,8 @@
             "properties": {
               "id": { "type": "string" },
               "label": { "type": "string" },
-              "paths": { "type": "array", "items": { "type": "string" } }
+              "paths": { "type": "array", "items": { "type": "string" } },
+              "alwaysMirror": { "type": "boolean" }
             }
           }
         },
@@ -699,6 +700,11 @@
           "type": "boolean",
           "default": false,
           "description": "%cfg.mirrorSkillsByName%"
+        },
+        "claudeCodexSkills.mirrorSkillsByNameAlways": {
+          "type": "boolean",
+          "default": false,
+          "description": "%cfg.mirrorSkillsByNameAlways%"
         }
       }
     }

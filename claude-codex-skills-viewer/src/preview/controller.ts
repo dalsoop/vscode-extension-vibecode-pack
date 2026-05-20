@@ -9,7 +9,7 @@ const md = new MarkdownIt({ html: false, linkify: true, breaks: false, typograph
 import { parseSections, replaceSection, removeSection, sectionBody, type Section } from './sections';
 import { scoreSection, type SectionScore } from './sectionScore';
 import { readConfig } from '../config';
-import { findMirrors, mirrorWrite } from '../mirrors';
+import { findMirrors, mirrorWrite, detectDrift } from '../mirrors';
 import { listPerSkillFiles } from '../instructionsDetector';
 import { log } from '../logger';
 import { buildHtml } from './view';
@@ -46,7 +46,13 @@ interface PayloadDto {
     ageDays: number;
     frontmatterError?: { message: string; line?: number; column?: number; snippet?: string } | null;
     showScoreBreakdown: boolean;
-    mirrors: Array<{ source: 'group' | 'skill-by-name'; groupLabel?: string; targets: string[] }>;
+    mirrors: Array<{
+      source: 'group' | 'skill-by-name';
+      groupLabel?: string;
+      alwaysMirror?: boolean;
+      targets: string[];
+    }>;
+    mirrorDrift: Array<{ path: string; exists: boolean; inSync: boolean }>;
   };
   sections: SectionDto[];
   aux: Array<{ name: string; abs: string; size: number; age: string }>;
@@ -175,8 +181,10 @@ function buildPayload(p: PreviewPayload): PayloadDto | null {
       mirrors: findMirrors(mdPath).map(m => ({
         source: m.source,
         groupLabel: m.groupLabel,
+        alwaysMirror: m.alwaysMirror,
         targets: m.targets
-      }))
+      })),
+      mirrorDrift: detectDrift(mdPath).peers
     },
     sections,
     aux,
@@ -345,6 +353,47 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
       const pos = new vscode.Position(line, col);
       editor.selection = new vscode.Selection(pos, pos);
       editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter);
+      return;
+    }
+
+    case 'mirror-diff': {
+      // msg.peer = absolute peer path
+      const peerPath = String(msg.peer || '');
+      if (!peerPath || !fs.existsSync(peerPath)) {
+        vscode.window.showWarningMessage(`Mirror peer not found: ${peerPath}`);
+        return;
+      }
+      await vscode.commands.executeCommand(
+        'vscode.diff',
+        vscode.Uri.file(mdPath),
+        vscode.Uri.file(peerPath),
+        `${path.basename(mdPath)} ↔ ${path.basename(peerPath)}`
+      );
+      return;
+    }
+
+    case 'mirror-sync-from-here': {
+      if (readOnly) {
+        send(s.panel, 'save-error', { error: 'Skill is read-only.' });
+        return;
+      }
+      const targets = findMirrors(mdPath).flatMap(m => m.targets);
+      if (!targets.length) {
+        vscode.window.showInformationMessage('No mirror peers configured for this file.');
+        return;
+      }
+      const content = fs.readFileSync(mdPath, 'utf8');
+      const wr = mirrorWrite(mdPath, targets, content);
+      const parts: string[] = [];
+      if (wr.written.length) parts.push(`synced to ${wr.written.length}`);
+      if (wr.skipped.length) parts.push(`${wr.skipped.length} skipped`);
+      vscode.window.setStatusBarMessage(parts.join(', ') || 'Sync done', 3000);
+      if (wr.skipped.length) {
+        vscode.window.showWarningMessage(
+          `Some mirror targets skipped:\n${wr.skipped.map(x => `${x.path}: ${x.reason}`).join('\n')}`
+        );
+      }
+      sendPayload(s, 'saved');
       return;
     }
 

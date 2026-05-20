@@ -4,6 +4,14 @@ interface MirrorGroup {
   id: string;
   label: string;
   paths: string[];
+  alwaysMirror?: boolean;
+}
+interface PresetInfo {
+  id: string;
+  label: string;
+  description: string;
+  scope: 'global' | 'workspace';
+  availablePaths: string[];
 }
 interface CcSkillsConfig {
   includeWorkspace: boolean;
@@ -17,11 +25,13 @@ interface CcSkillsConfig {
   showScoreBreakdown: boolean;
   mirrorGroups: MirrorGroup[];
   mirrorSkillsByName: boolean;
+  mirrorSkillsByNameAlways: boolean;
 }
 interface Payload {
   config: CcSkillsConfig;
   favoritesCount: number;
   extensionVersion: string;
+  mirrorPresets: PresetInfo[];
 }
 
 declare function acquireVsCodeApi(): { postMessage(msg: any): void };
@@ -77,6 +87,28 @@ function listEl(key: 'extraGlobalRoots' | 'extraWorkspaceRoots', label: string, 
   </div>`;
 }
 
+function renderMirrorPresets(): string {
+  const presets = payload?.mirrorPresets || [];
+  if (!presets.length) return '';
+  const items = presets
+    .map(p => {
+      const n = p.availablePaths.length;
+      const disabled = n === 0 ? 'disabled' : '';
+      const tooltip = n
+        ? `Will add a group with ${n} file(s):\n${p.availablePaths.join('\n')}`
+        : 'None of the preset paths exist on this machine.';
+      return `<button class="btn ${n === 0 ? '' : 'primary'}" data-mg-act="apply-preset" data-preset="${esc(p.id)}" ${disabled} title="${esc(tooltip)}">
+        ${ico(n ? 'rocket' : 'circle-slash')} ${esc(p.label)} <span style="opacity:0.7">(${n})</span>
+      </button>`;
+    })
+    .join(' ');
+  return `<div class="row">
+    <span class="row-label">Add from preset</span>
+    <span class="row-hint">Creates a mirror group seeded with existing files only. Click to add.</span>
+    <div class="actions" style="margin-top: 8px; flex-wrap: wrap;">${items}</div>
+  </div>`;
+}
+
 function renderMirrorGroups(): string {
   const groups = payload?.config.mirrorGroups || [];
   const cards = groups
@@ -92,14 +124,19 @@ function renderMirrorGroups(): string {
       return `<div class="mg-card" data-i="${i}">
         <div class="mg-head">
           <input class="input mg-label" data-mg-label data-i="${i}" value="${esc(g.label)}" placeholder="Group label">
-          <button class="btn danger" data-mg-act="rm-group" data-i="${i}">${ico('trash')} Remove group</button>
+          <label class="switch small" title="Skip the save confirm dialog for this group">
+            <input type="checkbox" data-mg-always data-i="${i}" ${g.alwaysMirror ? 'checked' : ''}>
+            <span>Always mirror</span>
+          </label>
+          <button class="btn danger" data-mg-act="rm-group" data-i="${i}">${ico('trash')} Remove</button>
         </div>
         <div class="list">${pathRows || '<span class="row-hint">No paths in this group</span>'}</div>
         <button class="btn" data-mg-act="add-path" data-i="${i}">${ico('add')} Add path to this group</button>
       </div>`;
     })
     .join('');
-  return `<div class="mg-list">${cards || '<div class="cs-empty">No mirror groups yet.</div>'}</div>
+  return `${renderMirrorPresets()}
+    <div class="mg-list">${cards || '<div class="cs-empty">No mirror groups yet.</div>'}</div>
     <button class="btn primary" data-mg-act="add-group">${ico('add')} Add mirror group</button>`;
 }
 
@@ -172,6 +209,7 @@ function render(): void {
           to the others. Useful when CLAUDE.md / AGENTS.md / GEMINI.md hold the same instructions.
         </p>
         ${switchEl('mirrorSkillsByName', 'Auto-mirror skills by name', 'If a skill directory of the same name exists under multiple AI tool roots (e.g. ~/.claude/skills/foo and ~/.codex/skills/foo), treat their SKILL.md files as one group. Off by default — opt-in.')}
+        ${switchEl('mirrorSkillsByNameAlways', 'Skip save confirm for skill auto-mirror', 'When the above is on, save without the confirmation dialog. Only meaningful if mirror-by-name is enabled.')}
         ${renderMirrorGroups()}
       </div>
     </section>
@@ -236,6 +274,14 @@ function bindMirrorGroups(): void {
       commitMirrorGroups(groups);
     };
   });
+  document.querySelectorAll<HTMLInputElement>('input[data-mg-always]').forEach(el => {
+    el.onchange = () => {
+      const i = parseInt(el.dataset.i || '0', 10);
+      if (!groups[i]) return;
+      groups[i].alwaysMirror = el.checked;
+      commitMirrorGroups(groups);
+    };
+  });
   document.querySelectorAll<HTMLInputElement>('input[data-mg-path]').forEach(el => {
     el.onblur = () => {
       const i = parseInt(el.dataset.i || '0', 10);
@@ -254,7 +300,7 @@ function bindMirrorGroups(): void {
       if (act === 'add-group') {
         const label = prompt('Group label (e.g. "Global agent instructions"):');
         if (!label) return;
-        groups.push({ id: `g-${Date.now()}`, label: label.trim(), paths: [] });
+        groups.push({ id: `g-${Date.now()}`, label: label.trim(), paths: [], alwaysMirror: false });
         commitMirrorGroups(groups);
       } else if (act === 'rm-group') {
         if (!confirm(`Remove group "${groups[i]?.label || ''}"? Target files stay untouched.`)) return;
@@ -270,6 +316,8 @@ function bindMirrorGroups(): void {
         if (!groups[i]) return;
         groups[i].paths.splice(pi, 1);
         commitMirrorGroups(groups);
+      } else if (act === 'apply-preset') {
+        vscode.postMessage({ type: 'mirror-apply-preset', presetId: btn.dataset.preset });
       }
     };
   });

@@ -3,19 +3,39 @@ import { readConfig, type CcSkillsConfig } from '../config';
 import { bus } from '../bus';
 import { log } from '../logger';
 import * as state from '../state';
+import type { MirrorGroup } from '../types';
+import { PRESETS, expandPreset } from '../mirrors';
 import { buildHtml } from './view';
+
+interface PresetInfo {
+  id: string;
+  label: string;
+  description: string;
+  scope: 'global' | 'workspace';
+  availablePaths: string[];
+}
 
 interface SettingsPayload {
   config: CcSkillsConfig;
   favoritesCount: number;
   extensionVersion: string;
+  mirrorPresets: PresetInfo[];
 }
 
 function buildPayload(extensionVersion: string): SettingsPayload {
+  const workspace = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || null;
+  const mirrorPresets: PresetInfo[] = PRESETS.map(p => ({
+    id: p.id,
+    label: p.label,
+    description: p.description,
+    scope: p.scope,
+    availablePaths: expandPreset(p, workspace)
+  }));
   return {
     config: readConfig(),
     favoritesCount: state.listFavorites().length,
-    extensionVersion
+    extensionVersion,
+    mirrorPresets
   };
 }
 
@@ -59,6 +79,37 @@ async function handleMessage(msg: any, panel: vscode.WebviewPanel, extensionVers
     case 'reload-window':
       vscode.commands.executeCommand('workbench.action.reloadWindow');
       return;
+
+    case 'mirror-apply-preset': {
+      const preset = PRESETS.find(p => p.id === msg.presetId);
+      if (!preset) {
+        panel.webview.postMessage({ type: 'error', message: 'Unknown preset' });
+        return;
+      }
+      const workspace = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || null;
+      const paths = expandPreset(preset, workspace);
+      if (!paths.length) {
+        vscode.window.showWarningMessage(`Preset "${preset.label}" has no existing files on this machine.`);
+        return;
+      }
+      const cfg = vscode.workspace.getConfiguration('claudeCodexSkills');
+      const groups = cfg.get<MirrorGroup[]>('mirrorGroups', []);
+      // Avoid duplicate group with same path set
+      const sigOf = (ps: string[]) => [...ps].sort().join('\n');
+      const want = sigOf(paths);
+      if (groups.some(g => sigOf(g.paths) === want)) {
+        vscode.window.showInformationMessage(`A group with the same paths already exists.`);
+        return;
+      }
+      const next: MirrorGroup[] = [
+        ...groups,
+        { id: `${preset.id}-${Date.now()}`, label: preset.label, paths, alwaysMirror: false }
+      ];
+      await cfg.update('mirrorGroups', next, vscode.ConfigurationTarget.Global);
+      vscode.window.setStatusBarMessage(`Added preset: ${preset.label} (${paths.length} files)`, 3000);
+      send();
+      return;
+    }
   }
 }
 

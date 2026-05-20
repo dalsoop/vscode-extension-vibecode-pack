@@ -35,6 +35,7 @@
   "cfg.showScoreBreakdown": "Show per-section score breakdown (Lost points / Earned rules) in preview by default",
   "cfg.mirrorGroups": "Groups of files that share the same content — saving any one mirrors the full content to the others",
   "cfg.mirrorSkillsByName": "Auto-mirror SKILL.md files whose parent directory has the same name across AI tool roots (opt-in)",
+  "cfg.mirrorSkillsByNameAlways": "Skip the save confirm dialog for skill auto-mirror (requires mirrorSkillsByName)",
   "chat.description": "Discover, preview, and recommend Claude/Codex skills",
   "tool.list.displayName": "List Skills",
   "tool.list.userDescription": "List all installed Claude/Codex skills",

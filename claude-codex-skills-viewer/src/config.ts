@@ -15,6 +15,7 @@ export interface CcSkillsConfig {
   showScoreBreakdown: boolean;
   mirrorGroups: MirrorGroup[];
   mirrorSkillsByName: boolean;
+  mirrorSkillsByNameAlways: boolean;
 }
 
 export function readConfig(): CcSkillsConfig {
@@ -30,6 +31,7 @@ export function readConfig(): CcSkillsConfig {
     githubToken: c.get<string>('githubToken', '') || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '',
     showScoreBreakdown: c.get<boolean>('showScoreBreakdown', true),
     mirrorGroups: c.get<MirrorGroup[]>('mirrorGroups', []),
-    mirrorSkillsByName: c.get<boolean>('mirrorSkillsByName', false)
+    mirrorSkillsByName: c.get<boolean>('mirrorSkillsByName', false),
+    mirrorSkillsByNameAlways: c.get<boolean>('mirrorSkillsByNameAlways', false)
   };
 }
