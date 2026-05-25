@@ -2,7 +2,7 @@ import type { AppManifest } from '../_types';
 
 export const manifest: AppManifest = {
   id: 'revealInOS',
-  title: 'Vibecode Files - Reveal in Finder / Explorer',
+  title: 'Vibecode - Reveal in Finder / Explorer',
   description: 'Reveal the selected file or folder in the OS file manager.',
   icon: 'folder-opened',
   menus: [

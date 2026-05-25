@@ -1,21 +1,27 @@
 {
   "ext": {
     "displayName": "바이브코드 확장 메뉴 리스트",
-    "description": "모든 vibecode-* 확장이 우클릭/팔레트 메뉴를 슬롯할 공용 `Vibecode` 서브메뉴 (explorer/context, editor/context, editor/title) 를 호스팅하고, 설치된 모든 vibecode-* 명령을 한 번에 조회/실행하는 카탈로그 팔레트 명령을 제공한다.",
+    "description": "상태바 우측의 `V` 버튼 (또는 팔레트 명령) 을 누르면 Walkthrough 스타일 패널이 에디터 옆에 슬라이드인 — 설치된 모든 vibecode-* 확장과 각 command 를 카드로 표시. 카드 클릭으로 즉시 실행.",
     "category": "바이브코드"
   },
-  "submenus": {
-    "vibecodeMenu.explorerContext": "Vibecode",
-    "vibecodeMenu.editorContext": "Vibecode",
-    "vibecodeMenu.editorTitle": "Vibecode"
-  },
   "commands": {
-    "showCatalog": "바이브코드 -확장 메뉴 카탈로그 열기"
+    "openSidePanel": "바이브코드 - 확장 메뉴 패널 열기",
+    "showCatalog": "바이브코드 - 확장 메뉴 카탈로그 열기 (QuickPick)",
+    "runCommand": "바이브코드 - 명령 실행 (내부)"
   },
   "runtime": {
     "No vibecode-* extensions with commands found.": "명령을 제공하는 vibecode-* 확장이 설치되어 있지 않습니다.",
+    "No vibecode-* extensions installed.": "설치된 vibecode-* 확장이 없습니다.",
+    "Vibecode Extensions": "Vibecode 확장",
+    "Click any command to run it.": "카드를 클릭하면 해당 명령이 즉시 실행됩니다.",
+    "Filter commands…": "명령 필터…",
+    "No matching commands.": "일치하는 명령이 없습니다.",
+    "Refresh": "새로고침",
+    "Open Vibecode extensions panel": "Vibecode 확장 메뉴 패널 열기",
     "Vibecode extension command catalog ({0} commands)": "Vibecode 확장 명령 카탈로그 ({0}개)",
     "Type to filter — select to run": "필터 입력 — 선택 시 실행",
-    "Failed to run {0}: {1}": "{0} 실행 실패: {1}"
+    "Failed to run {0}: {1}": "{0} 실행 실패: {1}",
+    "Side panel not initialized yet.": "사이드 패널이 아직 초기화되지 않았습니다.",
+    "runCommand called without a command id.": "runCommand 가 command id 없이 호출되었습니다."
   }
 }

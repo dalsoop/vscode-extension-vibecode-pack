@@ -5,11 +5,11 @@
     "category": "바이브코드"
   },
   "commands": {
-    "openHtmlInBrowser": "바이브코드 파일 -기본 브라우저로 열기",
-    "openFolderInNewWindow": "바이브코드 파일 -새 VSCode 창에서 폴더 열기",
-    "revealInOS": "바이브코드 파일 -Finder / 탐색기에서 보기",
-    "copyAbsolutePath": "바이브코드 파일 -절대 경로 복사",
-    "openInTerminal": "바이브코드 파일 -여기에 터미널 열기"
+    "openHtmlInBrowser": "바이브코드 - 기본 브라우저로 열기",
+    "openFolderInNewWindow": "바이브코드 - 새 VSCode 창에서 폴더 열기",
+    "revealInOS": "바이브코드 - Finder / 탐색기에서 보기",
+    "copyAbsolutePath": "바이브코드 - 절대 경로 복사",
+    "openInTerminal": "바이브코드 - 여기에 터미널 열기"
   },
   "runtime": {
     "No file to open.": "열 파일이 없습니다.",

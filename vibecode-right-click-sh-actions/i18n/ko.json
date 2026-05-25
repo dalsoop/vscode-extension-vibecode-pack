@@ -5,7 +5,7 @@
     "category": "바이브코드"
   },
   "commands": {
-    "runShInTerminal": "바이브코드 Sh - 터미널에서 .sh 실행"
+    "runShInTerminal": "바이브코드 - 터미널에서 .sh 실행"
   },
   "runtime": {
     "No .sh file selected.": "선택된 .sh 파일이 없습니다."

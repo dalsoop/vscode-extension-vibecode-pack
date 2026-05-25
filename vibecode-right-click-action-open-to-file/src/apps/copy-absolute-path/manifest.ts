@@ -2,7 +2,7 @@ import type { AppManifest } from '../_types';
 
 export const manifest: AppManifest = {
   id: 'copyAbsolutePath',
-  title: 'Vibecode Files - Copy Absolute Path',
+  title: 'Vibecode - Copy Absolute Path',
   description: 'Copy the absolute filesystem path of the selected file or folder to clipboard.',
   icon: 'clippy',
   menus: [

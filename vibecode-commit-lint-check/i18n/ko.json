@@ -5,9 +5,9 @@
     "category": "바이브코드"
   },
   "commands": {
-    "initFromTemplate": "바이브코드 커밋 린트 -템플릿으로 초기화",
-    "checkLastCommit": "바이브코드 커밋 린트 -직전 커밋 검사",
-    "addTemplate": "바이브코드 커밋 린트 -사용자 템플릿 추가"
+    "initFromTemplate": "바이브코드 - 커밋 린트 템플릿으로 초기화",
+    "checkLastCommit": "바이브코드 - 직전 커밋 메시지 검사",
+    "addTemplate": "바이브코드 - 커밋 린트 사용자 템플릿 추가"
   },
   "runtime": {
     "No folder selected.": "선택된 폴더가 없습니다.",
