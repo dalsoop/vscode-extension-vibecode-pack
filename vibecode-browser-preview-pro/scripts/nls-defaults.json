@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode Browser Preview Pro",
+  "ext.description": "HTML live preview with an in-page inspector, asset/CSS introspection, state controls, and snapshot export for design handoff. Builds on vibecode-browser-preview.",
+  "editor.displayName": "Vibecode Browser Preview Pro"
+}

@@ -17,6 +17,6 @@
     "noUnusedParameters": false,
     "noImplicitAny": false
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts", "src/contracts/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "src/webview/client"]
 }

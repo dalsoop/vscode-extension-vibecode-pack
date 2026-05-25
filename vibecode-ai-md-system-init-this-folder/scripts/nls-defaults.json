@@ -1,8 +1,9 @@
 {
-  "ext.displayName": "Vibecode Agent Init This Folder",
-  "ext.description": "Sidebar catalog of templates (use-case recipes) with per-tool variants (claude / codex / gemini / cursor). Click a template → pick tool → install into a target folder. Default tool is configurable.",
+  "ext.displayName": "Vibecode AI MD System Init",
+  "ext.description": "Sidebar catalog of templates with per-tool variants (claude / codex / gemini / cursor / windsurf / cline / aider / continue). Pick checkboxes → install into a folder. Workspace-root pre-flight auto-disables already-installed tools. Existing folders can be promoted into user templates. Right-click user templates to rename/delete/reveal.",
   "ext.category": "Vibecode",
-  "ext.viewContainerTitle": "Vibecode Agents",
+  "ext.viewContainerTitle": "Vibecode AI MD",
   "ext.viewTemplates": "Templates",
-  "cfg.defaultTool": "Default tool variant pre-selected in the Apply Template tool picker. Must match a subfolder name under <template>/."
+  "cfg.defaultTool": "Default tool variant pre-selected on each template's first reveal. Must match a subfolder name under <template>/.",
+  "welcome.empty": "No templates yet.\n[Promote a folder as User Template](command:vibecodeAiMdSystem.promoteTemplate)\n[Refresh](command:vibecodeAiMdSystem.refreshTemplates)"
 }

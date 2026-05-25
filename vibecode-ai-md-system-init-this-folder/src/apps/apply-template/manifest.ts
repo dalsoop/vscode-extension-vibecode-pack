@@ -2,13 +2,13 @@ import type { AppManifest } from '../_types';
 
 export const manifest: AppManifest = {
   id: 'applyTemplate',
-  title: 'Vibecode Agent - Apply Template…',
-  description: 'Pick a target parent folder + new folder name, then copy the chosen template.json into it.',
+  title: 'Vibecode - Install Selected Tool Variants',
+  description: 'Read sidebar-checked template/tool pairs, pick a target folder, and recursively copy each variant in. Button is hidden until at least one item is checked.',
   icon: 'rocket',
   menus: [
     {
       where: 'view/title',
-      when: 'view == vibecodeAiMdSystem.templates',
+      when: 'view == vibecodeAiMdSystem.templates && vibecodeAiMdSystem.hasSelection',
       group: 'navigation@10'
     }
   ]

@@ -39,6 +39,16 @@
     "typescript-eslint": "^8.59.4"
   },
   "contributes": {
+    "configuration": {
+      "title": "%ext.category%",
+      "properties": {
+        "vibecodeCommitLint.checkLastCommit.command": {
+          "type": "string",
+          "default": "npx --yes commitlint --from HEAD~1 --to HEAD --verbose",
+          "description": "%config.checkLastCommit.command%"
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -82,6 +92,12 @@
         "icon": "$(rocket)"
       },
       {
+        "command": "vibecodeCommitLint.openSettings",
+        "title": "%cmd.openSettings%",
+        "category": "%ext.category%",
+        "icon": "$(settings-gear)"
+      },
+      {
         "command": "vibecodeCommitLint.refreshTree",
         "title": "%cmd.refreshTree%",
         "category": "%ext.category%",
@@ -113,6 +129,11 @@
           "group": "navigation"
         },
         {
+          "command": "vibecodeCommitLint.openSettings",
+          "when": "view == vibecodeCommitLint.templates",
+          "group": "navigation@9"
+        },
+        {
           "command": "vibecodeCommitLint.refreshTree",
           "when": "view == vibecodeCommitLint.templates",
           "group": "navigation"
@@ -134,6 +155,9 @@
         },
         {
           "command": "vibecodeCommitLint.initFromTemplate"
+        },
+        {
+          "command": "vibecodeCommitLint.openSettings"
         },
         {
           "command": "vibecodeCommitLint.refreshTree"
