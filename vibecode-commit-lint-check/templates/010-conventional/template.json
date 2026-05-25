@@ -1,10 +1,10 @@
 {
   "title": "Conventional Commits (default)",
-  "description": "Baseline @commitlint/config-conventional setup. No hook installer — pair with husky/pre-commit/captainhook separately.",
+  "description": "Conventional Commits baseline. Same shape as vscode-extension-mono root config — Korean subjects allowed, body/footer line-length unrestricted (for auto-generated trailers), header capped at 100. Add scope-enum entries to match your repo's components. No hook installer — pair with husky/pre-commit/captainhook separately.",
   "files": [
     {
       "path": "commitlint.config.js",
-      "content": "module.exports = {\n  extends: ['@commitlint/config-conventional']\n};\n"
+      "content": "// Baseline Conventional Commits with relaxed line-length for Korean text\n// and machine-generated trailers (Co-Authored-By, etc.). Add a scope-enum\n// entry to enforce a closed list of scopes for your repo.\nmodule.exports = {\n  extends: ['@commitlint/config-conventional'],\n  rules: {\n    'subject-case': [0],\n    'header-max-length': [2, 'always', 100],\n    'body-max-line-length': [0],\n    'footer-max-line-length': [0]\n    // 'scope-enum': [2, 'always', ['api', 'web', 'docs']]\n  }\n};\n"
     }
   ],
   "postInstall": [

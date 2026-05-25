@@ -1,0 +1,5 @@
+{
+  "label": "Conventional Commits type prefix",
+  "description": "Subject starts with feat|fix|chore|docs|refactor|test|build|ci|perf|style|revert (optional scope, optional !) followed by ': '",
+  "command": "git log -1 --pretty=%s | grep -qE '^(feat|fix|chore|docs|refactor|test|build|ci|perf|style|revert)(\\(.+\\))?!?: '"
+}
