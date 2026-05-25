@@ -11,6 +11,11 @@ export const manifest: AppManifest = {
       where: 'editor/title',
       when: "resourceFilename == 'COMMIT_EDITMSG'",
       group: 'navigation'
+    },
+    {
+      where: 'view/title',
+      when: 'view == vibecodeCommitLint.templates',
+      group: 'navigation'
     }
   ]
 };

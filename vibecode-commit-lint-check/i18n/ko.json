@@ -1,13 +1,18 @@
 {
   "ext": {
     "displayName": "바이브코드 커밋 린트 검사",
-    "description": "번들된 commitlint 템플릿(Conventional, PHP/Laravel, Node, Python)으로 커밋 메시지를 검사한다. 폴더 우클릭으로 설정을 스캐폴드하거나, 팔레트에서 직전 커밋을 CLI 로 검사.",
+    "description": "번들된 commitlint 템플릿(Conventional, PHP/Laravel, Node, Python)으로 커밋 메시지를 검사한다. 폴더 우클릭 또는 사이드바 트리뷰에서 설정을 스캐폴드하고, 팔레트나 사이드바에서 직전 커밋을 CLI 로 검사.",
     "category": "바이브코드"
+  },
+  "view": {
+    "container": { "title": "커밋 린트" },
+    "templates": { "name": "템플릿" }
   },
   "commands": {
     "initFromTemplate": "바이브코드 - 커밋 린트 템플릿으로 초기화",
     "checkLastCommit": "바이브코드 - 직전 커밋 메시지 검사",
-    "addTemplate": "바이브코드 - 커밋 린트 사용자 템플릿 추가"
+    "addTemplate": "바이브코드 - 커밋 린트 사용자 템플릿 추가",
+    "refreshTree": "바이브코드 - 커밋 린트 템플릿 새로고침"
   },
   "runtime": {
     "No folder selected.": "선택된 폴더가 없습니다.",
@@ -32,6 +37,14 @@
     "Name is required.": "이름은 필수입니다.",
     "Use only letters, digits, dot, underscore, or hyphen.": "영문/숫자/`.`/`_`/`-` 만 사용 가능합니다.",
     "Template already exists: {0}": "이미 존재하는 템플릿입니다: {0}",
-    "Created: {0}": "생성됨: {0}"
+    "Created: {0}": "생성됨: {0}",
+    "Bundled Templates ({0})": "기본 제공 템플릿 ({0})",
+    "User Templates ({0})": "사용자 템플릿 ({0})",
+    "No bundled templates found.": "기본 제공 템플릿이 없습니다.",
+    "No user templates yet — use Add Template to create one.": "사용자 템플릿이 없습니다 — 추가 명령으로 새로 만드세요.",
+    "Click to scaffold into workspace root.": "클릭하면 워크스페이스 루트에 스캐폴드합니다.",
+    "Apply Template": "템플릿 적용",
+    "applyTemplate called without template/target args.": "applyTemplate 가 인자 없이 호출되었습니다.",
+    "Template at {0} is invalid or missing.": "{0} 의 템플릿이 잘못되었거나 존재하지 않습니다."
   }
 }
