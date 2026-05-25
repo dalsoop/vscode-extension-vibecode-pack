@@ -278,7 +278,11 @@ async function handleMessage(msg: Contracts.PreviewMsgFromView | undefined, s: P
       vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(s.payload.dir));
       return;
     case 'terminal': {
-      const term = vscode.window.createTerminal({ name: path.basename(s.payload.dir), cwd: s.payload.dir });
+      const name = path.basename(s.payload.dir);
+      const existing = vscode.window.terminals.find(t => t.name === name);
+      const term = existing && existing.exitStatus === undefined
+        ? existing
+        : vscode.window.createTerminal({ name, cwd: s.payload.dir });
       term.show();
       return;
     }
