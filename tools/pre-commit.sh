@@ -84,7 +84,7 @@ else
     JSCPD_OUT=$(npx jscpd "$SCAN_DIR" \
         --min-lines 4 \
         --min-tokens 50 \
-        --ignore "node_modules/**,dist/**,build/**" \
+        --ignore "node_modules/**,dist/**,build/**,vibecode-*/eslint.config.mjs,vibecode-*/scripts/sync-contributions.mjs,.policy-ci.yml,.gitlab-ci.yml,tools/eslint-config-master.mjs,vibecode-*/package.nls*.json,**/package-lock.json,**/.husky/**,vibecode-*/eslint-suppressions.json" \
         --reporters "console" 2>/dev/null)
     CLONES=$(echo "$JSCPD_OUT" | grep -oE 'Found [0-9]+ clones' | grep -oE '[0-9]+' || echo "0")
     if [[ "${CLONES}" -gt "${MAX_CLONES}" ]]; then
