@@ -61,6 +61,11 @@
     "views": {
       "vibecodeCommitLint": [
         {
+          "id": "vibecodeCommitLint.checks",
+          "name": "%view.checks.name%",
+          "type": "tree"
+        },
+        {
           "id": "vibecodeCommitLint.templates",
           "name": "%view.templates.name%",
           "type": "tree"
@@ -98,10 +103,45 @@
         "icon": "$(settings-gear)"
       },
       {
+        "command": "vibecodeCommitLint.refreshChecks",
+        "title": "%cmd.refreshChecks%",
+        "category": "%ext.category%",
+        "icon": "$(refresh)"
+      },
+      {
         "command": "vibecodeCommitLint.refreshTree",
         "title": "%cmd.refreshTree%",
         "category": "%ext.category%",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecodeCommitLint.revealChecksFolder",
+        "title": "%cmd.revealChecksFolder%",
+        "category": "%ext.category%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "vibecodeCommitLint.runAllChecks",
+        "title": "%cmd.runAllChecks%",
+        "category": "%ext.category%",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "vibecodeCommitLint.runCheck",
+        "title": "%cmd.runCheck%",
+        "category": "%ext.category%",
+        "icon": "$(play)"
+      },
+      {
+        "command": "vibecodeCommitLint.scaffoldDefaultChecks",
+        "title": "%cmd.scaffoldDefaultChecks%",
+        "category": "%ext.category%",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "vibecodeCommitLint.showCheckOutput",
+        "title": "%cmd.showCheckOutput%",
+        "category": "%ext.category%"
       }
     ],
     "menus": {
@@ -134,9 +174,24 @@
           "group": "navigation@9"
         },
         {
+          "command": "vibecodeCommitLint.refreshChecks",
+          "when": "view == vibecodeCommitLint.checks",
+          "group": "navigation@2"
+        },
+        {
           "command": "vibecodeCommitLint.refreshTree",
           "when": "view == vibecodeCommitLint.templates",
           "group": "navigation"
+        },
+        {
+          "command": "vibecodeCommitLint.revealChecksFolder",
+          "when": "view == vibecodeCommitLint.checks",
+          "group": "navigation@3"
+        },
+        {
+          "command": "vibecodeCommitLint.runAllChecks",
+          "when": "view == vibecodeCommitLint.checks",
+          "group": "navigation@1"
         }
       ],
       "editor/title": [
@@ -144,6 +199,13 @@
           "command": "vibecodeCommitLint.checkLastCommit",
           "when": "resourceFilename == 'COMMIT_EDITMSG'",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "vibecodeCommitLint.runCheck",
+          "when": "view == vibecodeCommitLint.checks && viewItem == commitLintCheck",
+          "group": "inline"
         }
       ],
       "commandPalette": [
@@ -160,7 +222,19 @@
           "command": "vibecodeCommitLint.openSettings"
         },
         {
+          "command": "vibecodeCommitLint.refreshChecks"
+        },
+        {
           "command": "vibecodeCommitLint.refreshTree"
+        },
+        {
+          "command": "vibecodeCommitLint.revealChecksFolder"
+        },
+        {
+          "command": "vibecodeCommitLint.runAllChecks"
+        },
+        {
+          "command": "vibecodeCommitLint.scaffoldDefaultChecks"
         }
       ]
     }

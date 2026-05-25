@@ -3,6 +3,7 @@
   "ext.description": "Lint commit messages against bundled commitlint templates (Conventional, PHP/Laravel, Node, Python). Right-click a folder or use the sidebar tree view to scaffold a config; run the CLI check on the last commit from the palette or the sidebar.",
   "ext.category": "Vibecode",
   "view.container.title": "Commit Lint",
+  "view.checks.name": "Checks",
   "view.templates.name": "Templates",
   "config.checkLastCommit.command": "Shell command run by 'Check Last Commit Message' in a workspace terminal. Defaults to `npx --yes commitlint --from HEAD~1 --to HEAD --verbose`.",
   "cmd.addTemplate": "Vibecode - Add Custom Commit Lint Template",
@@ -10,5 +11,11 @@
   "cmd.checkLastCommit": "Vibecode - Check Last Commit Message",
   "cmd.initFromTemplate": "Vibecode - Init Commit Lint From Template",
   "cmd.openSettings": "Vibecode - Open Commit Lint Settings",
-  "cmd.refreshTree": "Vibecode - Refresh Commit Lint Templates"
+  "cmd.refreshChecks": "Vibecode - Refresh Commit-Lint Checks",
+  "cmd.refreshTree": "Vibecode - Refresh Commit Lint Templates",
+  "cmd.revealChecksFolder": "Vibecode - Reveal Commit-Lint Checks Folder",
+  "cmd.runAllChecks": "Vibecode - Run All Commit-Lint Checks",
+  "cmd.runCheck": "Vibecode - Run Commit-Lint Check",
+  "cmd.scaffoldDefaultChecks": "Vibecode - Scaffold Default Commit-Lint Checks",
+  "cmd.showCheckOutput": "Vibecode - Show Commit-Lint Check Output"
 }
