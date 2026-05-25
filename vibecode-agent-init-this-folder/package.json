@@ -16,10 +16,12 @@
   ],
   "main": "./dist/extension.js",
   "scripts": {
-    "build": "npm run sync && tsc -p .",
+    "build": "npm run sync && npm run render && tsc -p .",
     "watch": "tsc -p . -w",
     "sync": "node scripts/sync-contributions.mjs",
     "sync:check": "node scripts/sync-contributions.mjs --check",
+    "render": "node scripts/render-templates.mjs",
+    "render:check": "node scripts/render-templates.mjs --check",
     "typecheck": "tsc -p . --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -37,7 +39,30 @@
     "typescript-eslint": "^8.59.4"
   },
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibecodeAgentInit",
+          "title": "%ext.viewContainerTitle%",
+          "icon": "icons/agent.svg"
+        }
+      ]
+    },
+    "views": {
+      "vibecodeAgentInit": [
+        {
+          "id": "vibecodeAgentInit.templates",
+          "name": "%ext.viewTemplates%"
+        }
+      ]
+    },
     "commands": [
+      {
+        "command": "vibecodeAgentInit.applyTemplate",
+        "title": "%cmd.applyTemplate%",
+        "category": "%ext.category%",
+        "icon": "$(rocket)"
+      },
       {
         "command": "vibecodeAgentInit.checkUpstream",
         "title": "%cmd.checkUpstream%",
@@ -49,36 +74,60 @@
         "title": "%cmd.initTemplateHere%",
         "category": "%ext.category%",
         "icon": "$(add)"
+      },
+      {
+        "command": "vibecodeAgentInit.refreshTemplates",
+        "title": "%cmd.refreshTemplates%",
+        "category": "%ext.category%",
+        "icon": "$(refresh)"
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "vibecodeAgentInit.applyTemplate",
+          "when": "view == vibecodeAgentInit.templates",
+          "group": "navigation@10"
+        },
+        {
+          "command": "vibecodeAgentInit.refreshTemplates",
+          "when": "view == vibecodeAgentInit.templates",
+          "group": "navigation"
+        }
+      ],
       "editor/title": [
         {
           "command": "vibecodeAgentInit.checkUpstream",
           "when": "resourceFilename == 'template.json'",
-          "group": "navigation@10"
+          "group": "navigation"
         }
       ],
       "editor/context": [
         {
           "command": "vibecodeAgentInit.checkUpstream",
           "when": "resourceFilename == 'template.json'",
-          "group": "6_rca@10"
+          "group": "6_rca"
         }
       ],
       "explorer/context": [
         {
           "command": "vibecodeAgentInit.initTemplateHere",
           "when": "explorerResourceIsFolder",
-          "group": "6_rca@10"
+          "group": "6_rca"
         }
       ],
       "commandPalette": [
+        {
+          "command": "vibecodeAgentInit.applyTemplate"
+        },
         {
           "command": "vibecodeAgentInit.checkUpstream"
         },
         {
           "command": "vibecodeAgentInit.initTemplateHere"
+        },
+        {
+          "command": "vibecodeAgentInit.refreshTemplates"
         }
       ]
     }

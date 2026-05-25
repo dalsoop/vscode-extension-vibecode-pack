@@ -46,6 +46,12 @@ sync-check:
     - npm run sync:check
   allow_failure: false
 
+render-check:
+  stage: lint
+  script:
+    - npm run render:check
+  allow_failure: false
+
 build:
   stage: build
   script:

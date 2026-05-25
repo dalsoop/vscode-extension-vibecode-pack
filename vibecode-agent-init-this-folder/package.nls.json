@@ -2,6 +2,10 @@
   "ext.displayName": "Vibecode Agent Init This Folder",
   "ext.description": "Right-click a folder to scaffold a new agent template entry (templates/<timestamp>-<name>/template.json) with title, content, prompts, upstream URL, and SSOT selection.",
   "ext.category": "Vibecode",
-  "cmd.checkUpstream": "Vibecode Agent - Check Template Upstream",
-  "cmd.initTemplateHere": "Vibecode Agent - Init Template Here"
+  "ext.viewContainerTitle": "Vibecode Agents",
+  "ext.viewTemplates": "Templates",
+  "cmd.applyTemplate": "Vibecode Agent - Apply Template…",
+  "cmd.checkUpstream": "Vibecode - Check Agent Template Upstream",
+  "cmd.initTemplateHere": "Vibecode - Init Agent Template Here",
+  "cmd.refreshTemplates": "Vibecode - Refresh Agent Templates"
 }
