@@ -64,19 +64,19 @@
         {
           "command": "vibecodeCommitLint.addTemplate",
           "when": "explorerResourceIsFolder",
-          "group": "6_rca@11"
+          "group": "6_rca"
         },
         {
           "command": "vibecodeCommitLint.initFromTemplate",
           "when": "explorerResourceIsFolder",
-          "group": "6_rca@10"
+          "group": "6_rca"
         }
       ],
       "editor/title": [
         {
           "command": "vibecodeCommitLint.checkLastCommit",
           "when": "resourceFilename == 'COMMIT_EDITMSG'",
-          "group": "navigation@10"
+          "group": "navigation"
         }
       ],
       "commandPalette": [

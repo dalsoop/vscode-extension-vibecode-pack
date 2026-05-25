@@ -9,17 +9,17 @@ export const manifest: AppManifest = {
     {
       where: 'explorer/context',
       when: "resourceExtname == '.sh'",
-      group: '6_rca@10'
+      group: '6_rca'
     },
     {
       where: 'editor/title',
       when: "resourceExtname == '.sh'",
-      group: 'navigation@10'
+      group: 'navigation'
     },
     {
       where: 'editor/context',
       when: "resourceExtname == '.sh'",
-      group: '6_rca@10'
+      group: '6_rca'
     }
   ]
 };

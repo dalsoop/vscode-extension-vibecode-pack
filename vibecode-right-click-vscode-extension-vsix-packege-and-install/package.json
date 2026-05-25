@@ -50,7 +50,7 @@
         {
           "command": "rcaVsixPackageInstall.packageAndInstall",
           "when": "explorerResourceIsFolder",
-          "group": "6_rca@20"
+          "group": "6_rca"
         }
       ],
       "commandPalette": [

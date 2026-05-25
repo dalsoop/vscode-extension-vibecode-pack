@@ -6,7 +6,7 @@ export const manifest: AppManifest = {
   description: 'Reveal the selected file or folder in the OS file manager.',
   icon: 'folder-opened',
   menus: [
-    { where: 'explorer/context', group: '6_rca@30' },
-    { where: 'editor/title/context', group: '6_rca@30' }
+    { where: 'explorer/context', group: '6_rca' },
+    { where: 'editor/title/context', group: '6_rca' }
   ]
 };

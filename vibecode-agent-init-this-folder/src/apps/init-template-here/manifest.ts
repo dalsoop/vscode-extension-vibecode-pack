@@ -9,7 +9,7 @@ export const manifest: AppManifest = {
     {
       where: 'explorer/context',
       when: 'explorerResourceIsFolder',
-      group: '6_rca@10'
+      group: '6_rca'
     }
   ]
 };

@@ -9,12 +9,12 @@ export const manifest: AppManifest = {
     {
       where: 'explorer/context',
       when: "resourceExtname =~ /\\.(html?|svg|pdf)$/",
-      group: '6_rca@10'
+      group: '6_rca'
     },
     {
       where: 'editor/title/context',
       when: "resourceExtname =~ /\\.(html?|svg|pdf)$/",
-      group: '6_rca@10'
+      group: '6_rca'
     }
   ]
 };

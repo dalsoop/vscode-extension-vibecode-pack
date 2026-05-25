@@ -9,12 +9,12 @@ export const manifest: AppManifest = {
     {
       where: 'editor/title',
       when: "resourceFilename == 'template.json'",
-      group: 'navigation@10'
+      group: 'navigation'
     },
     {
       where: 'editor/context',
       when: "resourceFilename == 'template.json'",
-      group: '6_rca@10'
+      group: '6_rca'
     }
   ]
 };

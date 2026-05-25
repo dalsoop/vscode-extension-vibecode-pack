@@ -10,7 +10,7 @@ export const manifest: AppManifest = {
     {
       where: 'editor/title',
       when: "resourceFilename == 'COMMIT_EDITMSG'",
-      group: 'navigation@10'
+      group: 'navigation'
     }
   ]
 };
