@@ -1,0 +1,106 @@
+{
+  "name": "vibecode-show-file-lines",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "0.1.0",
+  "publisher": "dalsoop",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "npm run sync && tsc -p .",
+    "watch": "tsc -p . -w",
+    "sync": "node scripts/sync-contributions.mjs",
+    "sync:check": "node scripts/sync-contributions.mjs --check",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "vscode:prepublish": "npm run build",
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license"
+  },
+  "dependencies": {
+    "ignore": "^5.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4",
+    "vitest": "^2.1.0"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibecodeShowFileLines",
+          "title": "%view.container.title%",
+          "icon": "$(list-ordered)"
+        }
+      ]
+    },
+    "views": {
+      "vibecodeShowFileLines": [
+        {
+          "id": "vibecodeShowFileLines.lineRanking",
+          "name": "%view.lineRanking.name%",
+          "type": "tree"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "%ext.category%",
+      "properties": {
+        "vibecodeShowFileLines.topN": {
+          "type": "number",
+          "default": 100,
+          "minimum": 1,
+          "description": "%config.topN%"
+        },
+        "vibecodeShowFileLines.warnThreshold": {
+          "type": "number",
+          "default": 500,
+          "minimum": 1,
+          "description": "%config.warnThreshold%"
+        },
+        "vibecodeShowFileLines.maxFileSizeKB": {
+          "type": "number",
+          "default": 5120,
+          "minimum": 1,
+          "description": "%config.maxFileSizeKB%"
+        },
+        "vibecodeShowFileLines.respectGitignore": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.respectGitignore%"
+        },
+        "vibecodeShowFileLines.respectFilesExclude": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.respectFilesExclude%"
+        },
+        "vibecodeShowFileLines.defaultGrouping": {
+          "type": "string",
+          "default": "flat",
+          "enum": ["flat", "byExtension"],
+          "description": "%config.defaultGrouping%"
+        },
+        "vibecodeShowFileLines.additionalBinaryExtensions": {
+          "type": "array",
+          "default": [],
+          "items": { "type": "string" },
+          "description": "%config.additionalBinaryExtensions%"
+        }
+      }
+    }
+  }
+}

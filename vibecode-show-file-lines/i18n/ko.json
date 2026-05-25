@@ -1,0 +1,34 @@
+{
+  "ext": {
+    "displayName": "바이브코드 파일 라인 뷰어",
+    "description": "워크스페이스 파일을 라인 수로 정렬해 리팩토링 타겟을 드러내는 사이드바 뷰.",
+    "category": "바이브코드"
+  },
+  "view": {
+    "container": { "title": "바이브코드 파일 라인" },
+    "lineRanking": { "name": "라인 랭킹" }
+  },
+  "config": {
+    "topN": "플랫 랭킹 뷰에 표시할 최대 파일 수.",
+    "warnThreshold": "이 라인 수 이상의 파일은 시각적으로 강조됩니다.",
+    "maxFileSizeKB": "이 크기를 초과하는 파일은 읽지 않고 건너뜁니다.",
+    "respectGitignore": "스캔 시 .gitignore 규칙을 적용합니다.",
+    "respectFilesExclude": "스캔 시 VSCode files.exclude 설정을 적용합니다.",
+    "defaultGrouping": "초기 뷰 모드: 플랫 랭킹 또는 확장자별 그룹.",
+    "additionalBinaryExtensions": "바이너리로 취급할 추가 확장자 (앞에 점, 예: \".bin\")."
+  },
+  "commands": {
+    "refresh": "바이브코드 - 라인 랭킹 새로고침",
+    "toggleView": "바이브코드 - 라인 랭킹 뷰 모드 전환",
+    "openSettings": "바이브코드 - 라인 랭킹 설정 열기"
+  },
+  "runtime": {
+    "Scanning {0} / {1} files...": "스캔 중 {0} / {1} ...",
+    "Scan complete: {0} files indexed.": "스캔 완료: {0} 개 파일 인덱싱.",
+    "View mode: {0}": "뷰 모드: {0}",
+    "Flat ranking": "플랫 랭킹",
+    "Grouped by extension": "확장자별 그룹",
+    "No files indexed yet.": "아직 인덱싱된 파일이 없습니다.",
+    "{0} files, {1} lines": "{0} 파일, {1} 라인"
+  }
+}
