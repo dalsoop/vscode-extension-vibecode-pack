@@ -1,4 +1,12 @@
 {
+  "name": "vscode-extension-mono",
+  "private": true,
+  "scripts": {
+    "lint:sync": "node tools/sync-eslint.mjs",
+    "lint:sync:check": "node tools/sync-eslint.mjs --check",
+    "lint:all": "node tools/lint-all.mjs",
+    "lint:debt": "node tools/lint-all.mjs --summary"
+  },
   "dependencies": {
     "eciesjs": "^0.5.0"
   }
