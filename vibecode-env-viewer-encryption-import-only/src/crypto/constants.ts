@@ -1,5 +1,9 @@
 // Constants shared by every crypto strategy. New strategies plug in by adding
 // an entry to STRATEGY_ID and registering in `./index.ts`.
+//
+// IMPORTANT: STRATEGY_ID values are mirrored in package.json under
+// `contributes.configuration["vibecodeEnvViewerEncryption.strategy"].enum`.
+// When adding a new strategy here, update both places.
 
 export const STRATEGY_ID = {
   /** Passthrough — values stored as-is. Behaviorally equivalent to the normal variant. */

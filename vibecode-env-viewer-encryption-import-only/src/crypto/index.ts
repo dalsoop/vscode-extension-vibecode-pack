@@ -9,9 +9,11 @@ import * as vscode from 'vscode';
 import { STRATEGY_ID, SETTING_KEY, type StrategyId } from './constants';
 import type { CryptoStrategy } from './types';
 import { NoneStrategy } from './none';
+import { DotenvxStrategy } from './dotenvx';
 
 const REGISTRY: Record<StrategyId, CryptoStrategy> = {
-  [STRATEGY_ID.NONE]: NoneStrategy
+  [STRATEGY_ID.NONE]: NoneStrategy,
+  [STRATEGY_ID.DOTENVX]: DotenvxStrategy
 };
 
 /**
