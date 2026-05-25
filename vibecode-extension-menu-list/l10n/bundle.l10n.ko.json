@@ -1,10 +1,7 @@
 {
-  "No vibecode-* extensions with commands found.": "명령을 제공하는 vibecode-* 확장이 설치되어 있지 않습니다.",
   "No vibecode-* extensions installed.": "설치된 vibecode-* 확장이 없습니다.",
   "Filter commands…": "명령 필터…",
   "No matching commands.": "일치하는 명령이 없습니다.",
   "Refresh": "새로고침",
-  "Vibecode extension command catalog ({0} commands)": "Vibecode 확장 명령 카탈로그 ({0}개)",
-  "Type to filter — select to run": "필터 입력 — 선택 시 실행",
   "Failed to run {0}: {1}": "{0} 실행 실패: {1}"
 }

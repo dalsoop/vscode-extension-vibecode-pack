@@ -56,20 +56,9 @@
         }
       ]
     },
-    "commands": [
-      {
-        "command": "vibecodeMenuList.showCatalog",
-        "title": "%cmd.showCatalog%",
-        "category": "%ext.category%",
-        "icon": "$(list-tree)"
-      }
-    ],
+    "commands": [],
     "menus": {
-      "commandPalette": [
-        {
-          "command": "vibecodeMenuList.showCatalog"
-        }
-      ]
+      "commandPalette": []
     }
   }
 }

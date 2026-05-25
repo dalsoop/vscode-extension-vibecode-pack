@@ -1,11 +1,13 @@
 {
   "ext.displayName": "바이브코드 에이전트 폴더 초기화",
-  "ext.description": "사이드바에서 스타터 키트(claude / codex / cursor 등)를 골라 새 프로젝트 폴더에 즉시 설치한다. 폴더 우클릭으로 새 에이전트 정의 템플릿 스캐폴드도 가능.",
+  "ext.description": "사이드바에 템플릿(use-case 레시피) 카탈로그. 각 템플릿은 도구별(claude/codex/gemini/cursor) 변형 보유. 클릭 → 도구 선택 → 타겟 폴더에 설치. 기본 도구는 설정 가능.",
   "ext.category": "바이브코드",
   "ext.viewContainerTitle": "바이브코드 에이전트",
-  "ext.viewTemplates": "스타터 키트",
-  "cmd.applyTemplate": "바이브코드 - 스타터 키트 설치…",
-  "cmd.checkUpstream": "바이브코드 - 에이전트 템플릿 업스트림 확인",
-  "cmd.initTemplateHere": "바이브코드 - 여기에 에이전트 템플릿 초기화",
-  "cmd.refreshTemplates": "바이브코드 - 스타터 새로고침"
+  "ext.viewTemplates": "템플릿",
+  "cfg.defaultTool": "템플릿 적용 시 도구 선택 단계에서 미리 선택될 기본 도구. <template>/<tool>/ 의 tool 폴더 이름과 일치해야 합니다.",
+  "cmd.applyTemplate": "바이브코드 - 템플릿 적용…",
+  "cmd.checkUpstream": "바이브코드 - 에이전트 정의 업스트림 확인",
+  "cmd.initTemplateHere": "바이브코드 - 여기에 에이전트 정의 템플릿 초기화",
+  "cmd.openTemplatesFolder": "바이브코드 - 템플릿 폴더 열기 (SSOT)",
+  "cmd.refreshTemplates": "바이브코드 - 템플릿 새로고침"
 }

@@ -14,7 +14,11 @@ export async function handler(arg: vscode.Uri | undefined): Promise<void> {
 
   const cwd = path.dirname(uri.fsPath);
   const filename = path.basename(uri.fsPath);
-  const term = vscode.window.createTerminal({ name: `▶ ${filename}`, cwd });
+  const name = `▶ ${filename}`;
+  const existing = vscode.window.terminals.find(t => t.name === name);
+  const term = existing && existing.exitStatus === undefined
+    ? existing
+    : vscode.window.createTerminal({ name, cwd });
   term.show();
   term.sendText(`bash ${quoteForShell('./' + filename)}`);
 }

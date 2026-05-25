@@ -9,6 +9,8 @@ export const STYLE = `
   .tab { padding: 7px 10px; cursor: pointer; border: none; background: transparent; color: var(--vscode-descriptionForeground); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; border-bottom: 2px solid transparent; }
   .tab:hover { color: var(--vscode-foreground); }
   .tab.active { color: var(--vscode-foreground); border-bottom-color: var(--vscode-focusBorder); }
+  .tab-count { opacity: 0.55; font-weight: 500; margin-left: 2px; text-transform: none; letter-spacing: 0; }
+  .tab.active .tab-count { opacity: 0.8; }
   .segs { display: flex; gap: 4px; padding: 6px 8px 4px; border-bottom: 1px solid var(--vscode-panel-border); background: var(--vscode-sideBar-background); flex-wrap: wrap; align-items: center; }
   #tools  { position: sticky; top: 31px; z-index: 9; }
   #tools[hidden] { display: none; }
@@ -17,6 +19,8 @@ export const STYLE = `
   .seg { padding: 2px 9px; cursor: pointer; border: 1px solid var(--vscode-panel-border); background: transparent; color: var(--vscode-descriptionForeground); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; border-radius: 10px; white-space: nowrap; }
   .seg:hover { background: var(--vscode-toolbar-hoverBackground); color: var(--vscode-foreground); }
   .seg.active { background: var(--vscode-focusBorder); border-color: var(--vscode-focusBorder); color: var(--vscode-button-foreground, #fff); }
+  .seg-count { opacity: 0.65; font-weight: 500; margin-left: 1px; text-transform: none; letter-spacing: 0; }
+  .seg.active .seg-count { opacity: 0.85; }
   .seg.disabled { opacity: 0.4; cursor: not-allowed; }
   .scope-hint { font-size: 10px; color: var(--vscode-descriptionForeground); opacity: 0.7; margin-left: auto; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .toolbar { display: flex; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--vscode-panel-border); align-items: center; }
@@ -48,6 +52,11 @@ export const STYLE = `
   .act:hover { background: var(--vscode-toolbar-hoverBackground); }
   .empty { padding: 20px 12px; text-align: center; color: var(--vscode-descriptionForeground); font-style: italic; font-size: 11px; }
   .desc { padding: 4px 10px 6px; color: var(--vscode-descriptionForeground); font-size: 11px; font-style: italic; opacity: 0.8; }
+  /* "All" tab: each category is a stacked section with a strong header */
+  .all-category { margin-bottom: 10px; }
+  .all-category-title { padding: 8px 10px 4px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--vscode-foreground); border-top: 1px solid var(--vscode-panel-border); margin-top: 4px; }
+  .all-category-count { opacity: 0.55; font-weight: 500; margin-left: 4px; letter-spacing: 0; }
+  .all-category:first-child .all-category-title { border-top: none; margin-top: 0; }
   /* Folder-depth tree wrapping */
   .tree-row { display: flex; align-items: stretch; }
   .tree-row > .item { flex: 1; min-width: 0; }

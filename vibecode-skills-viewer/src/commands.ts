@@ -64,7 +64,11 @@ function build(providers: Providers): CommandDef[] {
       id: 'vibecodeSkills.openInTerminal',
       handler: (arg?: SkillCommandArg) => {
         if (!arg?.dir) return;
-        const term = vscode.window.createTerminal({ name: path.basename(arg.dir), cwd: arg.dir });
+        const name = path.basename(arg.dir);
+        const existing = vscode.window.terminals.find(t => t.name === name);
+        const term = existing && existing.exitStatus === undefined
+          ? existing
+          : vscode.window.createTerminal({ name, cwd: arg.dir });
         term.show();
       }
     },

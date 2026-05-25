@@ -77,8 +77,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     for (const u of batch) await scanner.rescanOne(u);
   };
   context.subscriptions.push(
-    fw.onCreate(u => { pending.add(u.fsPath); debounce(flushPending); }),
-    fw.onChange(u => { pending.add(u.fsPath); debounce(flushPending); }),
+    fw.onCreate(u => { if (!ignoreResolver.isIgnored(u)) { pending.add(u.fsPath); debounce(flushPending); } }),
+    fw.onChange(u => { if (!ignoreResolver.isIgnored(u)) { pending.add(u.fsPath); debounce(flushPending); } }),
     fw.onDelete(u => { cache.remove(u); }),
     { dispose: () => fw.dispose() }
   );

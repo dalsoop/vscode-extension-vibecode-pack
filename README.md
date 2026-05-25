@@ -12,7 +12,8 @@ vscode-extension-mono/
 ├── vibecode-right-click-action-open-to-file/  # 파일/폴더 우클릭 컨텍스트 메뉴 액션 모음
 ├── vibecode-right-click-sh-actions/           # .sh 우클릭 → 터미널 실행 + 에디터 상단 ▶ 버튼
 ├── vibecode-agent-init-this-folder/           # 폴더 우클릭 → 에이전트 템플릿 엔트리 스캐폴드
-├── vibecode-env-import-only/                  # .env 를 paste-only 보안 뷰로 인터셉트 (값 비표시)
+├── vibecode-env-viewer-normal-import-only/    # .env 평문 paste-only 보안 뷰 (값 비표시)
+├── vibecode-env-viewer-encryption-import-only/ # .env + 암호화 paste-only 뷰 (.env.keys 감지 시 활성)
 ├── vibecode-commit-lint-check/                # 폴더 우클릭 → commitlint 템플릿 스캐폴드 + CLI 로 직전 커밋 검사
 ├── vibecode-extension-menu-list/              # Activity Bar 사이드바에 설치된 vibecode-* 확장과 명령을 트리로 표시 + 카탈로그 팔레트 명령
 ├── _seed/                             # 새 확장 시작용 placeholder
@@ -55,6 +56,7 @@ npx @vscode/vsce package --allow-missing-repository --skip-license
 | [vibecode-right-click-action-open-to-file](vibecode-right-click-action-open-to-file/) | 0.1.0 | 파일/폴더 우클릭 컨텍스트 메뉴 액션 (브라우저 열기, 새 창 열기, Finder 열기, 경로 복사, 터미널 열기). 각 액션이 `src/apps/<name>/` 모듈 묶음. |
 | [vibecode-right-click-sh-actions](vibecode-right-click-sh-actions/) | 0.1.0 | `.sh` 파일 우클릭 또는 에디터 상단 ▶ 플레이 버튼으로 통합 터미널에서 스크립트 실행. |
 | [vibecode-agent-init-this-folder](vibecode-agent-init-this-folder/) | 0.1.0 | 폴더 우클릭으로 `templates/{yymmddhhmmss}-{name}/template.json` 에이전트 템플릿 엔트리 생성 (title, content, prompts, upstream_url, ssot). 업스트림 동기화는 stub. |
-| [vibecode-env-import-only](vibecode-env-import-only/) | 0.1.0 | `.env` 파일을 paste-only 커스텀 에디터로 인터셉트. 키만 노출, 값은 화면에 표시되지 않음 (타이핑 차단, ⌘V 만 허용). 일반 텍스트 에디터는 "Open With…" 우회로만. |
+| [vibecode-env-viewer-normal-import-only](vibecode-env-viewer-normal-import-only/) | 0.2.0 | `.env` 파일을 paste-only 커스텀 에디터로 인터셉트. 키만 노출, 값은 화면에 표시되지 않음 (타이핑 차단, ⌘V 만 허용). 일반 텍스트 에디터는 "Open With…" 우회로만. 디스크에는 평문 저장. |
+| [vibecode-env-viewer-encryption-import-only](vibecode-env-viewer-encryption-import-only/) | 0.1.0 | `vibecode-env-viewer-normal-import-only` 의 암호화 변형. `.env.keys` 형제 파일이 있을 때만 활성 — paste-only 입력값을 즉시 암호화해 `.env` 에 `encrypted:` 프리픽스로 저장. |
 | [vibecode-commit-lint-check](vibecode-commit-lint-check/) | 0.1.0 | 폴더 우클릭으로 commitlint 설정을 템플릿(Conventional / PHP·Laravel / Node·husky / Python·pre-commit)으로 스캐폴드하고, 팔레트에서 `npx commitlint --from HEAD~1 --to HEAD` 로 직전 커밋을 검사. 사용자 정의 템플릿 추가 가능. |
 | [vibecode-extension-menu-list](vibecode-extension-menu-list/) | 0.1.0 | 상태바의 `🚀 Vibecode` 버튼 클릭 → Walkthrough 스타일 webview 패널이 에디터 옆으로 슬라이드인. 설치된 모든 vibecode-* 확장(publisher 무관)의 commands 를 카드로 표시, 클릭 시 즉시 실행. 필터 + 자동 새로고침. |

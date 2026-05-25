@@ -136,7 +136,8 @@ export interface ScoreContext {
 // ─── Data sources (extension-only) ─────────────────────────────────────
 
 export interface FetchContext {
-  scope: ScopeFilter;
+  // Scope is now a client-side filter (so chip counts work without a
+  // round-trip). Data sources return everything; client filters by item.scope.
   enabledTools: ReadonlySet<string>;
   activeFolderDir: string | null;
   workspaceDir: string | null;

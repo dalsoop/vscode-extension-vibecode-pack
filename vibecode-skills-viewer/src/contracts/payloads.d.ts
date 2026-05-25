@@ -52,6 +52,10 @@ declare namespace Contracts {
     exists?: boolean;
     hasBlock?: boolean;
     tool?: string;
+    // Source scope of the underlying item ('global' / 'workspace' /
+    // 'extension' / 'this folder'). Stamped by the server so the client can
+    // run the scope chip filter locally + count items per scope.
+    scope?: ScopeId;
     kind?: string;
     readOnly?: boolean;
     score?: ItemPayloadScore;

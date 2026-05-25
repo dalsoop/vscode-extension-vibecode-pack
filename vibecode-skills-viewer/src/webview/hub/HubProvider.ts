@@ -8,18 +8,27 @@ import { log } from '../../logger';
 import { buildHtml } from './view';
 import { t, getDict, getLocale, onDidChangeLocale } from '../../i18n';
 import { readConfig, enabledToolIds } from '../../config';
-import type { DataSource, FetchContext, ScopeFilter, MsgFromView, ActionContext } from '../../types';
+import type { DataSource, FetchContext, MsgFromView, ActionContext } from '../../types';
 
 export class HubProvider implements vscode.WebviewViewProvider {
   private view: vscode.WebviewView | null = null;
-  private scope: ScopeFilter = 'all';
   private readonly sources: DataSource[];
+  // Track the active editor's parent dir; only refresh when it actually
+  // changes (e.g. switching tabs within the same folder shouldn't re-scan).
+  private lastActiveDir: string | null = null;
 
   constructor(private context: vscode.ExtensionContext) {
     this.sources = getDataSources();
     context.subscriptions.push(
       vscode.window.onDidChangeActiveTextEditor(() => {
-        if (this.scope === 'this') this.refresh();
+        const editor = vscode.window.activeTextEditor;
+        const dir = editor ? path.dirname(editor.document.uri.fsPath) : null;
+        // Data sources always include "this folder" items, so any folder
+        // change can affect what's shown — re-fetch to keep the tree fresh.
+        if (dir !== this.lastActiveDir) {
+          this.lastActiveDir = dir;
+          this.refresh();
+        }
         this.sendActiveFolder();
       }),
       bus.on(() => this.refresh()),
@@ -57,7 +66,6 @@ export class HubProvider implements vscode.WebviewViewProvider {
     const wsFolder = vscode.workspace.workspaceFolders?.[0];
     const editor = vscode.window.activeTextEditor;
     return {
-      scope: this.scope,
       enabledTools: enabledToolIds(readConfig()),
       activeFolderDir: editor ? path.dirname(editor.document.uri.fsPath) : null,
       workspaceDir: wsFolder ? wsFolder.uri.fsPath : null,
@@ -91,7 +99,6 @@ export class HubProvider implements vscode.WebviewViewProvider {
       scopes,
       tools,
       showToolChips: cfg.showToolChips,
-      scope: this.scope,
       i18n: { locale: getLocale(), dict: getDict() }
     });
     this.sendActiveFolder();
@@ -116,10 +123,6 @@ export class HubProvider implements vscode.WebviewViewProvider {
   private async onMessage(msg: MsgFromView): Promise<void> {
     if (!msg) return;
     switch (msg.type) {
-      case 'setScope':
-        this.scope = msg.scope;
-        this.refresh();
-        return;
       case 'refresh':
         this.refresh();
         return;

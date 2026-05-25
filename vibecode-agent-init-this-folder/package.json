@@ -39,6 +39,22 @@
     "typescript-eslint": "^8.59.4"
   },
   "contributes": {
+    "configuration": {
+      "title": "%ext.displayName%",
+      "properties": {
+        "vibecodeAgentInit.defaultTool": {
+          "type": "string",
+          "enum": [
+            "claude",
+            "codex",
+            "cursor",
+            "gemini"
+          ],
+          "default": "claude",
+          "description": "%cfg.defaultTool%"
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -76,6 +92,12 @@
         "icon": "$(add)"
       },
       {
+        "command": "vibecodeAgentInit.openTemplatesFolder",
+        "title": "%cmd.openTemplatesFolder%",
+        "category": "%ext.category%",
+        "icon": "$(folder-opened)"
+      },
+      {
         "command": "vibecodeAgentInit.refreshTemplates",
         "title": "%cmd.refreshTemplates%",
         "category": "%ext.category%",
@@ -88,6 +110,11 @@
           "command": "vibecodeAgentInit.applyTemplate",
           "when": "view == vibecodeAgentInit.templates",
           "group": "navigation@10"
+        },
+        {
+          "command": "vibecodeAgentInit.openTemplatesFolder",
+          "when": "view == vibecodeAgentInit.templates",
+          "group": "navigation@5"
         },
         {
           "command": "vibecodeAgentInit.refreshTemplates",
@@ -125,6 +152,9 @@
         },
         {
           "command": "vibecodeAgentInit.initTemplateHere"
+        },
+        {
+          "command": "vibecodeAgentInit.openTemplatesFolder"
         },
         {
           "command": "vibecodeAgentInit.refreshTemplates"

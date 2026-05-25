@@ -99,11 +99,15 @@ function buildLocaleNls(localeData, defaults, manifests) {
   // Start from English defaults so VSCode can fall back per-key if a translation is missing.
   const out = { ...defaults };
   for (const m of manifests) out[nlsKeyForCommand(m.id)] = m.title;
-  if (localeData.ext) {
-    for (const [k, v] of Object.entries(localeData.ext)) out[`ext.${k}`] = v;
-  }
   if (localeData.commands) {
     for (const [id, v] of Object.entries(localeData.commands)) out[nlsKeyForCommand(id)] = v;
+  }
+  // Generic block handling: any top-level key OTHER than `commands` and `runtime` is treated
+  // as a prefix namespace. Members become `<block>.<key>`. So `ext.*`, `cfg.*`, etc. all flow.
+  for (const [block, entries] of Object.entries(localeData)) {
+    if (block === 'commands' || block === 'runtime') continue;
+    if (!entries || typeof entries !== 'object') continue;
+    for (const [k, v] of Object.entries(entries)) out[`${block}.${k}`] = v;
   }
   return out;
 }

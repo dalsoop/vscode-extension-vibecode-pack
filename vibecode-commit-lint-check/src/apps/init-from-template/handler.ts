@@ -65,32 +65,32 @@ export async function applyAndReport(
   }
 
   const configFile = written.find(p => /commitlint\.config\.(c|m)?js$/i.test(p));
-  if (configFile) {
-    const doc = await vscode.workspace.openTextDocument(path.join(targetFolder, configFile));
-    await vscode.window.showTextDocument(doc);
-  }
-
   const post = template.postInstall ?? [];
-  if (post.length) {
-    const choice = await vscode.window.showInformationMessage(
-      vscode.l10n.t(
+
+  const actions: string[] = [];
+  if (configFile) actions.push(vscode.l10n.t('Open config'));
+  if (post.length) actions.push(vscode.l10n.t('Run in terminal'));
+
+  const message = post.length
+    ? vscode.l10n.t(
         'Wrote {0} file(s) from "{1}". Run {2} post-install command(s) in a terminal?',
         String(written.length),
         template.title,
         String(post.length)
-      ),
-      { modal: true },
-      vscode.l10n.t('Run in terminal'),
-      vscode.l10n.t('Skip')
-    );
-    if (choice === vscode.l10n.t('Run in terminal')) {
-      runInTerminal(targetFolder, template.title, post);
-    }
-  } else {
-    vscode.window.setStatusBarMessage(
-      vscode.l10n.t('Scaffolded {0} file(s) from "{1}"', String(written.length), template.title),
-      4000
-    );
+      )
+    : vscode.l10n.t('Scaffolded {0} file(s) from "{1}"', String(written.length), template.title);
+
+  if (actions.length === 0) {
+    vscode.window.setStatusBarMessage(message, 4000);
+    return;
+  }
+
+  const choice = await vscode.window.showInformationMessage(message, ...actions);
+  if (choice === vscode.l10n.t('Open config') && configFile) {
+    const doc = await vscode.workspace.openTextDocument(path.join(targetFolder, configFile));
+    await vscode.window.showTextDocument(doc);
+  } else if (choice === vscode.l10n.t('Run in terminal') && post.length) {
+    runInTerminal(targetFolder, template.title, post);
   }
 }
 
@@ -108,7 +108,11 @@ async function resolveFolder(arg: vscode.Uri | undefined): Promise<string | unde
 }
 
 function runInTerminal(cwd: string, label: string, commands: string[]): void {
-  const term = vscode.window.createTerminal({ name: `commitlint: ${label}`, cwd });
+  const name = `commitlint: ${label}`;
+  const existing = vscode.window.terminals.find(t => t.name === name);
+  const term = existing && existing.exitStatus === undefined
+    ? existing
+    : vscode.window.createTerminal({ name, cwd });
   term.show(true);
   for (const cmd of commands) term.sendText(cmd, true);
 }

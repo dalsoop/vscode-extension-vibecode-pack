@@ -5,13 +5,6 @@ import * as state from '../state';
 import { readFolderTree } from './folderTree';
 import type { DataSource, FetchContext, Group, ItemPayload, Skill, ToolId } from '../types';
 
-function passesScope(srcScope: string, scope: FetchContext['scope']): boolean {
-  if (scope === 'all') return true;
-  if (scope === 'global') return srcScope === 'global';
-  if (scope === 'workspace') return srcScope === 'workspace';
-  return false;
-}
-
 // Tool ids that aren't user-configurable tools — they're meta-buckets driven
 // by other settings and always pass through.
 const NON_USER_TOOLS = new Set<string>(['extension', 'custom']);
@@ -27,14 +20,19 @@ export class SkillSource implements DataSource {
   readonly desc = 'Skills';
 
   fetch(ctx: FetchContext): Group[] {
-    let items: Skill[] =
-      ctx.scope === 'this'
-        ? ctx.activeFolderDir
-          ? collectSkillsUnder(ctx.activeFolderDir)
-          : []
-        : collectAllSkills({}).filter(it => passesScope(it.source.scope, ctx.scope));
-
-    items = items.filter(it => passesEnabledTools(it.source.tool, ctx.enabledTools));
+    // Scope is now a client-side filter (so chip counts can be computed
+    // without a round-trip). We always return everything: standard global +
+    // workspace + extension + custom roots, PLUS anything found under the
+    // active folder if there is one (so ad-hoc skill dirs still appear under
+    // the "This Folder" chip).
+    const merged: Skill[] = [...collectAllSkills({})];
+    if (ctx.activeFolderDir) {
+      const seen = new Set(merged.map(s => s.dir));
+      for (const s of collectSkillsUnder(ctx.activeFolderDir)) {
+        if (!seen.has(s.dir)) merged.push(s);
+      }
+    }
+    const items: Skill[] = merged.filter(it => passesEnabledTools(it.source.tool, ctx.enabledTools));
 
     const dupMap = analyzer.buildDupMap(collectAllSkills({}));
     const groups: Record<string, ItemPayload[]> = {};
@@ -59,6 +57,7 @@ export class SkillSource implements DataSource {
         path: it.dir,
         mdPath: it.info?.mdPath,
         tool: it.source.tool,
+        scope: it.source.scope,
         kind: 'skill',
         readOnly: !!it.source.readOnly,
         score: { pct: sc.pct, grade: sc.grade, color: sc.color, axes: sc.axes, issues: sc.issues },

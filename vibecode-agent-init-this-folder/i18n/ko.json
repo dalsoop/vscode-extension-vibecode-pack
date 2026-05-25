@@ -1,25 +1,29 @@
 {
   "ext": {
     "displayName": "바이브코드 에이전트 폴더 초기화",
-    "description": "사이드바에서 스타터 키트(claude / codex / cursor 등)를 골라 새 프로젝트 폴더에 즉시 설치한다. 폴더 우클릭으로 새 에이전트 정의 템플릿 스캐폴드도 가능.",
+    "description": "사이드바에 템플릿(use-case 레시피) 카탈로그. 각 템플릿은 도구별(claude/codex/gemini/cursor) 변형 보유. 클릭 → 도구 선택 → 타겟 폴더에 설치. 기본 도구는 설정 가능.",
     "category": "바이브코드",
     "viewContainerTitle": "바이브코드 에이전트",
-    "viewTemplates": "스타터 키트"
+    "viewTemplates": "템플릿"
+  },
+  "cfg": {
+    "defaultTool": "템플릿 적용 시 도구 선택 단계에서 미리 선택될 기본 도구. <template>/<tool>/ 의 tool 폴더 이름과 일치해야 합니다."
   },
   "commands": {
-    "initTemplateHere": "바이브코드 - 여기에 에이전트 템플릿 초기화",
-    "checkUpstream": "바이브코드 - 에이전트 템플릿 업스트림 확인",
-    "applyTemplate": "바이브코드 - 스타터 키트 설치…",
-    "refreshTemplates": "바이브코드 - 스타터 새로고침"
+    "initTemplateHere": "바이브코드 - 여기에 에이전트 정의 템플릿 초기화",
+    "checkUpstream": "바이브코드 - 에이전트 정의 업스트림 확인",
+    "applyTemplate": "바이브코드 - 템플릿 적용…",
+    "openTemplatesFolder": "바이브코드 - 템플릿 폴더 열기 (SSOT)",
+    "refreshTemplates": "바이브코드 - 템플릿 새로고침"
   },
   "runtime": {
     "No folder selected.": "선택된 폴더가 없습니다.",
     "No template.json active.": "활성화된 template.json 이 없습니다.",
-    "New agent template name": "새 에이전트 템플릿 이름",
+    "New agent template name": "새 에이전트 정의 이름",
     "Will be appended after the timestamp prefix (yymmddhhmmss-<name>).": "타임스탬프 프리픽스 뒤에 붙는다 (yymmddhhmmss-<name>).",
     "Name is required.": "이름은 필수입니다.",
     "Use only letters, digits, dot, underscore, or hyphen.": "영문/숫자/`.`/`_`/`-` 만 사용 가능합니다.",
-    "Template already exists: {0}": "이미 존재하는 템플릿입니다: {0}",
+    "Template already exists: {0}": "이미 존재합니다: {0}",
     "Created: {0}": "생성됨: {0}",
     "Cannot read template.json: {0}": "template.json 을 읽을 수 없습니다: {0}",
     "No upstream_url set. Edit the JSON to add one.": "upstream_url 이 비어 있습니다. JSON 에서 설정하세요.",
@@ -29,14 +33,17 @@
     "Pull (upstream → local)": "Pull (업스트림 → 로컬)",
     "Push (local → upstream)": "Push (로컬 → 업스트림)",
     "Stub: would {0}. Sync logic is not implemented in v0.1.": "Stub: \"{0}\" 을(를) 수행했을 것. v0.1 에서 동기화 로직은 미구현.",
-    "No starters available.": "사용 가능한 스타터가 없습니다.",
     "Extension not found.": "확장을 찾을 수 없습니다.",
-    "Pick a starter to install": "설치할 스타터 선택",
+    "No templates available.": "사용 가능한 템플릿이 없습니다.",
+    "Template \"{0}\" has no tool variants.": "템플릿 \"{0}\" 에 도구 변형이 없습니다.",
+    "Pick a template": "템플릿 선택",
+    "Pick tool variants (multi-select, space to toggle)": "도구 변형 선택 (다중 선택 — Space 로 토글)",
+    "default": "기본",
     "Install here": "여기에 설치",
     "Pick the target folder": "대상 폴더 선택",
     "{0} file(s) already exist in the target folder. Overwrite?": "대상 폴더에 이미 {0}개 파일이 있습니다. 덮어쓸까요?",
     "Overwrite": "덮어쓰기",
     "Skip existing": "기존 파일은 건너뛰기",
-    "Installed \"{0}\" → {1}": "설치 완료: \"{0}\" → {1}"
+    "Installed {0} → {1}  ({2} tool(s): {3})": "설치 완료: {0} → {1}  ({2}개 도구: {3})"
   }
 }

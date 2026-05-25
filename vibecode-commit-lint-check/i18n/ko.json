@@ -25,6 +25,7 @@
     "Template has no files declared.": "템플릿에 작성할 파일이 선언되어 있지 않습니다.",
     "Wrote {0} file(s) from \"{1}\". Run {2} post-install command(s) in a terminal?": "\"{1}\" 템플릿에서 {0}개 파일을 작성했습니다. 후속 설치 명령 {2}개를 터미널에서 실행할까요?",
     "Run in terminal": "터미널에서 실행",
+    "Open config": "config 열기",
     "Skip": "건너뜀",
     "Scaffolded {0} file(s) from \"{1}\"": "\"{1}\" 에서 {0}개 파일을 스캐폴드함",
     "No workspace folder open.": "열린 워크스페이스 폴더가 없습니다.",

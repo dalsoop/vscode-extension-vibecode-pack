@@ -26,7 +26,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const EXT_ROOT = path.resolve(__dirname, '..');
 const REPO_ROOT = path.resolve(EXT_ROOT, '..');
-const TEMPLATES_DIR = path.join(EXT_ROOT, 'templates');
+const AGENT_DEFINITIONS_DIR = path.join(EXT_ROOT, 'agent-definitions');
 const CLAUDE_DIR = path.join(REPO_ROOT, '.claude');
 
 const CHECK_MODE = process.argv.includes('--check');
@@ -148,10 +148,10 @@ const TARGET_RENDERERS = {
 // ---------- driver ----------
 
 async function listTemplateFolders() {
-  const entries = await fs.readdir(TEMPLATES_DIR, { withFileTypes: true });
+  const entries = await fs.readdir(AGENT_DEFINITIONS_DIR, { withFileTypes: true });
   return entries
     .filter(e => e.isDirectory())
-    .map(e => path.join(TEMPLATES_DIR, e.name))
+    .map(e => path.join(AGENT_DEFINITIONS_DIR, e.name))
     .sort();
 }
 

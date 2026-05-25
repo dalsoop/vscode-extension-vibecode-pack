@@ -6,6 +6,14 @@ import { t } from '../i18n';
 import { passesEnabledTools } from './skills';
 import type { DataSource, FetchContext, Group, ItemPayload, InstructionFile, TabId, ToolId } from '../types';
 
+// Map InstructionFile.kind onto the canonical scope id used by item.scope.
+// 'this' (per-folder instruction sweep) is normalised to 'this folder'.
+function scopeForKind(kind: InstructionFile['kind']): 'global' | 'workspace' | 'this folder' | 'extension' {
+  if (kind === 'this') return 'this folder';
+  if (kind === 'per-skill') return 'extension';
+  return kind;
+}
+
 function fileToItem(f: InstructionFile): ItemPayload {
   const sc = f.exists
     ? analyzer.fileScore(f.abs)
@@ -21,6 +29,7 @@ function fileToItem(f: InstructionFile): ItemPayload {
     exists: f.exists,
     hasBlock: f.hasBlock,
     tool: String(f.tool),
+    scope: scopeForKind(f.kind),
     score: { pct: sc.pct, grade: sc.grade as any, color: sc.color as any, issues: sc.issues },
     actions: f.exists ? ['open', 'sync', 'finder'] : ['create']
   };
@@ -66,21 +75,16 @@ class MdSource implements DataSource {
       return passesEnabledTools(f.tool as ToolId, ctx.enabledTools);
     };
 
+    // Always emit workspace + global + this-folder groups (scope is now a
+    // client-side filter so the chip counts can be computed locally).
     const out: Group[] = [];
-    if (ctx.scope === 'this') {
-      if (ctx.activeFolderDir) {
-        const items = localMdFiles(ctx.activeFolderDir, this.onlyAgent).filter(matches).map(fileToItem);
-        out.push({ title: t('hub.groups.thisFolder', path.basename(ctx.activeFolderDir)), items });
-      }
-    } else {
-      if (ctx.scope === 'all' || ctx.scope === 'workspace') {
-        const items = det.listWorkspaceFiles().filter(matches).map(fileToItem);
-        if (items.length) out.push({ title: t('hub.groups.workspace'), items });
-      }
-      if (ctx.scope === 'all' || ctx.scope === 'global') {
-        const items = det.listGlobalFiles().filter(matches).map(fileToItem);
-        if (items.length) out.push({ title: t('hub.groups.global'), items });
-      }
+    const wsItems = det.listWorkspaceFiles().filter(matches).map(fileToItem);
+    if (wsItems.length) out.push({ title: t('hub.groups.workspace'), items: wsItems });
+    const globalItems = det.listGlobalFiles().filter(matches).map(fileToItem);
+    if (globalItems.length) out.push({ title: t('hub.groups.global'), items: globalItems });
+    if (ctx.activeFolderDir) {
+      const items = localMdFiles(ctx.activeFolderDir, this.onlyAgent).filter(matches).map(fileToItem);
+      if (items.length) out.push({ title: t('hub.groups.thisFolder', path.basename(ctx.activeFolderDir)), items });
     }
     return out;
   }

@@ -41,11 +41,17 @@ export async function handler(arg: vscode.Uri | undefined): Promise<void> {
 
   const vsixName = `${pkg.name ?? folderName}-${pkg.version ?? '0.0.0'}.vsix`;
 
-  const term = vscode.window.createTerminal({ name: `📦 ${folderName}`, cwd: folderPath });
+  const term = findOrCreateTerminal(`📦 ${folderName}`, folderPath);
   term.show();
   term.sendText(
     `npm install --silent && ${packageCmd} && code --install-extension ${quoteForShell(vsixName)}`
   );
+}
+
+function findOrCreateTerminal(name: string, cwd: string): vscode.Terminal {
+  const existing = vscode.window.terminals.find(t => t.name === name);
+  if (existing && existing.exitStatus === undefined) return existing;
+  return vscode.window.createTerminal({ name, cwd });
 }
 
 function quoteForShell(s: string): string {
