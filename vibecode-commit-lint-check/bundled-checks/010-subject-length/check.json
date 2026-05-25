@@ -1,0 +1,5 @@
+{
+  "label": "Subject ≤ 72 chars",
+  "description": "First line of HEAD commit fits in 72 characters",
+  "command": "git log -1 --pretty=%s | awk '{exit (length>72)}'"
+}
