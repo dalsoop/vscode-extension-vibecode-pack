@@ -328,19 +328,31 @@ declare namespace DetailContract {
 
 ## 12. Dependencies
 
-- 런타임: `jsonc-parser`
-- 개발: `@types/vscode`, `@types/node`, `typescript`, `eslint`, `@vscode/vsce`
+- 런타임: `jsonc-parser` (esbuild 번들로 인라인)
+- 개발: `@types/vscode`, `@types/node`, `typescript`, `eslint`, `@vscode/vsce`, `esbuild`
 
 ## 13. Build & Package
 
-- `scripts/sync-i18n.mjs` → `scripts/build.mjs` (extension + detail-client 둘 다 컴파일) → `scripts/package.mjs` (vsce) → `scripts/install.mjs` (code --install-extension)
+- `scripts/sync-contributions.mjs` (manifest → package.json + nls) → `scripts/build-ext.mjs` (esbuild 로 `dist/extension.js` 번들 + `dist/parse.js` 테스트용 부산물) → `tsc -p tsconfig.detail-client.json` (webview client outFile) → `vsce package --no-dependencies` → `code --install-extension`
 - `vibecode-build-release-runner` 스킬로 실제 실행
+- **esbuild 옵션 `mainFields: ['module', 'main']` 필수** — `jsonc-parser` UMD 빌드의 동적 require 가 정적 분석 안 됨; ESM 엔트리로 강제해야 인라인 가능. 자세한 내용 `vibecode-extension-testing` 스킬 §Pitfalls 참조.
 
 ## 14. Testing
 
-- `tests/sources/*.test.ts` — fixture mcp.json 로 각 source.scan() 검증
-- `tests/parse-transport.test.ts` — URL/command → transport/port 추출 helper
-- TreeView/webview 통합테스트는 안 함 (수동 검증)
+두 층. `vibecode-extension-testing` 스킬 참조.
+
+### 14.1 단위 (필수, 본 v0.1 범위)
+- `tests/parse.test.mjs` — `parseTransport` + `parseMcpJson` 헬퍼 (fixture jsonc 포함, 9개)
+- `tests/activation.test.mjs` — **활성화 스모크 테스트**. stub 된 `vscode` 모듈로 `dist/extension.js` 의 `activate()` 를 호출, 다음을 검증:
+  - throw 없이 완주
+  - `vibecodeMcpList.tree` 에 TreeDataProvider 등록
+  - 5개 command 모두 `registerCommand` 됨
+- 러너: `node --test tests/*.test.mjs` (zero-dep, node ≥ 20)
+
+이 스모크 테스트가 0.1.0 의 `jsonc-parser` 누락 같은 번들 깨짐을 활성화 단계에서 잡는다. CLI typecheck/lint 만으로는 못 잡음.
+
+### 14.2 통합 (선택, MVP 범위 외)
+TreeView 실제 렌더링, webview 동작 검증은 `@vscode/test-electron` 추가 시 가능. v0.1 범위에서는 안 함 (수동 검증).
 
 ## 15. Done Criteria
 

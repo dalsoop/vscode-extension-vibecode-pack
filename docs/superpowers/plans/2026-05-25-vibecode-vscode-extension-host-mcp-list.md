@@ -6,7 +6,9 @@
 
 **Architecture:** Activity-bar container → one TreeView. Manifest-driven per-feature folders for sources/commands/views (mirrors `vibecode-right-click-action-open-to-file/src/apps/<feature>/{manifest,handler,index}.ts`). Constants-first ID + REGISTRY pattern for sources/commands/transport (compile-time exhaustiveness). Detail panel is a separate webview with `contracts/` ambient namespace + outFile + sections client pattern.
 
-**Tech Stack:** TypeScript, VSCode Extension API (`^1.95.0`), `jsonc-parser`, node `--test` for unit tests, vsce for packaging. No bundler (skills-viewer uses esbuild but right-click ext just uses `tsc -p .` — we follow the simpler pattern).
+**Tech Stack:** TypeScript, VSCode Extension API (`^1.95.0`), `jsonc-parser`, node `--test` for unit tests + activation smoke test (see `vibecode-extension-testing` skill), esbuild for runtime bundle (mandatory — `vsce package --no-dependencies` drops node_modules so all runtime deps must inline), vsce for packaging.
+
+> **Post-mortem note:** The first version of this plan said "no bundler — tsc only". That choice shipped 0.1.0 with `require('jsonc-parser')` failing at runtime because the dependency wasn't in the .vsix. Lesson: any vibecode-* extension with runtime deps **must** bundle via esbuild, and **must** have an activation smoke test (Layer 1 of the testing skill).
 
 **Spec:** [docs/superpowers/specs/2026-05-25-vibecode-vscode-extension-host-mcp-list-design.md](../specs/2026-05-25-vibecode-vscode-extension-host-mcp-list-design.md)
 
