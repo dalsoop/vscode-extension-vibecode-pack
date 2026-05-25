@@ -1,0 +1,17 @@
+{
+  "nls": {
+    "ext.displayName": "바이브코드 브라우저 프리뷰 Pro",
+    "ext.description": "HTML 라이브 프리뷰 + 페이지 안 인스펙터 + 사용된 에셋/CSS 자동 수집 + 상태 컨트롤 + 퍼블리싱 핸드오프용 스냅샷 저장. vibecode-browser-preview 의 확장판.",
+    "editor.displayName": "바이브코드 브라우저 프리뷰 Pro"
+  },
+  "runtime": {
+    "Reload": "새로고침",
+    "Edit Source": "소스 편집",
+    "Open in External Browser": "외부 브라우저에서 열기",
+    "Starting preview server…": "프리뷰 서버 시작 중…",
+    "Server error: {0}": "서버 오류: {0}",
+    "Retry": "다시 시도",
+    "Open a folder first": "먼저 폴더를 열어주세요",
+    "This unsaved HTML file has no folder to serve from. Save it inside a folder or open a workspace folder.": "저장되지 않은 HTML 파일은 서빙할 폴더가 없습니다. 폴더 안에 저장하거나 워크스페이스 폴더를 여세요."
+  }
+}
