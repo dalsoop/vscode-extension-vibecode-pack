@@ -2,7 +2,7 @@
   "name": "vibecode-vscode-extension-host-mcp-list",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "dalsoop",
   "engines": {
     "vscode": "^1.95.0"
@@ -16,9 +16,9 @@
   ],
   "main": "./dist/extension.js",
   "scripts": {
-    "build": "npm run sync && tsc -p . && tsc -p tsconfig.detail-client.json",
-    "build:dev": "npm run sync && tsc -p . && tsc -p tsconfig.detail-client.json",
-    "watch": "tsc -p . -w",
+    "build": "npm run sync && node scripts/build-ext.mjs --production && tsc -p tsconfig.detail-client.json",
+    "build:dev": "npm run sync && node scripts/build-ext.mjs && tsc -p tsconfig.detail-client.json",
+    "watch": "node scripts/build-ext.mjs --watch",
     "sync": "node scripts/sync-contributions.mjs",
     "sync:check": "node scripts/sync-contributions.mjs --check",
     "typecheck": "tsc -p . --noEmit && tsc -p tsconfig.detail-client.json --noEmit",
@@ -34,6 +34,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.95.0",
+    "esbuild": "^0.28.0",
     "eslint": "^9.39.4",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.59.4"
