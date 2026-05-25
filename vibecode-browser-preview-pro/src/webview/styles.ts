@@ -23,6 +23,8 @@ export const STYLES = `
   .panel-empty { font-size: 11px; color: var(--vscode-descriptionForeground); font-style: italic; }
   .pin-card { background: var(--vscode-editor-background); border: 1px solid var(--vscode-panel-border, transparent); border-radius: 4px; padding: 8px; margin-bottom: 8px; }
   .pin-header { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .pin-badge { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; padding: 1px 5px; border-radius: 10px; background: var(--vscode-badge-background, rgba(127,127,127,0.2)); color: var(--vscode-badge-foreground, var(--vscode-foreground)); margin-right: 6px; }
+  .pin-badge.zero { opacity: 0.4; }
   .pin-selector { font-family: var(--vscode-editor-font-family, monospace); font-size: 11px; word-break: break-all; flex: 1 1 auto; }
   .pin-actions button { font-size: 11px; padding: 2px 6px; }
   .pin-block { margin-top: 6px; }
@@ -33,6 +35,7 @@ export const STYLES = `
   .pin-computed .k { color: var(--vscode-descriptionForeground); }
   .pin-overrides input[type=text], .pin-overrides textarea, .pin-overrides select { width: 100%; box-sizing: border-box; font: inherit; font-family: var(--vscode-editor-font-family, monospace); font-size: 11px; padding: 3px 5px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--vscode-input-border, transparent); border-radius: 3px; }
   .pin-overrides textarea { resize: vertical; min-height: 38px; }
+  .pin-overrides .notes-ta { min-height: 32px; }
   .pin-overrides .toggles label { display: inline-flex; align-items: center; gap: 4px; margin-right: 8px; font-size: 11px; text-transform: none; color: inherit; }
   .asset-row { display: flex; gap: 6px; font-family: var(--vscode-editor-font-family, monospace); font-size: 11px; padding: 2px 0; }
   .asset-row .type { width: 56px; color: var(--vscode-descriptionForeground); text-transform: uppercase; font-size: 10px; }
