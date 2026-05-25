@@ -42,6 +42,7 @@ export interface L10nBundle {
   addedClasses: string;
   forceStates: string;
   forceStateWarning: string;
+  dismiss: string;
 }
 
 export function getL10nBundle(): L10nBundle {
@@ -86,6 +87,7 @@ export function getL10nBundle(): L10nBundle {
     changesEmpty: vscode.l10n.t('No changes yet — toggle a class, add inline style, change force state, or write notes.'),
     addedClasses: vscode.l10n.t('Added classes'),
     forceStates: vscode.l10n.t('Force states'),
-    forceStateWarning: vscode.l10n.t('Some hover/focus rules in external stylesheets are not simulatable (cross-origin).')
+    forceStateWarning: vscode.l10n.t('Some hover/focus rules in external stylesheets are not simulatable (cross-origin).'),
+    dismiss: vscode.l10n.t('Dismiss')
   };
 }
