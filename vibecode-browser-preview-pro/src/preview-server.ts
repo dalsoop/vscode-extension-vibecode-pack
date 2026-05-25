@@ -3,6 +3,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { URL } from 'url';
 import { contentTypeFor } from './mime';
+import { INSPECTOR_SCRIPT } from './inspector/inspector-script';
+
+const INSPECTOR_VIRTUAL_PATH = '/__bp_inspector.js';
+const INSPECTOR_TAG = '<script src="/__bp_inspector.js"></script>';
+const HTML_INJECT_LIMIT = 5 * 1024 * 1024; // 5MB
 
 class PreviewServer {
   private server: http.Server | null = null;
@@ -55,6 +60,12 @@ class PreviewServer {
         return;
       }
       const rawPath = decodeURIComponent((req.url ?? '/').split('?')[0]);
+
+      if (rawPath === INSPECTOR_VIRTUAL_PATH) {
+        this.serveInspector(res);
+        return;
+      }
+
       const resolved = path.normalize(path.join(this.rootDir, rawPath));
       if (
         resolved !== this.rootDir &&
@@ -71,6 +82,15 @@ class PreviewServer {
     }
   }
 
+  private serveInspector(res: http.ServerResponse): void {
+    const body = Buffer.from(INSPECTOR_SCRIPT, 'utf8');
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/javascript; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Content-Length', body.byteLength);
+    res.end(body);
+  }
+
   private serveFile(absPath: string, res: http.ServerResponse): void {
     fs.stat(absPath, (err, stat) => {
       if (err) {
@@ -83,7 +103,12 @@ class PreviewServer {
         this.serveFile(path.join(absPath, 'index.html'), res);
         return;
       }
-      const ext = path.extname(absPath);
+      const ext = path.extname(absPath).toLowerCase();
+      const isHtml = ext === '.html' || ext === '.htm';
+      if (isHtml && stat.size <= HTML_INJECT_LIMIT) {
+        this.serveHtmlWithInjection(absPath, res);
+        return;
+      }
       res.statusCode = 200;
       res.setHeader('Content-Type', contentTypeFor(ext));
       res.setHeader('Cache-Control', 'no-store');
@@ -97,6 +122,37 @@ class PreviewServer {
       stream.pipe(res);
     });
   }
+
+  private serveHtmlWithInjection(absPath: string, res: http.ServerResponse): void {
+    fs.readFile(absPath, 'utf8', (err, html) => {
+      if (err) {
+        res.statusCode = 500;
+        res.end('Read error');
+        return;
+      }
+      const injected = injectInspectorTag(html);
+      const body = Buffer.from(injected, 'utf8');
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('Content-Length', body.byteLength);
+      res.end(body);
+    });
+  }
+}
+
+export function injectInspectorTag(html: string): string {
+  if (html.includes(INSPECTOR_TAG)) return html;
+  const lower = html.toLowerCase();
+  const bodyClose = lower.lastIndexOf('</body>');
+  if (bodyClose >= 0) {
+    return html.slice(0, bodyClose) + INSPECTOR_TAG + '\n' + html.slice(bodyClose);
+  }
+  const htmlClose = lower.lastIndexOf('</html>');
+  if (htmlClose >= 0) {
+    return html.slice(0, htmlClose) + INSPECTOR_TAG + '\n' + html.slice(htmlClose);
+  }
+  return html + '\n' + INSPECTOR_TAG + '\n';
 }
 
 export class PreviewServerRegistry {
