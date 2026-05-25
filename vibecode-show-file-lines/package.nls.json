@@ -10,5 +10,8 @@
   "config.respectGitignore": "Honor .gitignore rules when scanning.",
   "config.respectFilesExclude": "Honor VSCode files.exclude when scanning.",
   "config.defaultGrouping": "Initial view mode: flat ranking or grouped by extension.",
-  "config.additionalBinaryExtensions": "Additional file extensions to treat as binary (with leading dot, e.g. \".bin\")."
+  "config.additionalBinaryExtensions": "Additional file extensions to treat as binary (with leading dot, e.g. \".bin\").",
+  "cmd.openSettings": "Vibecode - Open Line Ranking Settings",
+  "cmd.refresh": "Vibecode - Refresh Line Ranking",
+  "cmd.toggleView": "Vibecode - Toggle Line Ranking View"
 }

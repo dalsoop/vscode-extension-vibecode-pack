@@ -8,8 +8,12 @@
     "vscode": "^1.95.0"
   },
   "l10n": "./l10n",
-  "categories": ["Other"],
-  "activationEvents": ["onStartupFinished"],
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "scripts": {
     "build": "npm run sync && tsc -p .",
@@ -91,16 +95,71 @@
         "vibecodeShowFileLines.defaultGrouping": {
           "type": "string",
           "default": "flat",
-          "enum": ["flat", "byExtension"],
+          "enum": [
+            "flat",
+            "byExtension"
+          ],
           "description": "%config.defaultGrouping%"
         },
         "vibecodeShowFileLines.additionalBinaryExtensions": {
           "type": "array",
           "default": [],
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "%config.additionalBinaryExtensions%"
         }
       }
+    },
+    "commands": [
+      {
+        "command": "vibecodeShowFileLines.openSettings",
+        "title": "%cmd.openSettings%",
+        "category": "%ext.category%",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "vibecodeShowFileLines.refresh",
+        "title": "%cmd.refresh%",
+        "category": "%ext.category%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecodeShowFileLines.toggleView",
+        "title": "%cmd.toggleView%",
+        "category": "%ext.category%",
+        "icon": "$(list-tree)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "vibecodeShowFileLines.openSettings",
+          "when": "view == vibecodeShowFileLines.lineRanking",
+          "group": "navigation"
+        },
+        {
+          "command": "vibecodeShowFileLines.refresh",
+          "when": "view == vibecodeShowFileLines.lineRanking",
+          "group": "navigation"
+        },
+        {
+          "command": "vibecodeShowFileLines.toggleView",
+          "when": "view == vibecodeShowFileLines.lineRanking",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecodeShowFileLines.openSettings"
+        },
+        {
+          "command": "vibecodeShowFileLines.refresh"
+        },
+        {
+          "command": "vibecodeShowFileLines.toggleView"
+        }
+      ]
     }
   }
 }

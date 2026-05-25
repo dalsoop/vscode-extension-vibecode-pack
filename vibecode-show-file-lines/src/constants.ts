@@ -6,9 +6,8 @@ export const EXTENSION_ID = 'vibecodeShowFileLines';
 export const VIEW_CONTAINER_ID = 'vibecodeShowFileLines';
 export const VIEW_ID = 'vibecodeShowFileLines.lineRanking';
 
-export const CMD_REFRESH = 'vibecodeShowFileLines.refresh';
-export const CMD_TOGGLE_VIEW = 'vibecodeShowFileLines.toggleView';
-export const CMD_OPEN_SETTINGS = 'vibecodeShowFileLines.openSettings';
+// Command IDs are produced by apps/_types.ts:fullCommandId(manifest.id).
+// Do not duplicate them here.
 
 export const CFG_TOP_N = 'topN';
 export const CFG_WARN_THRESHOLD = 'warnThreshold';

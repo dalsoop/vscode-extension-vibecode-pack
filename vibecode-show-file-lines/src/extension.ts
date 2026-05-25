@@ -2,10 +2,11 @@ import * as vscode from 'vscode';
 import {
   CFG_ADDITIONAL_BINARY_EXTS, CFG_DEFAULT_GROUPING, CFG_MAX_FILE_SIZE_KB,
   CFG_RESPECT_FILES_EXCLUDE, CFG_RESPECT_GITIGNORE,
-  CMD_OPEN_SETTINGS, CMD_REFRESH, CMD_TOGGLE_VIEW,
   DEFAULT_BINARY_EXTS, EXTENSION_ID, LINE_COUNTER_RAW_NEWLINE,
   VIEW_ID, VIEW_MODE_FLAT, VIEW_MODE_GROUP_EXT, WATCH_DEBOUNCE_MS
 } from './constants';
+import { apps } from './apps';
+import { fullCommandId, type ExtensionApi } from './apps/_types';
 import { VsCodeConfig } from './adapters/vscodeConfig';
 import { VsCodeFileSystem } from './adapters/vscodeFileSystem';
 import { VsCodeLogger } from './adapters/vscodeLogger';
@@ -90,16 +91,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     )
   );
 
-  // Commands
-  context.subscriptions.push(
-    vscode.commands.registerCommand(CMD_REFRESH, () => void rescanAll()),
-    vscode.commands.registerCommand(CMD_TOGGLE_VIEW, () => {
-      const next = provider.toggleMode();
-      vscode.window.setStatusBarMessage(vscode.l10n.t('View mode: {0}', next), 2000);
-    }),
-    vscode.commands.registerCommand(CMD_OPEN_SETTINGS, () =>
-      vscode.commands.executeCommand('workbench.action.openSettings', `@ext:dalsoop.${EXTENSION_ID}`))
-  );
+  // Commands — registered via apps factory pattern
+  const api: ExtensionApi = {
+    refresh: rescanAll,
+    toggleView: () => provider.toggleMode(),
+    openSettings: () => vscode.commands.executeCommand(
+      'workbench.action.openSettings', `@ext:dalsoop.${EXTENSION_ID}`
+    )
+  };
+  for (const app of apps) {
+    context.subscriptions.push(
+      vscode.commands.registerCommand(fullCommandId(app.manifest.id), app.create(api))
+    );
+  }
 
   // Initial scan with status-bar progress
   void rescanAll();
