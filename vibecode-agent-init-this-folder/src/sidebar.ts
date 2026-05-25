@@ -1,28 +1,31 @@
-// Sidebar = catalog of project starter kits (bundled under `<extension>/starters/`).
-// Each top-level folder inside `starters/` is one installable kit; clicking it triggers
-// recursive copy into a user-picked target folder via `vibecodeAgentInit.applyTemplate`.
+// Sidebar = catalog of templates (bundled under `<extension>/templates/`).
+// Each top-level folder of `templates/` is one template (a use-case recipe).
+// Each template has tool-specific subfolders (claude, codex, gemini, …) that get applied.
+// Clicking a template starts the 2-step apply flow via `vibecodeAgentInit.applyTemplate`.
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
 const VIEW_ID = 'vibecodeAgentInit.templates';
-const STARTERS_SUBDIR = 'starters';
+const TEMPLATES_SUBDIR = 'templates';
 
-export interface StarterRef {
-  /** Absolute path of the starter folder under <extension>/starters/<name>/. */
+export interface TemplateRef {
+  /** Absolute path of the template folder under <extension>/templates/<name>/. */
   rootUri: vscode.Uri;
-  /** Folder name (the kit's id). */
+  /** Folder name (the template's id). */
   name: string;
+  /** Tool variant subfolder names (claude/, codex/, etc.) discovered inside. */
+  tools: string[];
 }
 
 interface EntryNode {
   kind: 'entry';
-  starter: StarterRef;
+  template: TemplateRef;
 }
 
 type TreeNode = EntryNode;
 
-export class StartersProvider implements vscode.TreeDataProvider<TreeNode> {
+export class TemplatesProvider implements vscode.TreeDataProvider<TreeNode> {
   private readonly _onDidChange = new vscode.EventEmitter<TreeNode | undefined>();
   readonly onDidChangeTreeData = this._onDidChange.event;
 
@@ -33,42 +36,57 @@ export class StartersProvider implements vscode.TreeDataProvider<TreeNode> {
   }
 
   getTreeItem(node: TreeNode): vscode.TreeItem {
-    const item = new vscode.TreeItem(node.starter.name, vscode.TreeItemCollapsibleState.None);
+    const item = new vscode.TreeItem(node.template.name, vscode.TreeItemCollapsibleState.None);
     item.iconPath = new vscode.ThemeIcon('rocket');
-    item.contextValue = 'starterItem';
-    item.tooltip = `${node.starter.rootUri.fsPath}\n\nClick to install into a folder.`;
+    item.contextValue = 'templateItem';
+    const toolsLabel = node.template.tools.join(' · ') || '(no tool variants)';
+    item.description = toolsLabel;
+    item.tooltip = `${node.template.rootUri.fsPath}\nTools: ${toolsLabel}\n\nClick to apply.`;
     item.command = {
       command: 'vibecodeAgentInit.applyTemplate',
-      title: 'Install starter…',
-      arguments: [node.starter.rootUri]
+      title: 'Apply template…',
+      arguments: [node.template.rootUri]
     };
     return item;
   }
 
   async getChildren(): Promise<TreeNode[]> {
-    const starters = await this.listStarters();
-    return starters.map(starter => ({ kind: 'entry', starter }));
+    const templates = await this.listTemplates();
+    return templates.map(template => ({ kind: 'entry', template }));
   }
 
-  private async listStarters(): Promise<StarterRef[]> {
-    const dir = vscode.Uri.joinPath(this.extensionUri, STARTERS_SUBDIR);
+  private async listTemplates(): Promise<TemplateRef[]> {
+    const dir = vscode.Uri.joinPath(this.extensionUri, TEMPLATES_SUBDIR);
     try {
       const entries = await fs.promises.readdir(dir.fsPath, { withFileTypes: true });
-      return entries
-        .filter(e => e.isDirectory())
-        .map(e => ({
-          rootUri: vscode.Uri.joinPath(dir, e.name),
-          name: e.name
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+      const templates: TemplateRef[] = [];
+      for (const e of entries) {
+        if (!e.isDirectory()) continue;
+        const templateDir = vscode.Uri.joinPath(dir, e.name);
+        const tools = await listTools(templateDir.fsPath);
+        templates.push({ rootUri: templateDir, name: e.name, tools });
+      }
+      return templates.sort((a, b) => a.name.localeCompare(b.name));
     } catch {
       return [];
     }
   }
 }
 
-export function registerSidebar(context: vscode.ExtensionContext): StartersProvider {
-  const provider = new StartersProvider(context.extensionUri);
+async function listTools(templateDir: string): Promise<string[]> {
+  try {
+    const entries = await fs.promises.readdir(templateDir, { withFileTypes: true });
+    return entries
+      .filter(e => e.isDirectory())
+      .map(e => e.name)
+      .sort();
+  } catch {
+    return [];
+  }
+}
+
+export function registerSidebar(context: vscode.ExtensionContext): TemplatesProvider {
+  const provider = new TemplatesProvider(context.extensionUri);
   const view = vscode.window.createTreeView(VIEW_ID, { treeDataProvider: provider });
   context.subscriptions.push(view);
   return provider;

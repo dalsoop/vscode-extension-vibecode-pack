@@ -1,7 +1,8 @@
 {
   "ext.displayName": "Vibecode Agent Init This Folder",
-  "ext.description": "Right-click a folder to scaffold a new agent template entry (templates/<timestamp>-<name>/template.json) with title, content, prompts, upstream URL, and SSOT selection.",
+  "ext.description": "Sidebar catalog of templates (use-case recipes) with per-tool variants (claude / codex / gemini / cursor). Click a template → pick tool → install into a target folder. Default tool is configurable.",
   "ext.category": "Vibecode",
   "ext.viewContainerTitle": "Vibecode Agents",
-  "ext.viewTemplates": "Templates"
+  "ext.viewTemplates": "Templates",
+  "cfg.defaultTool": "Default tool variant pre-selected in the Apply Template tool picker. Must match a subfolder name under <template>/."
 }

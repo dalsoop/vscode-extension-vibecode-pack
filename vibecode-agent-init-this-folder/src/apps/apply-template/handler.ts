@@ -2,84 +2,138 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
+const EXTENSION_ID = 'dalsoop.vibecode-agent-init-this-folder';
+const TEMPLATES_SUBDIR = 'templates';
+const SETTINGS_NAMESPACE = 'vibecodeAgentInit';
+const SETTING_DEFAULT_TOOL = 'defaultTool';
+
 /**
- * Install a project starter kit into a user-picked target folder.
+ * Apply a template's tool-variant into a user-picked target folder.
  *
  * Trigger modes:
- *   - sidebar item click   → `arg` is the starter folder Uri (under <extension>/starters/<name>/)
- *   - palette / sidebar [Install] button → `arg` undefined; QuickPick from bundled starters
+ *   - sidebar item click   → `arg` is the template folder Uri (`<extension>/templates/<name>/`)
+ *   - palette / view button → `arg` is undefined; QuickPick lists templates first
  *
  * Flow:
- *   1. Resolve starter folder (pick if not provided)
- *   2. Folder picker for target (default: workspace root)
- *   3. Confirm overwrite if any conflict
- *   4. Recursive copy starter contents into target (preserves directory structure, including dotfiles)
- *   5. Reveal the target folder in Explorer
+ *   1. Resolve template (pick if not provided)
+ *   2. Resolve tool variant (QuickPick subfolders; default from settings; skip if single-variant)
+ *   3. Folder picker for target (default: workspace root)
+ *   4. Conflict check → overwrite / skip-existing modal
+ *   5. Recursive copy `<template>/<tool>/*` into target
+ *   6. Toast + reveal target in Explorer
  */
 export async function handler(arg: vscode.Uri | undefined): Promise<void> {
-  const starterRoot = arg ?? (await pickStarter());
-  if (!starterRoot) return;
+  const templateRoot = arg ?? (await pickTemplate());
+  if (!templateRoot) return;
+
+  const tools = await listTools(templateRoot.fsPath);
+  if (tools.length === 0) {
+    vscode.window.showWarningMessage(
+      vscode.l10n.t('Template "{0}" has no tool variants.', path.basename(templateRoot.fsPath))
+    );
+    return;
+  }
+
+  const selectedTools = await pickTools(tools);
+  if (!selectedTools || selectedTools.length === 0) return;
 
   const target = await pickTargetFolder();
   if (!target) return;
 
-  const conflicts = await findConflicts(starterRoot.fsPath, target.fsPath);
-  if (conflicts.length > 0) {
-    const sample = conflicts.slice(0, 5).map(p => `  • ${p}`).join('\n');
-    const more = conflicts.length > 5 ? `\n  … +${conflicts.length - 5} more` : '';
+  // Aggregate conflicts across all selected tool variants — one modal for the whole install.
+  const allConflicts: Array<{ tool: string; rel: string }> = [];
+  for (const tool of selectedTools) {
+    const variantRoot = vscode.Uri.joinPath(templateRoot, tool);
+    const conflicts = await findConflicts(variantRoot.fsPath, target.fsPath);
+    for (const rel of conflicts) allConflicts.push({ tool, rel });
+  }
+
+  let overwrite = false;
+  if (allConflicts.length > 0) {
+    const sample = allConflicts.slice(0, 5).map(c => `  • [${c.tool}] ${c.rel}`).join('\n');
+    const more = allConflicts.length > 5 ? `\n  … +${allConflicts.length - 5} more` : '';
     const choice = await vscode.window.showWarningMessage(
-      vscode.l10n.t('{0} file(s) already exist in the target folder. Overwrite?', String(conflicts.length)),
-      {
-        modal: true,
-        detail: `${sample}${more}`
-      },
+      vscode.l10n.t('{0} file(s) already exist in the target folder. Overwrite?', String(allConflicts.length)),
+      { modal: true, detail: `${sample}${more}` },
       vscode.l10n.t('Overwrite'),
       vscode.l10n.t('Skip existing')
     );
     if (!choice) return;
-    const overwrite = choice === vscode.l10n.t('Overwrite');
-    await copyTree(starterRoot.fsPath, target.fsPath, { overwrite });
-  } else {
-    await copyTree(starterRoot.fsPath, target.fsPath, { overwrite: false });
+    overwrite = choice === vscode.l10n.t('Overwrite');
   }
 
-  const starterName = path.basename(starterRoot.fsPath);
+  for (const tool of selectedTools) {
+    const variantRoot = vscode.Uri.joinPath(templateRoot, tool);
+    await copyTree(variantRoot.fsPath, target.fsPath, { overwrite });
+  }
+
   vscode.window.showInformationMessage(
-    vscode.l10n.t('Installed "{0}" → {1}', starterName, target.fsPath)
+    vscode.l10n.t(
+      'Installed {0} → {1}  ({2} tool(s): {3})',
+      path.basename(templateRoot.fsPath),
+      target.fsPath,
+      String(selectedTools.length),
+      selectedTools.join(', ')
+    )
   );
   await vscode.commands.executeCommand('revealInExplorer', target);
 }
 
-async function pickStarter(): Promise<vscode.Uri | undefined> {
-  const ext = vscode.extensions.getExtension('dalsoop.vibecode-agent-init-this-folder');
+async function pickTemplate(): Promise<vscode.Uri | undefined> {
+  const ext = vscode.extensions.getExtension(EXTENSION_ID);
   if (!ext) {
     vscode.window.showErrorMessage(vscode.l10n.t('Extension not found.'));
     return undefined;
   }
-  const startersDir = vscode.Uri.joinPath(ext.extensionUri, 'starters');
+  const dir = vscode.Uri.joinPath(ext.extensionUri, TEMPLATES_SUBDIR);
   let entries: fs.Dirent[];
   try {
-    entries = await fs.promises.readdir(startersDir.fsPath, { withFileTypes: true });
+    entries = await fs.promises.readdir(dir.fsPath, { withFileTypes: true });
   } catch {
-    vscode.window.showWarningMessage(vscode.l10n.t('No starters available.'));
+    vscode.window.showWarningMessage(vscode.l10n.t('No templates available.'));
     return undefined;
   }
-  const items = entries
-    .filter(e => e.isDirectory())
-    .map(e => ({
-      label: `$(rocket) ${e.name}`,
-      description: e.name,
-      uri: vscode.Uri.joinPath(startersDir, e.name)
-    }))
-    .sort((a, b) => a.description.localeCompare(b.description));
-  if (items.length === 0) {
-    vscode.window.showWarningMessage(vscode.l10n.t('No starters available.'));
+  const templates = entries.filter(e => e.isDirectory()).map(e => e.name).sort();
+  if (templates.length === 0) {
+    vscode.window.showWarningMessage(vscode.l10n.t('No templates available.'));
     return undefined;
   }
-  const pick = await vscode.window.showQuickPick(items, {
-    title: vscode.l10n.t('Pick a starter to install')
+  const pick = await vscode.window.showQuickPick(
+    templates.map(name => ({ label: `$(rocket) ${name}`, name })),
+    { title: vscode.l10n.t('Pick a template') }
+  );
+  return pick ? vscode.Uri.joinPath(dir, pick.name) : undefined;
+}
+
+async function pickTools(tools: string[]): Promise<string[] | undefined> {
+  if (tools.length === 1) return [tools[0]];
+  const defaultTool = vscode.workspace
+    .getConfiguration(SETTINGS_NAMESPACE)
+    .get<string>(SETTING_DEFAULT_TOOL, 'claude');
+  // Re-order tools so the default (if present) is first; pre-check it.
+  const ordered = tools.includes(defaultTool)
+    ? [defaultTool, ...tools.filter(t => t !== defaultTool)]
+    : tools;
+  const items = ordered.map(t => ({
+    label: t,
+    description: t === defaultTool ? vscode.l10n.t('default') : undefined,
+    tool: t,
+    picked: t === defaultTool
+  }));
+  const picks = await vscode.window.showQuickPick(items, {
+    title: vscode.l10n.t('Pick tool variants (multi-select, space to toggle)'),
+    canPickMany: true
   });
-  return pick?.uri;
+  return picks?.map(p => p.tool);
+}
+
+async function listTools(templateDir: string): Promise<string[]> {
+  try {
+    const entries = await fs.promises.readdir(templateDir, { withFileTypes: true });
+    return entries.filter(e => e.isDirectory()).map(e => e.name).sort();
+  } catch {
+    return [];
+  }
 }
 
 async function pickTargetFolder(): Promise<vscode.Uri | undefined> {
