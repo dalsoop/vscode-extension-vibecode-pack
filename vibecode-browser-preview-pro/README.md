@@ -17,23 +17,26 @@
 - **📝 Edit Source** — 같은 `.html` 을 옆에 텍스트 편집기로 열기
 - **↗ Open in External Browser** — 같은 URL 을 기본 브라우저로 열기
 
-## Pro 전용 (v0.3 shipped)
+## Pro 전용 (v0.4 shipped)
 
 - 🎯 **Inspector toggle** — 호버 시 요소 outline + selector tooltip, 클릭 시 우측 패널에 핀
-- 핀 카드: matched CSS (heuristic) / computed style (화이트리스트 24 properties) / class toggle / 인라인 스타일 / force state 라벨 / **Notes textarea (퍼블리셔용 자유 메모)**
+- 핀 카드: matched CSS (heuristic) / computed style (화이트리스트 24 properties) / class toggle / 인라인 스타일 / force state 체크박스 / **Notes textarea (퍼블리셔용 자유 메모)**
 - **▲N 뱃지** — 핀 카드 헤더에서 현재 적용된 override 개수 실시간 표시
 - **자동 에셋 수집** — CSS / JS / 이미지 / 폰트 (DOM 초기 스캔 + PerformanceObserver)
 - 💾 **Save Snapshot** — `.vibecode/browser-preview/YYYYMMDDHHMMSS/` 에 6 파일 (`state.html`, `picks.json`, `assets.json`, `changes.json`, `changes.md`, `meta.json`) + 같은 위치에 `YYYYMMDDHHMMSS.zip` 자동 동봉.
 - `changes.md` 는 퍼블리셔가 그대로 읽도록 마크다운으로 렌더 — 핀별 변경사항 + Notes + computed delta.
 - `.vibecode/.gitignore` 자동 생성, ZIP 작성 실패해도 폴더는 안전.
 - Toast 알림 + "스냅샷 폴더 열기" 액션
+- 📱 **디바이스 프리셋** — 툴바에서 Auto / Desktop 1280 / Tablet 768 / Mobile 375 즉시 전환
+- 📊 **Changes 탭** — 인스펙터 패널에 Pins/Changes 탭. 현재 적용된 override 들이 `changes.md` 와 동일 구조로 실시간 렌더, 셀렉터 클릭으로 Pins 탭 점프
+- 🎨 **Force state 실제 시뮬레이션** — `:hover` / `:focus` / `:focus-visible` / `:active` 체크박스로 토글. 동일 origin stylesheet 의 룰을 자동 복제·적용. 스냅샷 `state.html` 에도 `<style id="vibecode-force-rules">` 로 보존되어 단독 렌더 가능.
 
-## 알려진 한계 (v0.3)
+## 알려진 한계 (v0.4)
 
-- Force state 셀렉트는 v0.3 에도 **라벨링만** (실제 `:hover` 등 pseudo-class 시뮬레이션은 v0.4 예정)
-- 페이지 리로드 시 핀/변형은 초기화됨 (Inspector toggle 만 유지)
+- Cross-origin stylesheet 의 `:hover`/`:focus` 룰은 시뮬레이션 불가 (패널 상단에 경고 표시)
+- 페이지 리로드 시 핀/override/force state 는 초기화됨 (Inspector toggle 만 유지)
 - 5MB 초과 HTML 은 inspector 자동 비활성 (성능)
-- 디바이스 프리셋 토글, 라이브 diff 패널, 요소 스크린샷은 v0.4
+- 요소 영역 스크린샷, 핀 영속화는 v0.5+
 
 ## Security
 

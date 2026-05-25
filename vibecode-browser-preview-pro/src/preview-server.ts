@@ -4,6 +4,7 @@ import * as path from 'path';
 import { URL } from 'url';
 import { contentTypeFor } from './mime';
 import { INSPECTOR_SCRIPT } from './inspector/inspector-script';
+import { FORCE_STATE_SCRIPT } from './inspector/force-state-script';
 
 const INSPECTOR_VIRTUAL_PATH = '/__bp_inspector.js';
 const INSPECTOR_TAG = '<script src="/__bp_inspector.js"></script>';
@@ -83,7 +84,7 @@ class PreviewServer {
   }
 
   private serveInspector(res: http.ServerResponse): void {
-    const body = Buffer.from(INSPECTOR_SCRIPT, 'utf8');
+    const body = Buffer.from(INSPECTOR_SCRIPT + '\n' + FORCE_STATE_SCRIPT, 'utf8');
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/javascript; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');

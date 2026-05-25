@@ -32,6 +32,16 @@ export interface L10nBundle {
   notesPlaceholder: string;
   changesLabel: string;
   zipAlsoSaved: string;
+  device: string;
+  deviceAuto: string;
+  deviceDesktop: string;
+  deviceTablet: string;
+  deviceMobile: string;
+  tabChanges: string;
+  changesEmpty: string;
+  addedClasses: string;
+  forceStates: string;
+  forceStateWarning: string;
 }
 
 export function getL10nBundle(): L10nBundle {
@@ -66,6 +76,16 @@ export function getL10nBundle(): L10nBundle {
     notes: vscode.l10n.t('Notes'),
     notesPlaceholder: vscode.l10n.t('Notes for publisher…'),
     changesLabel: vscode.l10n.t('Changes ({0})'),
-    zipAlsoSaved: vscode.l10n.t('ZIP also saved')
+    zipAlsoSaved: vscode.l10n.t('ZIP also saved'),
+    device: vscode.l10n.t('Device'),
+    deviceAuto: vscode.l10n.t('Auto'),
+    deviceDesktop: vscode.l10n.t('Desktop'),
+    deviceTablet: vscode.l10n.t('Tablet'),
+    deviceMobile: vscode.l10n.t('Mobile'),
+    tabChanges: vscode.l10n.t('Changes'),
+    changesEmpty: vscode.l10n.t('No changes yet — toggle a class, add inline style, change force state, or write notes.'),
+    addedClasses: vscode.l10n.t('Added classes'),
+    forceStates: vscode.l10n.t('Force states'),
+    forceStateWarning: vscode.l10n.t('Some hover/focus rules in external stylesheets are not simulatable (cross-origin).')
   };
 }

@@ -29,5 +29,15 @@
   "Notes": "메모",
   "Notes for publisher…": "퍼블리셔용 메모…",
   "Changes ({0})": "변경 사항 ({0})",
-  "ZIP also saved": "ZIP 도 함께 저장됨"
+  "ZIP also saved": "ZIP 도 함께 저장됨",
+  "Device": "디바이스",
+  "Auto": "자동",
+  "Desktop": "데스크탑",
+  "Tablet": "태블릿",
+  "Mobile": "모바일",
+  "Changes": "변경사항",
+  "No changes yet — toggle a class, add inline style, change force state, or write notes.": "아직 변경사항 없음 — 클래스를 토글하거나, 인라인 스타일을 추가하거나, force state 를 바꾸거나, 메모를 작성해보세요.",
+  "Added classes": "추가된 클래스",
+  "Force states": "강제 상태",
+  "Some hover/focus rules in external stylesheets are not simulatable (cross-origin).": "일부 hover/focus 룰이 외부 stylesheet 라 시뮬레이션 불가합니다 (cross-origin)."
 }

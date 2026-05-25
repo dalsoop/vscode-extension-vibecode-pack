@@ -12,10 +12,19 @@ export const CLIENT_SCRIPT = `
     const btnOpen = document.getElementById('btn-open');
     const btnInspector = document.getElementById('btn-inspector');
     const btnSave = document.getElementById('btn-save');
+    const selDevice = document.getElementById('sel-device');
+    const deviceFrame = document.getElementById('device-frame');
     const panel = document.getElementById('panel');
     const pinsList = document.getElementById('pins-list');
     const pinsEmpty = document.getElementById('pins-empty');
     const assetsList = document.getElementById('assets-list');
+    const tabBtns = document.querySelectorAll('.panel-tab');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    const tabPinsCount = document.getElementById('tab-pins-count');
+    const tabChangesCount = document.getElementById('tab-changes-count');
+    const panelWarning = document.getElementById('panel-warning');
+    const changesList = document.getElementById('changes-list');
+    const changesEmpty = document.getElementById('changes-empty');
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-msg');
     const toastAction = document.getElementById('toast-action');
@@ -83,19 +92,54 @@ export const CLIENT_SCRIPT = `
     }
     function hideToast() { toast.classList.remove('visible'); }
 
+    // ---- tab routing ----
+    let activeTab = 'pins';
+    function activateTab(name) {
+      activeTab = name;
+      tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+      tabPanels.forEach(p => p.hidden = (p.dataset.tab !== name));
+      if (name === 'changes') renderChangesList();
+    }
+    tabBtns.forEach(b => b.addEventListener('click', () => activateTab(b.dataset.tab)));
+
+    function selectPinTab(pickId) {
+      activateTab('pins');
+      const card = document.querySelector('.pin-card[data-pick-id="' + pickId + '"]');
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function renderChangesList() {
+      if (typeof window.__bp_renderChangesList !== 'function') return;
+      window.__bp_renderChangesList(pins, l10n, changesList, changesEmpty, selectPinTab);
+    }
+
     // ---- per-pin override state + badge ----
-    function recomputeBadge(pickId) {
-      const entry = pins.get(pickId);
-      if (!entry) return;
+    function currentOverrideCount(entry) {
       const s = entry.overrideState;
       let count = 0;
       for (const v of s.classToggles.values()) if (v) count++;
       if (s.inlineStyle.trim()) count++;
-      if (s.forceState) count++;
+      count += (s.forceStates ? s.forceStates.size : 0);
       if (s.notes.trim()) count++;
+      return count;
+    }
+    function updateTabCounts() {
+      const pinsTotal = pins.size;
+      let changesTotal = 0;
+      for (const entry of pins.values()) changesTotal += currentOverrideCount(entry);
+      tabPinsCount.textContent = String(pinsTotal);
+      tabPinsCount.classList.toggle('zero', pinsTotal === 0);
+      tabChangesCount.textContent = '▲' + changesTotal;
+      tabChangesCount.classList.toggle('zero', changesTotal === 0);
+    }
+    function recomputeBadge(pickId) {
+      const entry = pins.get(pickId);
+      if (!entry) return;
+      const count = currentOverrideCount(entry);
       entry.badgeEl.textContent = '▲' + count;
       entry.badgeEl.classList.toggle('zero', count === 0);
       entry.badgeEl.title = (l10n.changesLabel || 'Changes ({0})').replace('{0}', String(count));
+      updateTabCounts();
+      if (activeTab === 'changes') renderChangesList();
     }
 
     function updateClassToggleState(pickId, cls, enabled) {
@@ -110,10 +154,10 @@ export const CLIENT_SCRIPT = `
       entry.overrideState.inlineStyle = css || '';
       recomputeBadge(pickId);
     }
-    function updateForceStateState(pickId, state) {
+    function updateForceStateStates(pickId, states) {
       const entry = pins.get(pickId);
       if (!entry) return;
-      entry.overrideState.forceState = state || null;
+      entry.overrideState.forceStates = new Set(states || []);
       recomputeBadge(pickId);
     }
     function updateNotesState(pickId, notes) {
@@ -229,17 +273,29 @@ export const CLIENT_SCRIPT = `
       const forceLabel = document.createElement('label');
       forceLabel.textContent = l10n.forceState || 'Force state';
       ov.appendChild(forceLabel);
-      const forceSel = document.createElement('select');
-      for (const opt of [['', '—'], ['hover', ':hover'], ['focus', ':focus'], ['active', ':active']]) {
-        const o = document.createElement('option');
-        o.value = opt[0]; o.textContent = opt[1];
-        forceSel.appendChild(o);
+      const forceWrap = document.createElement('div');
+      forceWrap.className = 'force-toggles';
+      const FORCE_STATES = ['hover', 'focus', 'focus-visible', 'active'];
+      const forceCheckboxes = {};
+      for (const st of FORCE_STATES) {
+        const lab = document.createElement('label');
+        lab.className = 'force-toggle';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.dataset.state = st;
+        cb.onchange = () => {
+          const states = FORCE_STATES.filter(s => forceCheckboxes[s].checked);
+          updateForceStateStates(pick.id, states);
+          postToIframe({ type: 'bp:setForceStates', pickId: pick.id, states });
+        };
+        forceCheckboxes[st] = cb;
+        lab.appendChild(cb);
+        const txt = document.createElement('span');
+        txt.textContent = ':' + st;
+        lab.appendChild(txt);
+        forceWrap.appendChild(lab);
       }
-      forceSel.onchange = () => {
-        updateForceStateState(pick.id, forceSel.value || null);
-        postToIframe({ type: 'bp:setForceState', pickId: pick.id, state: forceSel.value || null });
-      };
-      ov.appendChild(forceSel);
+      ov.appendChild(forceWrap);
 
       const notesLabel = document.createElement('label');
       notesLabel.textContent = l10n.notes || 'Notes';
@@ -283,7 +339,7 @@ export const CLIENT_SCRIPT = `
       const overrideState = {
         classToggles: new Map(),
         inlineStyle: '',
-        forceState: null,
+        forceStates: new Set(),
         notes: ''
       };
       pins.set(pick.id, { card, data: pick, overrideState, badgeEl: badge });
@@ -299,6 +355,8 @@ export const CLIENT_SCRIPT = `
       pins.delete(pickId);
       if (pins.size === 0) pinsEmpty.style.display = '';
       postToIframe({ type: 'bp:unpin', pickId });
+      updateTabCounts();
+      if (activeTab === 'changes') renderChangesList();
     }
 
     function addAsset(asset) {
@@ -339,6 +397,16 @@ export const CLIENT_SCRIPT = `
           case 'bp:snapshotData':
             vscode.postMessage({ type: 'snapshotData', payload: msg.payload });
             break;
+          case 'bp:force-state-scan': {
+            const r = msg.result || {};
+            if (r.skippedSheets > 0) {
+              panelWarning.hidden = false;
+              panelWarning.textContent = l10n.forceStateWarning || 'Some hover/focus rules in external stylesheets are not simulatable (cross-origin).';
+            } else {
+              panelWarning.hidden = true;
+            }
+            break;
+          }
         }
         return;
       }
@@ -366,6 +434,12 @@ export const CLIENT_SCRIPT = `
           break;
       }
     });
+
+    selDevice.addEventListener('change', () => {
+      deviceFrame.setAttribute('data-mode', selDevice.value);
+    });
+
+    updateTabCounts();
 
     vscode.postMessage({ type: 'ready' });
   })();

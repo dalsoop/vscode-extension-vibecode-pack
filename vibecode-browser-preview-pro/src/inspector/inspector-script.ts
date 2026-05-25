@@ -148,12 +148,12 @@ export const INSPECTOR_SCRIPT = `
 
   function pinElement(el) {
     const id = nextPickId++;
-    const overrides = { classToggles: [], inlineStyle: '', forceState: null, notes: '' };
+    const overrides = { classToggles: [], inlineStyle: '', forceStates: [], notes: '' };
     const baseline = {
       className: el.className.toString(),
       classes: classListOf(el),
       inlineStyle: el.getAttribute('style') || '',
-      forceState: null,
+      forceStates: [],
       notes: '',
       computed: computedFor(el)
     };
@@ -175,7 +175,7 @@ export const INSPECTOR_SCRIPT = `
       overrides: {
         classToggles: overrides.classToggles.slice(),
         inlineStyle: overrides.inlineStyle,
-        forceState: overrides.forceState,
+        forceStates: (overrides.forceStates || []).slice(),
         notes: overrides.notes
       }
     };
@@ -199,7 +199,7 @@ export const INSPECTOR_SCRIPT = `
     const classDiff = diffArrays(baseline.classes, currentClasses);
     const currentInline = el.getAttribute('style') || '';
     const inlineChanged = currentInline !== baseline.inlineStyle;
-    const forceChanged = (overrides.forceState || null) !== (baseline.forceState || null);
+    const forceChanged = ((overrides.forceStates || []).length > 0);
     const notesChanged = (overrides.notes || '') !== (baseline.notes || '');
     const curComputed = computedFor(el);
     const computedDelta = {};
@@ -218,7 +218,7 @@ export const INSPECTOR_SCRIPT = `
     return {
       classes: classDiff,
       inlineStyle: { before: baseline.inlineStyle, after: currentInline, changed: inlineChanged },
-      forceState: { before: baseline.forceState, after: overrides.forceState || null, changed: forceChanged },
+      forceStates: { before: [], after: (overrides.forceStates || []).slice(), changed: forceChanged },
       notes: { before: baseline.notes, after: overrides.notes || '', changed: notesChanged },
       computed: computedDelta,
       __hasAnyChange: hasAnyChange
@@ -302,10 +302,12 @@ export const INSPECTOR_SCRIPT = `
     pin.el.setAttribute('style', (pin.originalInlineStyle ? pin.originalInlineStyle + ';' : '') + css);
   }
 
-  function applyForceState(pickId, state) {
+  function applyForceStates(pickId, states) {
     const pin = pins.get(pickId); if (!pin) return;
-    pin.overrides.forceState = state || null;
-    // v0.2/v0.3: label only — no actual pseudo-class simulation
+    pin.overrides.forceStates = Array.isArray(states) ? states.slice() : [];
+    if (typeof window.__bpApplyForceStates === 'function') {
+      window.__bpApplyForceStates(pin.el, pin.overrides.forceStates);
+    }
   }
 
   function applyNotes(pickId, notes) {
@@ -337,7 +339,16 @@ export const INSPECTOR_SCRIPT = `
     hideOverlay();
     overlay.remove();
     tooltip.remove();
-    const outerHTML = '<!DOCTYPE html>\\n' + document.documentElement.outerHTML;
+    let outerHTML = '<!DOCTYPE html>\\n' + document.documentElement.outerHTML;
+    const _rules = (typeof window.__bpGetForceRules === 'function') ? window.__bpGetForceRules() : [];
+    if (_rules.length) {
+      const _styleTag = '<style id="vibecode-force-rules">\\n' + _rules.join('\\n') + '\\n</style>';
+      if (outerHTML.indexOf('</head>') !== -1) {
+        outerHTML = outerHTML.replace('</head>', _styleTag + '</head>');
+      } else {
+        outerHTML = outerHTML.replace('<html', _styleTag + '<html');
+      }
+    }
     document.documentElement.appendChild(overlay);
     document.documentElement.appendChild(tooltip);
     return {
@@ -346,7 +357,8 @@ export const INSPECTOR_SCRIPT = `
       assets: assets.slice(),
       changes: changesArr,
       viewport: { width: window.innerWidth, height: window.innerHeight },
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
+      forceRules: _rules
     };
   }
 
@@ -369,8 +381,8 @@ export const INSPECTOR_SCRIPT = `
       case 'bp:setInlineStyle':
         applyInlineStyle(msg.pickId, String(msg.css || ''));
         break;
-      case 'bp:setForceState':
-        applyForceState(msg.pickId, msg.state || null);
+      case 'bp:setForceStates':
+        applyForceStates(msg.pickId, Array.isArray(msg.states) ? msg.states : []);
         break;
       case 'bp:setNotes':
         applyNotes(msg.pickId, msg.notes);
@@ -391,5 +403,11 @@ export const INSPECTOR_SCRIPT = `
   startPerfObserver();
 
   post({ type: 'bp:ready' });
+
+  setTimeout(function () {
+    if (window.__bpForceScanResult) {
+      post({ type: 'bp:force-state-scan', result: window.__bpForceScanResult });
+    }
+  }, 0);
 })();
 `;
