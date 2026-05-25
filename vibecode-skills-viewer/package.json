@@ -657,11 +657,6 @@
           "default": "ref",
           "description": "%cfg.instructionFormat%"
         },
-        "vibecodeSkills.githubToken": {
-          "type": "string",
-          "default": "",
-          "description": "%cfg.githubToken%"
-        },
         "vibecodeSkills.showScoreBreakdown": {
           "type": "boolean",
           "default": true,
