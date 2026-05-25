@@ -34,6 +34,7 @@ export interface PickOverrides {
   classToggles: { name: string; enabled: boolean }[];
   inlineStyle: string;
   forceState: 'hover' | 'focus' | 'active' | null;
+  notes: string;
 }
 
 export interface PickData {
@@ -53,10 +54,26 @@ export interface AssetData {
   mime: string | null;
 }
 
+export interface Delta {
+  classes: { added: string[]; removed: string[] };
+  inlineStyle: { before: string; after: string; changed: boolean };
+  forceState: { before: 'hover' | 'focus' | 'active' | null; after: 'hover' | 'focus' | 'active' | null; changed: boolean };
+  notes: { before: string; after: string; changed: boolean };
+  computed: Record<string, { before: string; after: string }>;
+}
+
+export interface ChangeData {
+  pickId: number;
+  selector: string;
+  delta: Delta;
+  hasAnyChange: boolean;
+}
+
 export interface SnapshotPayload {
   outerHTML: string;
   picks: PickData[];
   assets: AssetData[];
+  changes: ChangeData[];
   viewport: { width: number; height: number };
   userAgent: string;
 }
@@ -64,5 +81,6 @@ export interface SnapshotPayload {
 export interface SnapshotResult {
   folderAbsPath: string;
   folderRelPath: string;
+  zipAbsPath: string | null;
   timestampLocal: string;
 }
