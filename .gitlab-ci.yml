@@ -21,7 +21,7 @@ commit-lint:
   stage: lint
   image: node:20-alpine
   before_script:
-    - apk add --no-cache git >/dev/null
+    - command -v git >/dev/null || { command -v apk >/dev/null && apk add --no-cache git >/dev/null; } || { command -v apt-get >/dev/null && apt-get update -qq && apt-get install -y -qq git >/dev/null; }
     - npm ci --cache .npm --prefer-offline 2>/dev/null || npm install --cache .npm
   script:
     - |
