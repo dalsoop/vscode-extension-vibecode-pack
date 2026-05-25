@@ -90,7 +90,7 @@ export class SnapshotWriter {
     for (const p of picks) {
       if (p.overrides.classToggles.length > 0) overridesCount++;
       if (p.overrides.inlineStyle.trim()) overridesCount++;
-      if (p.overrides.forceState) overridesCount++;
+      if (p.overrides.forceStates && p.overrides.forceStates.length > 0) overridesCount++;
       if (p.overrides.notes.trim()) overridesCount++;
     }
     const pinsWithChanges = changes.filter(c => c.hasAnyChange).length;
@@ -143,10 +143,9 @@ export class SnapshotWriter {
         const after = d.inlineStyle.after ? `\`${escBacktick(d.inlineStyle.after)}\`` : '*(empty)*';
         lines.push(`- Inline style: ${before} → ${after}`);
       }
-      if (d.forceState.changed) {
-        const before = d.forceState.before || '(none)';
-        const after = d.forceState.after || '(none)';
-        lines.push(`- Force state: \`${before}\` → \`${after}\``);
+      if (d.forceStates.changed) {
+        const after = d.forceStates.after.length ? d.forceStates.after.join(', ') : '(none)';
+        lines.push(`- Force states: \`${after}\``);
       }
       if (d.notes.changed) {
         lines.push(`- **Notes:**`);
