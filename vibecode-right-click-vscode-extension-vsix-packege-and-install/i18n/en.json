@@ -1,0 +1,15 @@
+{
+  "ext": {
+    "displayName": "Vibecode Right-Click VSIX Package & Install",
+    "description": "Right-click a VSCode extension folder to package and install the .vsix in one step.",
+    "category": "Vibecode"
+  },
+  "commands": {
+    "packageAndInstall": "Vibecode - Package & Install VSCode Extension"
+  },
+  "runtime": {
+    "No folder selected.": "No folder selected.",
+    "No package.json found in {0}.": "No package.json found in {0}.",
+    "{0} is not a VSCode extension (no engines.vscode in package.json).": "{0} is not a VSCode extension (no engines.vscode in package.json)."
+  }
+}

@@ -9,7 +9,8 @@
   },
   "l10n": "./l10n",
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -161,5 +162,7 @@
         }
       ]
     }
-  }
+  },
+  "license": "MIT",
+  "icon": "icon.png"
 }

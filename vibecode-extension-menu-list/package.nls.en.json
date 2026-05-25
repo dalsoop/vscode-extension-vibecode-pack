@@ -1,0 +1,7 @@
+{
+  "ext.displayName": "Vibecode Extension Menu List",
+  "ext.description": "Click the `V` icon in the Activity Bar → the Primary Sidebar slides open and the webview lists every installed vibecode-* extension with its commands as cards. Click a card to run it instantly.",
+  "ext.category": "Vibecode",
+  "viewContainer.vibecode": "Vibecode",
+  "view.vibecodeMenuList.sidebar": "Extensions"
+}

@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode .env Import-Only",
+  "ext.description": "Open .env-family files in a paste-only secure view — keys are visible but values are never displayed. Shows schema diff against .env.example with one-click add for missing keys.",
+  "editor.displayName": "Vibecode .env (Import-Only)"
+}

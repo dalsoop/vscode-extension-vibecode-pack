@@ -241,5 +241,7 @@
         }
       ]
     }
-  }
+  },
+  "license": "MIT",
+  "icon": "icon.png"
 }

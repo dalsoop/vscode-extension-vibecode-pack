@@ -9,7 +9,8 @@
   },
   "l10n": "./l10n",
   "categories": [
-    "Other"
+    "Other",
+    "Extension Packs"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -60,5 +61,7 @@
     "menus": {
       "commandPalette": []
     }
-  }
+  },
+  "license": "MIT",
+  "icon": "icon.png"
 }

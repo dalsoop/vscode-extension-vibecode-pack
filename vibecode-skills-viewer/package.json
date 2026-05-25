@@ -609,24 +609,80 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["id", "label"],
+            "required": [
+              "id",
+              "label"
+            ],
             "properties": {
-              "id": { "type": "string", "description": "Unique slug used internally to tag skills with this tool." },
-              "label": { "type": "string", "description": "Display name shown in the sidebar and settings." },
-              "enabled": { "type": "boolean", "default": true, "description": "Uncheck to hide this tool's skills and instruction files." },
-              "builtin": { "type": "boolean", "description": "True for default seed tools; ignored when set by hand." }
+              "id": {
+                "type": "string",
+                "description": "Unique slug used internally to tag skills with this tool."
+              },
+              "label": {
+                "type": "string",
+                "description": "Display name shown in the sidebar and settings."
+              },
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Uncheck to hide this tool's skills and instruction files."
+              },
+              "builtin": {
+                "type": "boolean",
+                "description": "True for default seed tools; ignored when set by hand."
+              }
             },
             "additionalProperties": false
           },
           "default": [
-            { "id": "claude", "label": "Claude", "enabled": true, "builtin": true },
-            { "id": "codex", "label": "Codex", "enabled": true, "builtin": true },
-            { "id": "copilot", "label": "Copilot", "enabled": true, "builtin": true },
-            { "id": "cursor", "label": "Cursor", "enabled": true, "builtin": true },
-            { "id": "gemini", "label": "Gemini", "enabled": true, "builtin": true },
-            { "id": "windsurf", "label": "Windsurf", "enabled": true, "builtin": true },
-            { "id": "cline", "label": "Cline", "enabled": true, "builtin": true },
-            { "id": "agents", "label": "Agents", "enabled": true, "builtin": true }
+            {
+              "id": "claude",
+              "label": "Claude",
+              "enabled": true,
+              "builtin": true
+            },
+            {
+              "id": "codex",
+              "label": "Codex",
+              "enabled": true,
+              "builtin": true
+            },
+            {
+              "id": "copilot",
+              "label": "Copilot",
+              "enabled": true,
+              "builtin": true
+            },
+            {
+              "id": "cursor",
+              "label": "Cursor",
+              "enabled": true,
+              "builtin": true
+            },
+            {
+              "id": "gemini",
+              "label": "Gemini",
+              "enabled": true,
+              "builtin": true
+            },
+            {
+              "id": "windsurf",
+              "label": "Windsurf",
+              "enabled": true,
+              "builtin": true
+            },
+            {
+              "id": "cline",
+              "label": "Cline",
+              "enabled": true,
+              "builtin": true
+            },
+            {
+              "id": "agents",
+              "label": "Agents",
+              "enabled": true,
+              "builtin": true
+            }
           ],
           "description": "%cfg.tools%"
         },
@@ -668,12 +724,27 @@
           "description": "%cfg.mirrorGroups%",
           "items": {
             "type": "object",
-            "required": ["id", "label", "paths"],
+            "required": [
+              "id",
+              "label",
+              "paths"
+            ],
             "properties": {
-              "id": { "type": "string" },
-              "label": { "type": "string" },
-              "paths": { "type": "array", "items": { "type": "string" } },
-              "alwaysMirror": { "type": "boolean" }
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "alwaysMirror": {
+                "type": "boolean"
+              }
             }
           }
         },
@@ -693,5 +764,7 @@
   "dependencies": {
     "markdown-it": "^14.1.1",
     "yaml": "^2.9.0"
-  }
+  },
+  "license": "MIT",
+  "icon": "icon.png"
 }

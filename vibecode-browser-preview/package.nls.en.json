@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode Browser Preview",
+  "ext.description": "Live preview HTML files via a local HTTP server (rooted at the workspace) + iframe. Auto-reloads on any file save inside the workspace.",
+  "editor.displayName": "Vibecode Browser Preview"
+}

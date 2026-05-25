@@ -1,0 +1,19 @@
+{
+  "ext.displayName": "Vibecode AI MD System Init",
+  "ext.description": "Pick template × tool (claude/codex/gemini/cursor/windsurf/cline/aider/continue) checkboxes in the sidebar to install into a new folder. Workspace-root auto-detected so already-installed tools are disabled. Promote an existing folder into a user template. Right-click a user template to rename/delete/reveal.",
+  "ext.category": "Vibecode",
+  "ext.viewContainerTitle": "Vibecode AI MD",
+  "ext.viewTemplates": "Templates",
+  "cfg.defaultTool": "Default tool pre-selected during the apply-template tool-picker step. Must match the <tool> folder name under <template>/<tool>/.",
+  "welcome.empty": "No templates yet.\n[Promote a folder into a User Template](command:vibecodeAiMdSystem.promoteTemplate)\n[Refresh](command:vibecodeAiMdSystem.refreshTemplates)",
+  "cmd.applyTemplate": "Vibecode - Install Selected Tool Variants",
+  "cmd.checkUpstream": "Vibecode - Check Agent Definition Upstream",
+  "cmd.deleteUserTemplate": "Vibecode - Delete User Template",
+  "cmd.initTemplateHere": "Vibecode - Init Agent Definition Template Here",
+  "cmd.openTemplatesFolder": "Vibecode - Open Templates Folder (SSOT)",
+  "cmd.promoteTemplate": "Vibecode - Promote Folder to User Template",
+  "cmd.refreshTemplates": "Vibecode - Refresh Templates",
+  "cmd.reinstallTool": "Vibecode - Force Reinstall Tool (Overwrite)",
+  "cmd.renameUserTemplate": "Vibecode - Rename User Template",
+  "cmd.revealTemplateSource": "Vibecode - Reveal Template Source Folder"
+}

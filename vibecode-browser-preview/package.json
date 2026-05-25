@@ -9,7 +9,8 @@
   },
   "l10n": "./l10n",
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
@@ -40,11 +41,16 @@
         "viewType": "vibecodeBrowserPreview.editor",
         "displayName": "%editor.displayName%",
         "selector": [
-          { "filenamePattern": "*.html" },
-          { "filenamePattern": "*.htm" }
+          {
+            "filenamePattern": "*.html"
+          },
+          {
+            "filenamePattern": "*.htm"
+          }
         ],
         "priority": "default"
       }
     ]
-  }
+  },
+  "license": "MIT"
 }

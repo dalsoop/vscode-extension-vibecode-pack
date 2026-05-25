@@ -1,0 +1,13 @@
+{
+  "ext": {
+    "displayName": "Vibecode Right-Click .sh Actions",
+    "description": "Run .sh scripts via the right-click context menu or the editor-title play button.",
+    "category": "Vibecode"
+  },
+  "commands": {
+    "runShInTerminal": "Vibecode - Run .sh in Terminal"
+  },
+  "runtime": {
+    "No .sh file selected.": "No .sh file selected."
+  }
+}

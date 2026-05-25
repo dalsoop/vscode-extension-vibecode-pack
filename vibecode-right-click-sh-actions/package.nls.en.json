@@ -1,0 +1,6 @@
+{
+  "ext.displayName": "Vibecode Right-Click .sh Actions",
+  "ext.description": "Run .sh scripts via the right-click context menu or the editor-title play button.",
+  "ext.category": "Vibecode",
+  "cmd.runShInTerminal": "Vibecode - Run .sh in Terminal"
+}

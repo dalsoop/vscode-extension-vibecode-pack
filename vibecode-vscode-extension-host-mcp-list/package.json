@@ -9,7 +9,8 @@
   },
   "l10n": "./l10n",
   "categories": [
-    "Other"
+    "Other",
+    "AI"
   ],
   "activationEvents": [
     "onView:vibecodeMcpList.tree"
@@ -128,5 +129,7 @@
         }
       ]
     }
-  }
+  },
+  "license": "MIT",
+  "icon": "icon.png"
 }

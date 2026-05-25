@@ -40,14 +40,25 @@
         "viewType": "vibecodeEnvViewerNormalImport.editor",
         "displayName": "%editor.displayName%",
         "selector": [
-          { "filenamePattern": ".env" },
-          { "filenamePattern": ".env.local" },
-          { "filenamePattern": ".env.development" },
-          { "filenamePattern": ".env.production" },
-          { "filenamePattern": ".env.staging" }
+          {
+            "filenamePattern": ".env"
+          },
+          {
+            "filenamePattern": ".env.local"
+          },
+          {
+            "filenamePattern": ".env.development"
+          },
+          {
+            "filenamePattern": ".env.production"
+          },
+          {
+            "filenamePattern": ".env.staging"
+          }
         ],
         "priority": "default"
       }
     ]
-  }
+  },
+  "license": "MIT"
 }

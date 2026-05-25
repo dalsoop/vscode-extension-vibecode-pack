@@ -1,0 +1,20 @@
+{
+  "ext": {
+    "displayName": "Vibecode Extension Menu List",
+    "description": "Click the `V` icon in the Activity Bar → the Primary Sidebar slides open and the webview lists every installed vibecode-* extension with its commands as cards. Click a card to run it instantly.",
+    "category": "Vibecode"
+  },
+  "viewContainers": {
+    "vibecode": "Vibecode"
+  },
+  "views": {
+    "vibecodeMenuList.sidebar": "Extensions"
+  },
+  "runtime": {
+    "No vibecode-* extensions installed.": "No vibecode-* extensions installed.",
+    "Filter commands…": "Filter commands…",
+    "No matching commands.": "No matching commands.",
+    "Refresh": "Refresh",
+    "Failed to run {0}: {1}": "Failed to run {0}: {1}"
+  }
+}
