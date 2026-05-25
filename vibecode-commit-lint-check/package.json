@@ -2,7 +2,7 @@
   "name": "vibecode-commit-lint-check",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "publisher": "dalsoop",
   "engines": {
     "vscode": "^1.95.0"
@@ -21,10 +21,10 @@
     "build": "npm run sync && node scripts/build-ext.mjs --production",
     "build:dev": "npm run sync && node scripts/build-ext.mjs",
     "watch": "node scripts/build-ext.mjs --watch",
+    "test": "node --test tests/*.test.mjs",
     "sync": "node scripts/sync-contributions.mjs",
     "sync:check": "node scripts/sync-contributions.mjs --check",
     "typecheck": "tsc -p . --noEmit",
-    "test": "node --test tests/*.test.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -45,6 +45,11 @@
     "configuration": {
       "title": "%ext.category%",
       "properties": {
+        "vibecodeCommitLint.checkLastCommit.preferExternal": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.checkLastCommit.preferExternal%"
+        },
         "vibecodeCommitLint.checkLastCommit.command": {
           "type": "string",
           "default": "npx --yes commitlint --from HEAD~1 --to HEAD --verbose",
@@ -241,7 +246,5 @@
         }
       ]
     }
-  },
-  "license": "MIT",
-  "icon": "icon.png"
+  }
 }

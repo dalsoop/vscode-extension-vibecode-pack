@@ -1,6 +1,17 @@
 # vibecode-commit-lint-check
 
-폴더 우클릭으로 commitlint 설정을 템플릿으로 스캐폴드하고, 팔레트에서 직전 커밋을 검사한다. 추가로 `.vibecode/code-lint/` 아래에 폴더 단위 "Checks" (임의 셸 명령) 를 등록해 사이드바에서 한 번에 돌릴 수 있다.
+VSCode 에 설치하면 어떤 repo 든 즉시 커밋 메시지 lint 가 가능하다. 더 엄격한 룰이 필요하면 commitlint 셋업까지 한 번에 스캐폴드하고, 프로젝트 단위의 임의 셸 체크도 `.vibecode/code-lint/` 트리로 관리한다.
+
+## 동작 레이어
+
+| Layer | 사용자가 할 일 | 검증기 |
+|---|---|---|
+| **0 — 즉시** | 설치만 | **내장 Conventional Commits validator (외부 도구 0)** |
+| 1 — 강한 룰 도입 | 폴더 우클릭 → Init From Template | 스캐폴드된 `commitlint.config.js` |
+| 2 — 외부 commitlint 강제 | 설정에서 `vibecodeCommitLint.checkLastCommit.preferExternal: true` | `npx commitlint --from HEAD~1 --to HEAD` (터미널) |
+| 3 — 임의 셸 체크 | 팔레트 → Scaffold Default Commit-Lint Checks | `.vibecode/code-lint/*/check.json` (Checks 트리에서 run/runAll) |
+
+설치 직후 (`Layer 0`) 에 `Vibecode - Check Last Commit Message` 를 실행하면 `commitlint.config` 도 `@commitlint/cli` 도 필요 없이 ext 내장 검증기로 결과가 즉시 나온다.
 
 ```
 <우클릭한 폴더>/

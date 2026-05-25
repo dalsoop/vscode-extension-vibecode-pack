@@ -49,7 +49,7 @@ This extension makes it a single right-click instead.
 
 ```bash
 npm install
-npm run build       # tsc + sync NLS
+npm run build       # sync NLS + esbuild bundle into dist/extension.js
 npm run package     # produce .vsix (yes — eat your own dogfood)
 ```
 

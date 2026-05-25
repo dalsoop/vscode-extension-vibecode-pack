@@ -1,6 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+import { validateCommitMessage, formatValidationResult } from '../../lint/validator';
+import { getOutputChannel } from '../../checks/outputChannel';
+
+const execFileAsync = promisify(execFile);
 
 export async function handler(arg: vscode.Uri | undefined): Promise<void> {
   const cwd = await resolveCwd(arg);
@@ -10,37 +16,56 @@ export async function handler(arg: vscode.Uri | undefined): Promise<void> {
   }
 
   if (!hasGitDir(cwd)) {
-    vscode.window.showWarningMessage(
-      vscode.l10n.t('Not a git repository: {0}', cwd)
-    );
+    vscode.window.showWarningMessage(vscode.l10n.t('Not a git repository: {0}', cwd));
     return;
   }
 
-  if (!hasCommitlintConfig(cwd)) {
-    const choice = await vscode.window.showWarningMessage(
-      vscode.l10n.t(
-        'No commitlint.config.* found in {0}. Scaffold one from a template first?',
-        cwd
-      ),
-      vscode.l10n.t('Init From Template'),
-      vscode.l10n.t('Run anyway')
-    );
-    if (choice === vscode.l10n.t('Init From Template')) {
-      await vscode.commands.executeCommand(
-        'vibecodeCommitLint.initFromTemplate',
-        vscode.Uri.file(cwd)
-      );
-      return;
-    }
-    if (choice !== vscode.l10n.t('Run anyway')) return;
+  const useExternal = hasCommitlintConfig(cwd) && getUseExternalSetting();
+  if (useExternal) {
+    runExternalCommitlint(cwd);
+    return;
   }
 
-  const term = findOrCreateTerminal('commitlint: last commit', cwd);
-  term.show(true);
-  term.sendText(resolveCheckCommand(), true);
+  await runBuiltinValidator(cwd);
 }
 
-function resolveCheckCommand(): string {
+async function runBuiltinValidator(cwd: string): Promise<void> {
+  const channel = getOutputChannel();
+  channel.show(true);
+  channel.appendLine(`\n=== built-in commit lint @ ${new Date().toISOString()} ===`);
+  channel.appendLine(`cwd: ${cwd}`);
+
+  let message: string;
+  try {
+    const { stdout } = await execFileAsync('git', ['log', '-1', '--pretty=%B'], { cwd });
+    message = stdout.replace(/\n+$/, '');
+  } catch (err) {
+    channel.appendLine(`git log failed: ${String(err)}`);
+    vscode.window.showErrorMessage(vscode.l10n.t('Failed to read HEAD commit: {0}', String(err)));
+    return;
+  }
+
+  const result = validateCommitMessage(message);
+  const header = message.split('\n')[0] ?? '';
+  channel.appendLine(formatValidationResult(header, result));
+
+  if (result.ok) {
+    vscode.window.setStatusBarMessage(vscode.l10n.t('Commit lint: passed'), 4000);
+  } else {
+    const errCount = result.issues.filter(i => i.severity === 'error').length;
+    vscode.window.showWarningMessage(
+      vscode.l10n.t('Commit lint: {0} issue(s) — see output', String(errCount))
+    );
+  }
+}
+
+function runExternalCommitlint(cwd: string): void {
+  const term = findOrCreateTerminal('commitlint: last commit', cwd);
+  term.show(true);
+  term.sendText(resolveExternalCommand(), true);
+}
+
+function resolveExternalCommand(): string {
   const configured = vscode.workspace
     .getConfiguration('vibecodeCommitLint')
     .get<string>('checkLastCommit.command');
@@ -48,6 +73,12 @@ function resolveCheckCommand(): string {
   return trimmed && trimmed.length > 0
     ? trimmed
     : 'npx --yes commitlint --from HEAD~1 --to HEAD --verbose';
+}
+
+function getUseExternalSetting(): boolean {
+  const cfg = vscode.workspace.getConfiguration('vibecodeCommitLint');
+  const value = cfg.get<boolean>('checkLastCommit.preferExternal');
+  return value === true;
 }
 
 function findOrCreateTerminal(name: string, cwd: string): vscode.Terminal {

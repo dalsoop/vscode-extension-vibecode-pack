@@ -48,7 +48,7 @@ A workspace scan walks every file VSCode's `findFiles` API returns (respecting y
 
 ```bash
 npm install
-npm run build       # tsc + esbuild bundle into dist/
+npm run build       # esbuild bundle into dist/extension.js
 npm test            # vitest unit tests
 npm run package     # produce .vsix
 ```

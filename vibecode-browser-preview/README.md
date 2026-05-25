@@ -45,7 +45,7 @@ The HTTP server only listens on `127.0.0.1`, so it isn't reachable from other ma
 
 ```bash
 npm install
-npm run build       # tsc + sync NLS
+npm run build       # sync NLS + esbuild bundle into dist/extension.js
 npm run package     # produce .vsix
 ```
 
