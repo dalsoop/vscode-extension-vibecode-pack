@@ -4,8 +4,12 @@ import * as path from 'path';
 import * as os from 'os';
 import type { InstructionFile, ToolId } from './types';
 
-export const START = '<!-- ccskills-START -->';
-export const END = '<!-- ccskills-END -->';
+export const START = '<!-- vibeskills-START -->';
+export const END = '<!-- vibeskills-END -->';
+// Legacy markers from the old "ccskills" brand. Read for detection so existing
+// user blocks still register; never written.
+export const LEGACY_START = '<!-- ccskills-START -->';
+export const LEGACY_END = '<!-- ccskills-END -->';
 
 export type InstructionScope = 'workspace' | 'global' | 'per-skill';
 export type InstructionCategory = 'memory' | 'rules' | 'instructions';
@@ -203,6 +207,29 @@ interface Inspected {
   blockSize: number;
 }
 
+function firstIndex(s: string, markers: string[]): number {
+  let best = -1;
+  for (const m of markers) {
+    const i = s.indexOf(m);
+    if (i !== -1 && (best === -1 || i < best)) best = i;
+  }
+  return best;
+}
+
+function firstEndAfter(
+  s: string,
+  markers: string[],
+  after: number
+): { index: number; marker: string } | null {
+  if (after === -1) return null;
+  let best: { index: number; marker: string } | null = null;
+  for (const m of markers) {
+    const i = s.indexOf(m, after);
+    if (i !== -1 && (!best || i < best.index)) best = { index: i, marker: m };
+  }
+  return best;
+}
+
 export function inspect(abs: string): Inspected {
   let exists = false,
     size = 0,
@@ -216,11 +243,11 @@ export function inspect(abs: string): Inspected {
     mtime = st.mtimeMs;
     if (exists && size < 500_000) {
       const raw = fs.readFileSync(abs, 'utf8');
-      const i = raw.indexOf(START);
-      const j = raw.indexOf(END);
-      if (i !== -1 && j !== -1 && j > i) {
+      const startIdx = firstIndex(raw, [START, LEGACY_START]);
+      const endMatch = firstEndAfter(raw, [END, LEGACY_END], startIdx);
+      if (startIdx !== -1 && endMatch && endMatch.index > startIdx) {
         hasBlock = true;
-        blockSize = j - i + END.length;
+        blockSize = endMatch.index - startIdx + endMatch.marker.length;
       }
     }
   } catch {}

@@ -1,5 +1,5 @@
 {
-  "name": "claude-codex-skills-viewer",
+  "name": "vibecode-skills-viewer",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
   "version": "2.3.0",
@@ -15,7 +15,7 @@
   ],
   "activationEvents": [
     "onStartupFinished",
-    "onView:ccskills.hub"
+    "onView:vibeskills.hub"
   ],
   "main": "./dist/extension.js",
   "scripts": {
@@ -66,16 +66,16 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "ccskills",
+          "id": "vibeskills",
           "title": "%view.container.title%",
           "icon": "icons/tools/claude.svg"
         }
       ]
     },
     "views": {
-      "ccskills": [
+      "vibeskills": [
         {
-          "id": "ccskills.hub",
+          "id": "vibeskills.hub",
           "name": "%view.hub%",
           "type": "webview"
         }
@@ -83,142 +83,142 @@
     },
     "commands": [
       {
-        "command": "claudeCodexSkills.refresh",
+        "command": "vibecodeSkills.refresh",
         "title": "%cmd.refresh%",
         "icon": "$(refresh)"
       },
       {
-        "command": "claudeCodexSkills.search",
+        "command": "vibecodeSkills.search",
         "title": "%cmd.search%",
         "icon": "$(search)"
       },
       {
-        "command": "claudeCodexSkills.clearFilter",
+        "command": "vibecodeSkills.clearFilter",
         "title": "%cmd.clearFilter%",
         "icon": "$(clear-all)"
       },
       {
-        "command": "claudeCodexSkills.previewSkill",
+        "command": "vibecodeSkills.previewSkill",
         "title": "%cmd.previewSkill%"
       },
       {
-        "command": "claudeCodexSkills.openSkillFile",
+        "command": "vibecodeSkills.openSkillFile",
         "title": "%cmd.openSkillFile%",
         "icon": "$(go-to-file)"
       },
       {
-        "command": "claudeCodexSkills.revealInFinder",
+        "command": "vibecodeSkills.revealInFinder",
         "title": "%cmd.revealInFinder%",
         "icon": "$(folder-opened)"
       },
       {
-        "command": "claudeCodexSkills.copyPath",
+        "command": "vibecodeSkills.copyPath",
         "title": "%cmd.copyPath%",
         "icon": "$(copy)"
       },
       {
-        "command": "claudeCodexSkills.copyContent",
+        "command": "vibecodeSkills.copyContent",
         "title": "%cmd.copyContent%"
       },
       {
-        "command": "claudeCodexSkills.openInTerminal",
+        "command": "vibecodeSkills.openInTerminal",
         "title": "%cmd.openInTerminal%",
         "icon": "$(terminal)"
       },
       {
-        "command": "claudeCodexSkills.openSourceFolder",
+        "command": "vibecodeSkills.openSourceFolder",
         "title": "%cmd.openSourceFolder%",
         "icon": "$(folder-opened)"
       },
       {
-        "command": "claudeCodexSkills.toggleFavorite",
+        "command": "vibecodeSkills.toggleFavorite",
         "title": "%cmd.toggleFavorite%",
         "icon": "$(star-empty)"
       },
       {
-        "command": "claudeCodexSkills.createSkill",
+        "command": "vibecodeSkills.createSkill",
         "title": "%cmd.createSkill%",
         "icon": "$(add)"
       },
       {
-        "command": "claudeCodexSkills.deleteSkill",
+        "command": "vibecodeSkills.deleteSkill",
         "title": "%cmd.deleteSkill%",
         "icon": "$(trash)"
       },
       {
-        "command": "claudeCodexSkills.installRemoteSkill",
+        "command": "vibecodeSkills.installRemoteSkill",
         "title": "%cmd.installRemoteSkill%",
         "icon": "$(cloud-download)"
       },
       {
-        "command": "claudeCodexSkills.searchGithub",
+        "command": "vibecodeSkills.searchGithub",
         "title": "%cmd.searchGithub%",
         "icon": "$(github)"
       },
       {
-        "command": "claudeCodexSkills.refreshRemote",
+        "command": "vibecodeSkills.refreshRemote",
         "title": "%cmd.refreshRemote%",
         "icon": "$(refresh)"
       },
       {
-        "command": "claudeCodexSkills.syncInstructions",
+        "command": "vibecodeSkills.syncInstructions",
         "title": "%cmd.syncInstructions%",
         "icon": "$(sync)"
       },
       {
-        "command": "claudeCodexSkills.syncInstructionsAll",
+        "command": "vibecodeSkills.syncInstructionsAll",
         "title": "%cmd.syncInstructionsAll%"
       },
       {
-        "command": "claudeCodexSkills.removeInstructionBlock",
+        "command": "vibecodeSkills.removeInstructionBlock",
         "title": "%cmd.removeInstructionBlock%"
       },
       {
-        "command": "claudeCodexSkills.reportBug",
+        "command": "vibecodeSkills.reportBug",
         "title": "%cmd.reportBug%",
         "icon": "$(bug)"
       },
       {
-        "command": "claudeCodexSkills.openCatalog",
+        "command": "vibecodeSkills.openCatalog",
         "title": "%cmd.openCatalog%"
       },
       {
-        "command": "claudeCodexSkills.openInstructionFile",
+        "command": "vibecodeSkills.openInstructionFile",
         "title": "%cmd.openInstructionFile%",
         "icon": "$(go-to-file)"
       },
       {
-        "command": "claudeCodexSkills.syncToThisFile",
+        "command": "vibecodeSkills.syncToThisFile",
         "title": "%cmd.syncToThisFile%",
         "icon": "$(sync)"
       },
       {
-        "command": "claudeCodexSkills.removeBlockFromThisFile",
+        "command": "vibecodeSkills.removeBlockFromThisFile",
         "title": "%cmd.removeBlockFromThisFile%",
         "icon": "$(trash)"
       },
       {
-        "command": "claudeCodexSkills.createInstructionFile",
+        "command": "vibecodeSkills.createInstructionFile",
         "title": "%cmd.createInstructionFile%",
         "icon": "$(add)"
       },
       {
-        "command": "claudeCodexSkills.openMemoryFile",
+        "command": "vibecodeSkills.openMemoryFile",
         "title": "%cmd.openMemoryFile%",
         "icon": "$(go-to-file)"
       },
       {
-        "command": "claudeCodexSkills.openMemoryFolder",
+        "command": "vibecodeSkills.openMemoryFolder",
         "title": "%cmd.openMemoryFolder%",
         "icon": "$(folder-opened)"
       },
       {
-        "command": "claudeCodexSkills.openMemoryIndex",
+        "command": "vibecodeSkills.openMemoryIndex",
         "title": "%cmd.openMemoryIndex%",
         "icon": "$(book)"
       },
       {
-        "command": "claudeCodexSkills.openSettings",
+        "command": "vibecodeSkills.openSettings",
         "title": "%cmd.openSettings%",
         "icon": "$(settings-gear)"
       }
@@ -226,159 +226,159 @@
     "menus": {
       "view/title": [
         {
-          "command": "claudeCodexSkills.createSkill",
-          "when": "view == ccskills.installed",
+          "command": "vibecodeSkills.createSkill",
+          "when": "view == vibeskills.installed",
           "group": "navigation@0"
         },
         {
-          "command": "claudeCodexSkills.search",
-          "when": "view =~ /ccskills\\./",
+          "command": "vibecodeSkills.search",
+          "when": "view =~ /vibeskills\\./",
           "group": "navigation@1"
         },
         {
-          "command": "claudeCodexSkills.clearFilter",
-          "when": "view =~ /ccskills\\./",
+          "command": "vibecodeSkills.clearFilter",
+          "when": "view =~ /vibeskills\\./",
           "group": "navigation@2"
         },
         {
-          "command": "claudeCodexSkills.refresh",
-          "when": "view =~ /ccskills\\./ && view != ccskills.browse",
+          "command": "vibecodeSkills.refresh",
+          "when": "view =~ /vibeskills\\./ && view != vibeskills.browse",
           "group": "navigation@3"
         },
         {
-          "command": "claudeCodexSkills.openMemoryIndex",
-          "when": "view == ccskills.memory",
+          "command": "vibecodeSkills.openMemoryIndex",
+          "when": "view == vibeskills.memory",
           "group": "navigation@0"
         },
         {
-          "command": "claudeCodexSkills.refreshRemote",
-          "when": "view == ccskills.browse",
+          "command": "vibecodeSkills.refreshRemote",
+          "when": "view == vibeskills.browse",
           "group": "navigation@3"
         },
         {
-          "command": "claudeCodexSkills.searchGithub",
-          "when": "view == ccskills.browse",
+          "command": "vibecodeSkills.searchGithub",
+          "when": "view == vibeskills.browse",
           "group": "navigation@4"
         },
         {
-          "command": "claudeCodexSkills.syncInstructions",
-          "when": "view == ccskills.installed",
+          "command": "vibecodeSkills.syncInstructions",
+          "when": "view == vibeskills.installed",
           "group": "1_more@1"
         },
         {
-          "command": "claudeCodexSkills.syncInstructionsAll",
-          "when": "view == ccskills.rootmd",
+          "command": "vibecodeSkills.syncInstructionsAll",
+          "when": "view == vibeskills.rootmd",
           "group": "navigation@2"
         },
         {
-          "command": "claudeCodexSkills.openCatalog",
-          "when": "view == ccskills.browse",
+          "command": "vibecodeSkills.openCatalog",
+          "when": "view == vibeskills.browse",
           "group": "1_more@1"
         },
         {
-          "command": "claudeCodexSkills.openSettings",
-          "when": "view == ccskills.hub",
+          "command": "vibecodeSkills.openSettings",
+          "when": "view == vibeskills.hub",
           "group": "navigation@5"
         },
         {
-          "command": "claudeCodexSkills.reportBug",
-          "when": "view =~ /ccskills\\./",
+          "command": "vibecodeSkills.reportBug",
+          "when": "view =~ /vibeskills\\./",
           "group": "9_about@1"
         }
       ],
       "view/item/context": [
         {
-          "command": "claudeCodexSkills.openSkillFile",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "command": "vibecodeSkills.openSkillFile",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
           "group": "inline@1"
         },
         {
-          "command": "claudeCodexSkills.toggleFavorite",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "command": "vibecodeSkills.toggleFavorite",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
           "group": "inline@2"
         },
         {
-          "command": "claudeCodexSkills.previewSkill",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "command": "vibecodeSkills.previewSkill",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
           "group": "1_open@1"
         },
         {
-          "command": "claudeCodexSkills.revealInFinder",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "command": "vibecodeSkills.revealInFinder",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
           "group": "1_open@2"
         },
         {
-          "command": "claudeCodexSkills.openInTerminal",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "command": "vibecodeSkills.openInTerminal",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
           "group": "1_open@3"
         },
         {
-          "command": "claudeCodexSkills.copyPath",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "command": "vibecodeSkills.copyPath",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
           "group": "2_copy@1"
         },
         {
-          "command": "claudeCodexSkills.copyContent",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /skill/",
+          "command": "vibecodeSkills.copyContent",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
           "group": "2_copy@2"
         },
         {
-          "command": "claudeCodexSkills.deleteSkill",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /writable/",
+          "command": "vibecodeSkills.deleteSkill",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /writable/",
           "group": "9_danger@1"
         },
         {
-          "command": "claudeCodexSkills.openSourceFolder",
-          "when": "view =~ /ccskills\\./ && viewItem =~ /source/",
+          "command": "vibecodeSkills.openSourceFolder",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /source/",
           "group": "inline@1"
         },
         {
-          "command": "claudeCodexSkills.installRemoteSkill",
-          "when": "view == ccskills.browse && viewItem == remote-skill",
+          "command": "vibecodeSkills.installRemoteSkill",
+          "when": "view == vibeskills.browse && viewItem == remote-skill",
           "group": "inline@1"
         },
         {
-          "command": "claudeCodexSkills.refreshRemote",
-          "when": "view == ccskills.browse && viewItem == remote-source",
+          "command": "vibecodeSkills.refreshRemote",
+          "when": "view == vibeskills.browse && viewItem == remote-source",
           "group": "inline@1"
         },
         {
-          "command": "claudeCodexSkills.openInstructionFile",
-          "when": "view == ccskills.rootmd && viewItem =~ /inst-file/ && viewItem =~ /exists/",
+          "command": "vibecodeSkills.openInstructionFile",
+          "when": "view == vibeskills.rootmd && viewItem =~ /inst-file/ && viewItem =~ /exists/",
           "group": "inline@1"
         },
         {
-          "command": "claudeCodexSkills.syncToThisFile",
-          "when": "view == ccskills.rootmd && viewItem =~ /inst-file/",
+          "command": "vibecodeSkills.syncToThisFile",
+          "when": "view == vibeskills.rootmd && viewItem =~ /inst-file/",
           "group": "inline@2"
         },
         {
-          "command": "claudeCodexSkills.createInstructionFile",
-          "when": "view == ccskills.rootmd && viewItem =~ /missing/",
+          "command": "vibecodeSkills.createInstructionFile",
+          "when": "view == vibeskills.rootmd && viewItem =~ /missing/",
           "group": "1_open@1"
         },
         {
-          "command": "claudeCodexSkills.removeBlockFromThisFile",
-          "when": "view == ccskills.rootmd && viewItem =~ /hasBlock/",
+          "command": "vibecodeSkills.removeBlockFromThisFile",
+          "when": "view == vibeskills.rootmd && viewItem =~ /hasBlock/",
           "group": "9_danger@1"
         },
         {
-          "command": "claudeCodexSkills.openMemoryFile",
-          "when": "view == ccskills.memory && viewItem =~ /mem-file/",
+          "command": "vibecodeSkills.openMemoryFile",
+          "when": "view == vibeskills.memory && viewItem =~ /mem-file/",
           "group": "inline@1"
         },
         {
-          "command": "claudeCodexSkills.openMemoryFolder",
-          "when": "view == ccskills.memory && viewItem =~ /mem-project|mem-ws/",
+          "command": "vibecodeSkills.openMemoryFolder",
+          "when": "view == vibeskills.memory && viewItem =~ /mem-project|mem-ws/",
           "group": "inline@1"
         }
       ]
     },
     "chatParticipants": [
       {
-        "id": "ccskills.participant",
-        "name": "ccskills",
-        "fullName": "Claude & Codex Skills",
+        "id": "vibeskills.participant",
+        "name": "vibeskills",
+        "fullName": "Vibecode Skills",
         "description": "%chat.description%",
         "isSticky": true,
         "commands": [
@@ -411,7 +411,7 @@
     ],
     "languageModelTools": [
       {
-        "name": "claudeCodexSkills_list",
+        "name": "vibecodeSkills_list",
         "displayName": "%tool.list.displayName%",
         "modelDescription": "List all locally installed Claude/Codex/Copilot/etc. skills with name, source (global/workspace/extension), description, and path. Use to discover what skills the user has available.",
         "userDescription": "%tool.list.userDescription%",
@@ -458,7 +458,7 @@
         }
       },
       {
-        "name": "claudeCodexSkills_search",
+        "name": "vibecodeSkills_search",
         "displayName": "%tool.search.displayName%",
         "modelDescription": "Search locally installed skills by keyword. Searches the skill name, description, when-to-use, and categories. Returns matches ranked by relevance.",
         "userDescription": "%tool.search.userDescription%",
@@ -488,7 +488,7 @@
         }
       },
       {
-        "name": "claudeCodexSkills_read",
+        "name": "vibecodeSkills_read",
         "displayName": "%tool.read.displayName%",
         "modelDescription": "Read the full SKILL.md content of a specific locally installed skill by name.",
         "userDescription": "%tool.read.userDescription%",
@@ -512,7 +512,7 @@
         }
       },
       {
-        "name": "claudeCodexSkills_recommend",
+        "name": "vibecodeSkills_recommend",
         "displayName": "%tool.recommend.displayName%",
         "modelDescription": "Given a user goal description, recommend the most relevant installed skills (top 5 by keyword overlap).",
         "userDescription": "%tool.recommend.userDescription%",
@@ -536,7 +536,7 @@
         }
       },
       {
-        "name": "claudeCodexSkills_listCategories",
+        "name": "vibecodeSkills_listCategories",
         "displayName": "%tool.listCategories.displayName%",
         "modelDescription": "List all categories present across installed skills, with counts.",
         "userDescription": "%tool.listCategories.userDescription%",
@@ -553,7 +553,7 @@
         }
       },
       {
-        "name": "claudeCodexSkills_inCategory",
+        "name": "vibecodeSkills_inCategory",
         "displayName": "%tool.inCategory.displayName%",
         "modelDescription": "List installed skills belonging to a specific category.",
         "userDescription": "%tool.inCategory.userDescription%",
@@ -577,7 +577,7 @@
         }
       },
       {
-        "name": "claudeCodexSkills_listSources",
+        "name": "vibecodeSkills_listSources",
         "displayName": "%tool.listSources.displayName%",
         "modelDescription": "List all skill sources (locations) being scanned with the count of skills in each.",
         "userDescription": "%tool.listSources.userDescription%",
@@ -594,7 +594,7 @@
         }
       },
       {
-        "name": "claudeCodexSkills_status",
+        "name": "vibecodeSkills_status",
         "displayName": "%tool.status.displayName%",
         "modelDescription": "Get aggregate counts of installed skills by scope and tool.",
         "userDescription": "%tool.status.userDescription%",
@@ -614,37 +614,62 @@
     "configuration": {
       "title": "%cfg.title%",
       "properties": {
-        "claudeCodexSkills.includeWorkspace": {
+        "vibecodeSkills.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "en",
+            "ko"
+          ],
+          "enumDescriptions": [
+            "%cfg.language.auto%",
+            "English",
+            "한국어"
+          ],
+          "default": "auto",
+          "description": "%cfg.language%"
+        },
+        "vibecodeSkills.includeWorkspace": {
           "type": "boolean",
           "default": true,
           "description": "%cfg.includeWorkspace%"
         },
-        "claudeCodexSkills.includeGlobal": {
+        "vibecodeSkills.includeGlobal": {
           "type": "boolean",
           "default": true,
           "description": "%cfg.includeGlobal%"
         },
-        "claudeCodexSkills.includeExtensions": {
+        "vibecodeSkills.includeExtensions": {
           "type": "boolean",
           "default": true,
           "description": "%cfg.includeExtensions%"
         },
-        "claudeCodexSkills.tools": {
-          "type": "string",
-          "enum": [
-            "all",
-            "claude",
-            "codex",
-            "copilot",
-            "cursor",
-            "windsurf",
-            "cline",
-            "agents"
+        "vibecodeSkills.tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label"],
+            "properties": {
+              "id": { "type": "string", "description": "Unique slug used internally to tag skills with this tool." },
+              "label": { "type": "string", "description": "Display name shown in the sidebar and settings." },
+              "enabled": { "type": "boolean", "default": true, "description": "Uncheck to hide this tool's skills and instruction files." },
+              "builtin": { "type": "boolean", "description": "True for default seed tools; ignored when set by hand." }
+            },
+            "additionalProperties": false
+          },
+          "default": [
+            { "id": "claude", "label": "Claude", "enabled": true, "builtin": true },
+            { "id": "codex", "label": "Codex", "enabled": true, "builtin": true },
+            { "id": "copilot", "label": "Copilot", "enabled": true, "builtin": true },
+            { "id": "cursor", "label": "Cursor", "enabled": true, "builtin": true },
+            { "id": "gemini", "label": "Gemini", "enabled": true, "builtin": true },
+            { "id": "windsurf", "label": "Windsurf", "enabled": true, "builtin": true },
+            { "id": "cline", "label": "Cline", "enabled": true, "builtin": true },
+            { "id": "agents", "label": "Agents", "enabled": true, "builtin": true }
           ],
-          "default": "all",
           "description": "%cfg.tools%"
         },
-        "claudeCodexSkills.extraGlobalRoots": {
+        "vibecodeSkills.extraGlobalRoots": {
           "type": "array",
           "items": {
             "type": "string"
@@ -652,7 +677,7 @@
           "default": [],
           "description": "%cfg.extraGlobalRoots%"
         },
-        "claudeCodexSkills.extraWorkspaceRoots": {
+        "vibecodeSkills.extraWorkspaceRoots": {
           "type": "array",
           "items": {
             "type": "string"
@@ -660,7 +685,7 @@
           "default": [],
           "description": "%cfg.extraWorkspaceRoots%"
         },
-        "claudeCodexSkills.instructionFormat": {
+        "vibecodeSkills.instructionFormat": {
           "type": "string",
           "enum": [
             "ref",
@@ -671,17 +696,17 @@
           "default": "ref",
           "description": "%cfg.instructionFormat%"
         },
-        "claudeCodexSkills.githubToken": {
+        "vibecodeSkills.githubToken": {
           "type": "string",
           "default": "",
           "description": "%cfg.githubToken%"
         },
-        "claudeCodexSkills.showScoreBreakdown": {
+        "vibecodeSkills.showScoreBreakdown": {
           "type": "boolean",
           "default": true,
           "description": "%cfg.showScoreBreakdown%"
         },
-        "claudeCodexSkills.mirrorGroups": {
+        "vibecodeSkills.mirrorGroups": {
           "type": "array",
           "default": [],
           "description": "%cfg.mirrorGroups%",
@@ -696,12 +721,12 @@
             }
           }
         },
-        "claudeCodexSkills.mirrorSkillsByName": {
+        "vibecodeSkills.mirrorSkillsByName": {
           "type": "boolean",
           "default": false,
           "description": "%cfg.mirrorSkillsByName%"
         },
-        "claudeCodexSkills.mirrorSkillsByNameAlways": {
+        "vibecodeSkills.mirrorSkillsByNameAlways": {
           "type": "boolean",
           "default": false,
           "description": "%cfg.mirrorSkillsByNameAlways%"

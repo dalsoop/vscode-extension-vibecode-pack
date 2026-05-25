@@ -2,13 +2,22 @@ import { collectAllSkills, collectSkillsUnder } from '../sources';
 import * as analyzer from '../analyzer';
 import * as mem from '../memory';
 import * as state from '../state';
-import type { DataSource, FetchContext, Group, ItemPayload, Skill } from '../types';
+import type { DataSource, FetchContext, Group, ItemPayload, Skill, ToolId } from '../types';
 
 function passesScope(srcScope: string, scope: FetchContext['scope']): boolean {
   if (scope === 'all') return true;
   if (scope === 'global') return srcScope === 'global';
   if (scope === 'workspace') return srcScope === 'workspace';
   return false;
+}
+
+// Tool ids that aren't user-configurable tools — they're meta-buckets driven
+// by other settings and always pass through.
+const NON_USER_TOOLS = new Set<string>(['extension', 'custom']);
+
+export function passesEnabledTools(tool: ToolId | string | undefined, enabled: ReadonlySet<string>): boolean {
+  if (!tool || NON_USER_TOOLS.has(tool)) return true;
+  return enabled.has(tool);
 }
 
 export class SkillSource implements DataSource {
@@ -24,7 +33,7 @@ export class SkillSource implements DataSource {
           : []
         : collectAllSkills({}).filter(it => passesScope(it.source.scope, ctx.scope));
 
-    if (ctx.tool !== 'all') items = items.filter(it => it.source.tool === ctx.tool);
+    items = items.filter(it => passesEnabledTools(it.source.tool, ctx.enabledTools));
 
     const dupMap = analyzer.buildDupMap(collectAllSkills({}));
     const groups: Record<string, ItemPayload[]> = {};

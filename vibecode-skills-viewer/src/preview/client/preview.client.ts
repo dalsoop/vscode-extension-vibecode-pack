@@ -1,74 +1,11 @@
 // Interactive preview client. Compiled via tsconfig.preview-client.json.
-
-interface SectionRule {
-  id: string;
-  pass: boolean;
-  weight: number;
-  message: string;
-}
-interface SectionScore {
-  pct: number;
-  earned: number;
-  total: number;
-  grade: 'A' | 'B' | 'C' | 'D' | 'F';
-  color: 'green' | 'lime' | 'yellow' | 'orange' | 'red';
-  rules: SectionRule[];
-  issues: string[];
-}
-interface Section {
-  id: string;
-  canonical?: string;
-  kind: 'frontmatter' | 'title' | 'heading';
-  level?: number;
-  heading?: string;
-  raw: string;
-  body: string;
-  rendered: string;
-  score: SectionScore;
-}
-interface AuxFile {
-  name: string;
-  abs: string;
-  size: number;
-  age: string;
-}
-interface Meta {
-  name: string;
-  description?: string;
-  source: { label: string; scope: string; readOnly: boolean };
-  abs: string;
-  categories: string[];
-  totalScore: SectionScore;
-  lines: number;
-  chars: number;
-  ageDays: number;
-  frontmatterError?: { message: string; line?: number; column?: number; snippet?: string } | null;
-  showScoreBreakdown: boolean;
-  mirrors: Array<{
-    source: 'group' | 'skill-by-name';
-    groupLabel?: string;
-    alwaysMirror?: boolean;
-    targets: string[];
-  }>;
-  mirrorDrift: Array<{ path: string; exists: boolean; inSync: boolean }>;
-}
-interface TocEntry {
-  id: string;
-  label: string;
-  level: number;
-  score: number;
-}
-interface Payload {
-  meta: Meta;
-  sections: Section[];
-  aux: AuxFile[];
-  toc: TocEntry[];
-}
+// All shared types come from the ambient `Contracts.*` namespace in
+// src/contracts/*.d.ts (single source of truth shared with the extension).
 
 declare function acquireVsCodeApi(): { postMessage(msg: any): void };
 const vscode = acquireVsCodeApi();
 
-let payload: Payload | null = null;
+let payload: Contracts.PreviewPayload | null = null;
 const editing = new Set<string>();
 const collapsedRules = new Set<string>(); // rules visible by default; user can collapse
 const confirmingDelete = new Set<string>();
@@ -80,6 +17,15 @@ const esc = (s: any): string =>
 
 function ico(name: string): string {
   return `<span class="codicon codicon-${name}"></span>`;
+}
+
+function tr(key: string, ...args: Array<string | number>): string {
+  const raw = (payload?.i18n.dict[key] ?? key) as string;
+  if (!args.length) return raw;
+  return raw.replace(/\{(\d+)\}/g, (_m, i) => {
+    const v = args[Number(i)];
+    return v === undefined ? '' : String(v);
+  });
 }
 
 const FIX_BY_RULE: Record<string, string> = {
@@ -104,12 +50,12 @@ function askMirror(): boolean {
   if (allAlways) return true;
   const summary = mirrors
     .map(m => {
-      const label = m.source === 'group' ? m.groupLabel || 'Group' : 'Skills sharing this name';
-      const tag = m.alwaysMirror ? ' (always)' : '';
+      const label = m.source === 'group' ? m.groupLabel || tr('preview.mirror.group.label') : tr('preview.mirror.skillsSharingName');
+      const tag = m.alwaysMirror ? tr('preview.mirror.always') : '';
       return `[${label}${tag}]\n  ` + m.targets.join('\n  ');
     })
     .join('\n\n');
-  return confirm(`Apply the same full-file content to ${count} mirror target(s)?\n\n${summary}\n\nOK = write to all mirrors. Cancel = save only this file.`);
+  return confirm(tr('preview.confirm.mirror', count, summary));
 }
 
 function renderHeader(): void {
@@ -117,9 +63,9 @@ function renderHeader(): void {
   const { meta } = payload;
   $('title').textContent = meta.name;
   const roBadge = meta.source.readOnly
-    ? '<span class="badge ro" title="Bundled by extension — cannot edit">read-only</span>'
+    ? `<span class="badge ro" title="${esc(tr('preview.badge.readOnly.tooltip'))}">${esc(tr('preview.badge.readOnly.label'))}</span>`
     : '';
-  const extBadge = externalDirty ? '<span class="badge warn">⚠ external change</span>' : '';
+  const extBadge = externalDirty ? `<span class="badge warn">${esc(tr('preview.badge.externalChange'))}</span>` : '';
   const mirrorCount = (meta.mirrors || []).reduce((a, m) => a + m.targets.length, 0);
   const drift = (meta.mirrorDrift || []).filter(d => !d.inSync);
   const driftCount = drift.length;
@@ -127,20 +73,27 @@ function renderHeader(): void {
   if (mirrorCount) {
     const tooltip = (meta.mirrors || [])
       .map(m => {
-        const tag = m.alwaysMirror ? ' [always]' : '';
-        const label = (m.source === 'group' ? m.groupLabel || 'Group' : 'Skill by name') + tag;
-        const lines = m.targets.map(t => {
-          const driftEntry = (meta.mirrorDrift || []).find(d => d.path === t);
-          const mark = !driftEntry ? '?' : !driftEntry.exists ? '✗ missing' : driftEntry.inSync ? '✓' : '⚠ differs';
-          return `  ${mark} ${t}`;
+        const tag = m.alwaysMirror ? tr('preview.mirror.alwaysTag') : '';
+        const label =
+          (m.source === 'group' ? m.groupLabel || tr('preview.mirror.group.label') : tr('preview.mirror.skillByName')) + tag;
+        const lines = m.targets.map(target => {
+          const driftEntry = (meta.mirrorDrift || []).find(d => d.path === target);
+          const mark = !driftEntry
+            ? tr('preview.mirror.mark.unknown')
+            : !driftEntry.exists
+              ? tr('preview.mirror.mark.missing')
+              : driftEntry.inSync
+                ? tr('preview.mirror.mark.ok')
+                : tr('preview.mirror.mark.differs');
+          return `  ${mark} ${target}`;
         });
         return `${label}:\n${lines.join('\n')}`;
       })
       .join('\n\n');
     if (driftCount > 0) {
-      mirrorBadge = `<span class="badge mirror drift" title="${esc(tooltip)}">${ico('warning')} drift ${driftCount}/${mirrorCount}</span>`;
+      mirrorBadge = `<span class="badge mirror drift" title="${esc(tooltip)}">${ico('warning')} ${esc(tr('preview.mirror.driftBadge', driftCount, mirrorCount))}</span>`;
     } else {
-      mirrorBadge = `<span class="badge mirror ok" title="${esc(tooltip)}">${ico('link')} mirrored ×${mirrorCount} ✓</span>`;
+      mirrorBadge = `<span class="badge mirror ok" title="${esc(tooltip)}">${ico('link')} ${esc(tr('preview.mirror.okBadge', mirrorCount))}</span>`;
     }
   }
   $('meta').innerHTML = [
@@ -150,8 +103,8 @@ function renderHeader(): void {
     extBadge,
     mirrorBadge,
     ...meta.categories.map(c => `<span class="badge">${esc(c)}</span>`),
-    `<span class="score ${meta.totalScore.color}" title="${esc(meta.totalScore.issues.join('\n') || 'No issues')}">${meta.totalScore.pct}/100 ${meta.totalScore.grade}</span>`,
-    `<span style="opacity:0.7">${meta.lines} lines · ${(meta.chars / 1024).toFixed(1)}KB · ${Math.floor(meta.ageDays)}d old</span>`
+    `<span class="score ${meta.totalScore.color}" title="${esc(meta.totalScore.issues.join('\n') || tr('preview.score.noIssues'))}">${esc(tr('preview.score.fmt', meta.totalScore.pct, meta.totalScore.grade))}</span>`,
+    `<span style="opacity:0.7">${esc(tr('preview.stats.lineCharsAge', meta.lines, (meta.chars / 1024).toFixed(1), Math.floor(meta.ageDays)))}</span>`
   ].join('');
   const showScore = meta.showScoreBreakdown;
   const driftPeers = (meta.mirrorDrift || []).filter(d => !d.inSync);
@@ -159,26 +112,26 @@ function renderHeader(): void {
   if (mirrorCount > 0) {
     if (driftPeers.length > 0) {
       mirrorButtons.push(
-        `<button class="tbtn danger" data-act="mirror-sync" title="Overwrite all peers with this file's content">${ico('cloud-upload')} Sync ${driftPeers.length} peer${driftPeers.length > 1 ? 's' : ''} from here</button>`
+        `<button class="tbtn danger" data-act="mirror-sync" title="${esc(tr('preview.toolbar.mirrorSync.title'))}">${ico('cloud-upload')} ${esc(tr('preview.toolbar.mirrorSync.label', driftPeers.length))}</button>`
       );
       // Diff with first drifted peer
       const firstDrift = driftPeers.find(d => d.exists);
       if (firstDrift) {
         mirrorButtons.push(
-          `<button class="tbtn" data-act="mirror-diff" data-peer="${esc(firstDrift.path)}" title="Open diff with ${esc(firstDrift.path)}">${ico('diff')} Diff peer</button>`
+          `<button class="tbtn" data-act="mirror-diff" data-peer="${esc(firstDrift.path)}" title="${esc(tr('preview.toolbar.mirrorDiff.title', firstDrift.path))}">${ico('diff')} ${esc(tr('preview.toolbar.mirrorDiff.label'))}</button>`
         );
       }
     }
   }
   $('toolbar').innerHTML = [
-    `<button class="tbtn" data-act="open">${ico('go-to-file')} Open</button>`,
-    `<button class="tbtn" data-act="copy-md">${ico('copy')} Copy MD</button>`,
-    `<button class="tbtn" data-act="copy-path">${ico('files')} Copy Path</button>`,
-    `<button class="tbtn" data-act="finder">${ico('folder-opened')} Finder</button>`,
-    `<button class="tbtn" data-act="terminal">${ico('terminal')} Terminal</button>`,
-    `<button class="tbtn ${showScore ? 'active' : ''}" data-act="toggle-score" title="Toggle score breakdowns (sticky)">${ico(showScore ? 'eye' : 'eye-closed')} ${showScore ? 'Hide scores' : 'Show scores'}</button>`,
+    `<button class="tbtn" data-act="open">${ico('go-to-file')} ${esc(tr('preview.toolbar.open'))}</button>`,
+    `<button class="tbtn" data-act="copy-md">${ico('copy')} ${esc(tr('preview.toolbar.copyMd'))}</button>`,
+    `<button class="tbtn" data-act="copy-path">${ico('files')} ${esc(tr('preview.toolbar.copyPath'))}</button>`,
+    `<button class="tbtn" data-act="finder">${ico('folder-opened')} ${esc(tr('preview.toolbar.finder'))}</button>`,
+    `<button class="tbtn" data-act="terminal">${ico('terminal')} ${esc(tr('preview.toolbar.terminal'))}</button>`,
+    `<button class="tbtn ${showScore ? 'active' : ''}" data-act="toggle-score" title="${esc(tr('preview.toolbar.toggleScoreTitle'))}">${ico(showScore ? 'eye' : 'eye-closed')} ${esc(tr(showScore ? 'preview.toolbar.hideScores' : 'preview.toolbar.showScores'))}</button>`,
     ...mirrorButtons,
-    `<button class="tbtn" data-act="refresh">${ico('refresh')} Refresh</button>`
+    `<button class="tbtn" data-act="refresh">${ico('refresh')} ${esc(tr('preview.toolbar.refresh'))}</button>`
   ].join('');
   $('toolbar')
     .querySelectorAll<HTMLButtonElement>('.tbtn')
@@ -188,12 +141,9 @@ function renderHeader(): void {
         if (a === 'toggle-score') {
           vscode.postMessage({ type: 'toggle-score-breakdown', value: !showScore });
         } else if (a === 'mirror-sync') {
-          if (
-            confirm(
-              `Overwrite ${driftPeers.length} peer file(s) with THIS file's current content?\n\n` +
-                driftPeers.map(d => `  • ${d.path}${d.exists ? '' : ' (will be created)'}`).join('\n')
-            )
-          ) {
+          const willCreate = tr('preview.confirm.mirrorSync.willCreate');
+          const detail = driftPeers.map(d => `  • ${d.path}${d.exists ? '' : willCreate}`).join('\n');
+          if (confirm(tr('preview.confirm.mirrorSync', driftPeers.length, detail))) {
             vscode.postMessage({ type: 'mirror-sync-from-here' });
           }
         } else if (a === 'mirror-diff') {
@@ -233,7 +183,7 @@ function buildFmYaml(fields: { name: string; description: string; categories: st
   return lines.join('\n');
 }
 
-function renderFrontmatterForm(s: Section): string {
+function renderFrontmatterForm(s: Contracts.PreviewSection): string {
   const body = s.raw.replace(/^---\n/, '').replace(/\n---$/, '');
   const fm = parseFmYaml(body);
   const knownKeys = new Set(['name', 'description', 'categories']);
@@ -249,67 +199,67 @@ function renderFrontmatterForm(s: Section): string {
   return `
     <div class="fm-form" data-id="${esc(s.id)}">
       <label class="fm-row">
-        <span class="fm-label">name</span>
-        <input class="fm-input" data-field="name" value="${esc(fm.name || '')}" placeholder="my-skill-name">
+        <span class="fm-label">${esc(tr('preview.fm.name'))}</span>
+        <input class="fm-input" data-field="name" value="${esc(fm.name || '')}" placeholder="${esc(tr('preview.fm.namePlaceholder'))}">
       </label>
       <label class="fm-row">
-        <span class="fm-label">description <span class="fm-counter ${descClass}">${descLen}/200</span></span>
-        <textarea class="fm-textarea" data-field="description" rows="3" placeholder="One-sentence trigger description">${esc(fm.description || '')}</textarea>
+        <span class="fm-label">${esc(tr('preview.fm.description'))} <span class="fm-counter ${descClass}">${esc(tr('preview.fm.descCounter', descLen))}</span></span>
+        <textarea class="fm-textarea" data-field="description" rows="3" placeholder="${esc(tr('preview.fm.descPlaceholder'))}">${esc(fm.description || '')}</textarea>
       </label>
       <label class="fm-row">
-        <span class="fm-label">categories <span class="fm-hint">comma-separated</span></span>
-        <input class="fm-input" data-field="categories" value="${esc((fm.categories || []).join(', '))}" placeholder="dev, testing, ai">
+        <span class="fm-label">${esc(tr('preview.fm.categories'))} <span class="fm-hint">${esc(tr('preview.fm.categoriesHint'))}</span></span>
+        <input class="fm-input" data-field="categories" value="${esc((fm.categories || []).join(', '))}" placeholder="${esc(tr('preview.fm.categoriesPlaceholder'))}">
       </label>
-      ${extra ? `<label class="fm-row"><span class="fm-label">other YAML</span><textarea class="fm-textarea" data-field="extra" rows="3">${esc(extra)}</textarea></label>` : ''}
+      ${extra ? `<label class="fm-row"><span class="fm-label">${esc(tr('preview.fm.otherYaml'))}</span><textarea class="fm-textarea" data-field="extra" rows="3">${esc(extra)}</textarea></label>` : ''}
       <div class="edit-row">
-        <button class="tbtn" data-sect-act="cancel" data-id="${esc(s.id)}">Cancel</button>
-        <button class="tbtn primary" data-sect-act="save-fm" data-id="${esc(s.id)}">${ico('save')} Save</button>
+        <button class="tbtn" data-sect-act="cancel" data-id="${esc(s.id)}">${esc(tr('preview.section.editor.cancel'))}</button>
+        <button class="tbtn primary" data-sect-act="save-fm" data-id="${esc(s.id)}">${ico('save')} ${esc(tr('preview.section.editor.save'))}</button>
       </div>
     </div>`;
 }
 
-function renderSection(s: Section): string {
+function renderSection(s: Contracts.PreviewSection): string {
   const isEditing = editing.has(s.id);
   const globallyHidden = payload && !payload.meta.showScoreBreakdown;
   const rulesCollapsed = globallyHidden || collapsedRules.has(s.id);
   const kind = s.canonical || s.kind;
-  const label = s.heading || (s.canonical === 'frontmatter' ? 'Frontmatter' : 'Section');
+  const label = s.heading || (s.canonical === 'frontmatter' ? tr('preview.section.frontmatter') : tr('preview.section.section'));
   const ro = readOnly();
   const lowScore = s.score.pct < 60;
   const fails = s.score.rules.filter(r => !r.pass);
   const passes = s.score.rules.filter(r => r.pass);
 
   const editButtons = ro
-    ? `<button class="sa" disabled title="Read-only">${ico('lock')}</button>`
-    : `<button class="sa" data-sect-act="${isEditing ? 'cancel' : 'edit'}" data-id="${esc(s.id)}" title="${isEditing ? 'Cancel' : 'Edit'}">${ico(isEditing ? 'close' : 'edit')}</button>`;
+    ? `<button class="sa" disabled title="${esc(tr('preview.section.title.readOnly'))}">${ico('lock')}</button>`
+    : `<button class="sa" data-sect-act="${isEditing ? 'cancel' : 'edit'}" data-id="${esc(s.id)}" title="${esc(tr(isEditing ? 'preview.section.title.cancel' : 'preview.section.title.edit'))}">${ico(isEditing ? 'close' : 'edit')}</button>`;
 
   const isConfirming = confirmingDelete.has(s.id);
   const deleteButton = ro
     ? ''
     : isConfirming
-      ? `<button class="sa danger active" data-sect-act="cancel-delete" data-id="${esc(s.id)}" title="Cancel delete">${ico('close')}</button>`
-      : `<button class="sa danger" data-sect-act="delete-section" data-id="${esc(s.id)}" title="Delete section">${ico('trash')}</button>`;
+      ? `<button class="sa danger active" data-sect-act="cancel-delete" data-id="${esc(s.id)}" title="${esc(tr('preview.section.title.cancelDelete'))}">${ico('close')}</button>`
+      : `<button class="sa danger" data-sect-act="delete-section" data-id="${esc(s.id)}" title="${esc(tr('preview.section.title.delete'))}">${ico('trash')}</button>`;
 
   const head = `
     <div class="section-head">
       <span class="section-title">
         <span class="kind-pill">${esc(kind)}</span>
         ${esc(label)}
-        <span class="score ${s.score.color}" title="${esc(s.score.issues.join('\n') || 'All checks pass')}">${s.score.pct}/100</span>
-        ${fails.length ? `<span class="fail-count">${fails.length} issue${fails.length > 1 ? 's' : ''}</span>` : '<span class="pass-tag">✓ clean</span>'}
+        <span class="score ${s.score.color}" title="${esc(s.score.issues.join('\n') || tr('preview.score.allChecksPass'))}">${s.score.pct}/100</span>
+        ${fails.length ? `<span class="fail-count">${esc(tr('preview.section.issueCount', fails.length))}</span>` : `<span class="pass-tag">${esc(tr('preview.section.clean'))}</span>`}
       </span>
       <span class="section-actions">
-        <button class="sa" data-sect-act="toggle-rules" data-id="${esc(s.id)}" title="${rulesCollapsed ? 'Show breakdown' : 'Hide breakdown'}">${ico(rulesCollapsed ? 'chevron-down' : 'chevron-up')}</button>
+        <button class="sa" data-sect-act="toggle-rules" data-id="${esc(s.id)}" title="${esc(tr(rulesCollapsed ? 'preview.section.toggle.showBreakdown' : 'preview.section.toggle.hideBreakdown'))}">${ico(rulesCollapsed ? 'chevron-down' : 'chevron-up')}</button>
         ${editButtons}
         ${deleteButton}
       </span>
     </div>`;
 
   // Score breakdown — ALWAYS visible (failed rules first, then passed in muted style)
-  const renderRule = (r: SectionRule): string => {
+  const renderRule = (r: Contracts.PreviewSectionRule): string => {
     const fix = !r.pass && !ro && FIX_BY_RULE[r.id];
     const fixBtn = fix
-      ? `<button class="fix-btn" data-sect-act="quick-fix" data-id="${esc(s.id)}" data-fix="${esc(fix)}" title="Apply fix">${ico('wand')} Fix</button>`
+      ? `<button class="fix-btn" data-sect-act="quick-fix" data-id="${esc(s.id)}" data-fix="${esc(fix)}" title="${esc(tr('preview.section.fix.title'))}">${ico('wand')} ${esc(tr('preview.section.fix.label'))}</button>`
       : '';
     return `<li class="rule-li ${r.pass ? 'rule-pass' : 'rule-fail'}">
       <span class="mark">${r.pass ? '✓' : '✗'}</span>
@@ -325,7 +275,7 @@ function renderSection(s: Section): string {
         ${
           fails.length
             ? `<div class="rules-group">
-              <div class="rules-group-title">Lost points (${fails.reduce((a, r) => a + r.weight, 0)}pt)</div>
+              <div class="rules-group-title">${esc(tr('preview.rules.lost', fails.reduce((a, r) => a + r.weight, 0)))}</div>
               <ul class="rules">${fails.map(renderRule).join('')}</ul>
             </div>`
             : ''
@@ -333,7 +283,7 @@ function renderSection(s: Section): string {
         ${
           passes.length
             ? `<div class="rules-group muted">
-              <div class="rules-group-title">Earned (${passes.reduce((a, r) => a + r.weight, 0)}pt)</div>
+              <div class="rules-group-title">${esc(tr('preview.rules.earned', passes.reduce((a, r) => a + r.weight, 0)))}</div>
               <ul class="rules">${passes.map(renderRule).join('')}</ul>
             </div>`
             : ''
@@ -345,13 +295,13 @@ function renderSection(s: Section): string {
     bodyHtml = `<div class="delete-confirm">
         <div class="dc-icon">${ico('warning')}</div>
         <div class="dc-text">
-          <div class="dc-title">Delete this section?</div>
-          <div class="dc-desc">The section header and its body will be removed from <code>SKILL.md</code>. This cannot be undone from inside the extension — make sure your editor / VCS has it.</div>
+          <div class="dc-title">${esc(tr('preview.section.deleteConfirm.title'))}</div>
+          <div class="dc-desc">${esc(tr('preview.section.deleteConfirm.desc'))}</div>
           <div class="dc-target">${esc(s.canonical || s.kind)} · ${esc(s.heading || s.id)}</div>
         </div>
         <div class="dc-actions">
-          <button class="tbtn" data-sect-act="cancel-delete" data-id="${esc(s.id)}">Cancel</button>
-          <button class="tbtn danger" data-sect-act="confirm-delete" data-id="${esc(s.id)}">${ico('trash')} Delete</button>
+          <button class="tbtn" data-sect-act="cancel-delete" data-id="${esc(s.id)}">${esc(tr('preview.section.deleteConfirm.cancel'))}</button>
+          <button class="tbtn danger" data-sect-act="confirm-delete" data-id="${esc(s.id)}">${ico('trash')} ${esc(tr('preview.section.deleteConfirm.delete'))}</button>
         </div>
       </div>`;
   } else if (isEditing && s.canonical === 'frontmatter') {
@@ -359,8 +309,8 @@ function renderSection(s: Section): string {
   } else if (isEditing) {
     bodyHtml = `<textarea class="editor" data-id="${esc(s.id)}">${esc(s.raw)}</textarea>
        <div class="edit-row">
-         <button class="tbtn" data-sect-act="cancel" data-id="${esc(s.id)}">Cancel</button>
-         <button class="tbtn primary" data-sect-act="save" data-id="${esc(s.id)}">${ico('save')} Save</button>
+         <button class="tbtn" data-sect-act="cancel" data-id="${esc(s.id)}">${esc(tr('preview.section.editor.cancel'))}</button>
+         <button class="tbtn primary" data-sect-act="save" data-id="${esc(s.id)}">${ico('save')} ${esc(tr('preview.section.editor.save'))}</button>
        </div>`;
   } else {
     bodyHtml = `<div class="rendered">${s.rendered}</div>`;
@@ -379,7 +329,7 @@ function renderSection(s: Section): string {
 function renderAux(): string {
   if (!payload || !payload.aux.length) return '';
   return `<section class="section">
-    <div class="section-head"><span class="section-title"><span class="kind-pill">aux</span> Auxiliary Files</span></div>
+    <div class="section-head"><span class="section-title"><span class="kind-pill">${esc(tr('preview.aux.kind'))}</span> ${esc(tr('preview.aux.title'))}</span></div>
     <div class="section-body">
       <div class="aux-files">
         ${payload.aux
@@ -401,7 +351,7 @@ function injectCodeCopyButtons(): void {
       const btn = document.createElement('button');
       btn.className = 'code-copy';
       btn.innerHTML = ico('copy');
-      btn.title = 'Copy code';
+      btn.title = tr('preview.copyCode');
       btn.onclick = () => {
         const code = pre.querySelector('code')?.textContent || pre.textContent || '';
         navigator.clipboard.writeText(code);
@@ -421,7 +371,7 @@ function bindCounters(): void {
         const counter = ta.parentElement?.querySelector<HTMLElement>('.fm-counter');
         if (!counter) return;
         const len = ta.value.length;
-        counter.textContent = `${len}/200`;
+        counter.textContent = tr('preview.fm.descCounter', len);
         counter.classList.remove('over', 'near');
         if (len > 200) counter.classList.add('over');
         else if (len > 150) counter.classList.add('near');
@@ -434,14 +384,14 @@ function renderToc(): string {
   const colorFor = (n: number): string =>
     n >= 90 ? '#6bd58a' : n >= 75 ? '#b7df4d' : n >= 60 ? '#f4d03f' : n >= 40 ? '#ff9d3a' : '#ff6363';
   return `<aside id="toc">
-    <div class="toc-title">Sections</div>
+    <div class="toc-title">${esc(tr('preview.toc.title'))}</div>
     ${payload.toc
       .map(
-        t => `
-      <a class="toc-item" href="#sect-${esc(t.id)}" data-jump="${esc(t.id)}">
-        <span class="toc-dot" style="background:${colorFor(t.score)}"></span>
-        <span class="toc-label">${esc(t.label)}</span>
-        <span class="toc-score" style="color:${colorFor(t.score)}">${t.score}</span>
+        entry => `
+      <a class="toc-item" href="#sect-${esc(entry.id)}" data-jump="${esc(entry.id)}">
+        <span class="toc-dot" style="background:${colorFor(entry.score)}"></span>
+        <span class="toc-label">${esc(entry.label)}</span>
+        <span class="toc-score" style="color:${colorFor(entry.score)}">${entry.score}</span>
       </a>`
       )
       .join('')}
@@ -451,20 +401,20 @@ function renderToc(): string {
 function renderYamlError(): string {
   const e = payload?.meta.frontmatterError;
   if (!e) return '';
-  const where = e.line ? `line ${e.line}${e.column ? `:${e.column}` : ''}` : '';
+  const where = e.line ? (e.column ? tr('preview.yaml.whereCol', e.line, e.column) : tr('preview.yaml.where', e.line)) : '';
   const openBtn = e.line
-    ? `<button class="tbtn" data-yaml-act="open-at-line" data-line="${e.line}" data-column="${e.column || 1}">${ico('go-to-file')} Open at ${where}</button>`
+    ? `<button class="tbtn" data-yaml-act="open-at-line" data-line="${e.line}" data-column="${e.column || 1}">${ico('go-to-file')} ${esc(tr('preview.yaml.openAt', where))}</button>`
     : '';
   return `<div class="yaml-error">
     <div class="ye-head">
       <span class="ye-icon">${ico('error')}</span>
-      <strong>Invalid frontmatter YAML — tools like Codex / Claude Code will skip this skill.</strong>
+      <strong>${esc(tr('preview.yaml.headTitle'))}</strong>
     </div>
-    <div class="ye-msg">${esc(e.message)} ${where ? `<code>(${where})</code>` : ''}</div>
+    <div class="ye-msg">${esc(e.message)} ${where ? `<code>(${esc(where)})</code>` : ''}</div>
     ${e.snippet ? `<pre class="ye-snippet">${esc(e.snippet)}</pre>` : ''}
-    <div class="ye-hint">Common fix: wrap values containing <code>:</code>, <code>"</code>, or special chars in double quotes.</div>
+    <div class="ye-hint">${esc(tr('preview.yaml.commonFix'))}</div>
     <div class="ye-actions">
-      <button class="tbtn primary" data-yaml-act="autofix">${ico('wand')} Try auto-fix</button>
+      <button class="tbtn primary" data-yaml-act="autofix">${ico('wand')} ${esc(tr('preview.yaml.autofix'))}</button>
       ${openBtn}
     </div>
   </div>`;
@@ -494,14 +444,10 @@ function render(): void {
       const a = btn.dataset.yamlAct!;
       if (a === 'autofix') {
         if (readOnly()) {
-          alert('This file is read-only.');
+          alert(tr('preview.alert.readOnly'));
           return;
         }
-        if (
-          confirm(
-            'Try to auto-fix frontmatter by quoting risky values?\n\nThis will overwrite the file in place — undo via your editor / VCS if needed.'
-          )
-        ) {
+        if (confirm(tr('preview.confirm.autofix'))) {
           vscode.postMessage({ type: 'autofix-frontmatter' });
         }
       } else if (a === 'open-at-line') {
@@ -598,11 +544,11 @@ window.addEventListener('message', ev => {
     if (m.type === 'saved') externalDirty = false;
     render();
   } else if (m.type === 'save-error') {
-    alert(`Save failed: ${m.error}`);
+    alert(tr('preview.alert.saveFailed', m.error));
   } else if (m.type === 'external-change') {
     externalDirty = true;
     render();
-    if (!confirm('SKILL.md was modified outside the preview.\n\nDiscard your changes and reload?')) return;
+    if (!confirm(tr('preview.confirm.externalChange'))) return;
     editing.clear();
     vscode.postMessage({ type: 'refresh' });
   }

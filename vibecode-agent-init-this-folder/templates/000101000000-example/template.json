@@ -1,0 +1,16 @@
+{
+  "title": "Example Agent Template",
+  "content": "Markdown body describing what this agent does.",
+  "prompts": [
+    {
+      "name": "system",
+      "body": "You are a helpful assistant."
+    },
+    {
+      "name": "user",
+      "body": "{{input}}"
+    }
+  ],
+  "upstream_url": "",
+  "ssot": "local"
+}

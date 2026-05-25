@@ -1,17 +1,18 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as state from '../../state';
-import { getDataSources, TABS, SCOPES, TOOLS } from '../../data';
+import { getDataSources, TABS, SCOPES } from '../../data';
 import { dispatch } from '../../actions';
 import { bus } from '../../bus';
 import { log } from '../../logger';
 import { buildHtml } from './view';
-import type { DataSource, FetchContext, ScopeFilter, ToolFilter, MsgFromView, ActionContext } from '../../types';
+import { t, getDict, getLocale, onDidChangeLocale } from '../../i18n';
+import { readConfig, enabledToolIds } from '../../config';
+import type { DataSource, FetchContext, ScopeFilter, MsgFromView, ActionContext } from '../../types';
 
 export class HubProvider implements vscode.WebviewViewProvider {
   private view: vscode.WebviewView | null = null;
   private scope: ScopeFilter = 'all';
-  private tool: ToolFilter = 'all';
   private readonly sources: DataSource[];
 
   constructor(private context: vscode.ExtensionContext) {
@@ -21,7 +22,12 @@ export class HubProvider implements vscode.WebviewViewProvider {
         if (this.scope === 'this') this.refresh();
         this.sendActiveFolder();
       }),
-      bus.on(() => this.refresh())
+      bus.on(() => this.refresh()),
+      onDidChangeLocale(() => {
+        if (!this.view) return;
+        this.view.webview.html = buildHtml(this.view.webview, this.context.extensionPath);
+        this.sendAll();
+      })
     );
   }
 
@@ -52,7 +58,7 @@ export class HubProvider implements vscode.WebviewViewProvider {
     const editor = vscode.window.activeTextEditor;
     return {
       scope: this.scope,
-      tool: this.tool,
+      enabledTools: enabledToolIds(readConfig()),
       activeFolderDir: editor ? path.dirname(editor.document.uri.fsPath) : null,
       workspaceDir: wsFolder ? wsFolder.uri.fsPath : null,
       favorites: new Set(state.listFavorites()),
@@ -67,7 +73,19 @@ export class HubProvider implements vscode.WebviewViewProvider {
   }
 
   private sendAll(): void {
-    this.send({ type: 'init', tabs: TABS, scopes: SCOPES, tools: TOOLS, scope: this.scope, tool: this.tool });
+    const tabs = TABS.map(tab => ({
+      ...tab,
+      label: t(`hub.tabs.${tab.id}.label`),
+      desc: t(`hub.tabs.${tab.id}.desc`)
+    }));
+    const scopes = SCOPES.map(s => ({ ...s, label: t(`hub.scopes.${s.id}`) }));
+    this.send({
+      type: 'init',
+      tabs,
+      scopes,
+      scope: this.scope,
+      i18n: { locale: getLocale(), dict: getDict() }
+    });
     this.sendActiveFolder();
     const ctx = this.buildCtx();
     for (const src of this.sources) {
@@ -94,15 +112,11 @@ export class HubProvider implements vscode.WebviewViewProvider {
         this.scope = msg.scope;
         this.refresh();
         return;
-      case 'setTool':
-        this.tool = msg.tool;
-        this.refresh();
-        return;
       case 'refresh':
         this.refresh();
         return;
       case 'createSkill':
-        await vscode.commands.executeCommand('claudeCodexSkills.createSkill');
+        await vscode.commands.executeCommand('vibecodeSkills.createSkill');
         this.refresh();
         return;
       case 'action': {

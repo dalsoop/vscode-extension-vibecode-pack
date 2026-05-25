@@ -8,4 +8,4 @@ export function getDataSources(): DataSource[] {
   return [new SkillSource(), new RootMdSource(), new AgentMdSource(), new MemorySource(), new BrowseSource()];
 }
 
-export { TABS, SCOPES, TOOLS, TOOL_FILE_MATCHERS } from './constants';
+export { TABS, SCOPES } from './constants';

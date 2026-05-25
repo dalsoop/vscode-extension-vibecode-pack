@@ -1,38 +1,47 @@
-// ============ Shared types across modules ============
+// Backward-compat aliases over the ambient `Contracts.*` types declared in
+// src/contracts/*.d.ts (those are the single source of truth shared with
+// every webview client). Extension code keeps its existing
+// `import { Item } from './types'` style — no churn required.
+//
+// Extension-only types (Skill, SkillRoot, Source, …) stay defined here
+// because no webview client needs them.
 
-export type ToolId =
-  | 'claude'
-  | 'codex'
-  | 'copilot'
-  | 'cursor'
-  | 'gemini'
-  | 'windsurf'
-  | 'cline'
-  | 'agents'
-  | 'extension'
-  | 'custom';
+// ─── Re-exports from Contracts ─────────────────────────────────────────
 
-export type ScopeId = 'global' | 'workspace' | 'extension' | 'this folder';
-export type ScopeFilter = 'all' | 'global' | 'workspace' | 'this';
-export type ToolFilter = 'all' | ToolId;
-export type TabId = 'skill' | 'rootmd' | 'agent' | 'memory' | 'browse';
-export type ActionName = 'open' | 'preview' | 'finder' | 'fav' | 'sync' | 'github' | 'create';
+export type ToolId = Contracts.ToolId;
+export type ScopeId = Contracts.ScopeId;
+export type ScopeFilter = Contracts.ScopeFilter;
+export type TabId = Contracts.TabId;
+export type ActionName = Contracts.ActionName;
+export type RootScope = Contracts.RootScope;
+export type RootLayout = Contracts.RootLayout;
+export type LocaleSetting = Contracts.LocaleSetting;
+export type InstructionFormat = Contracts.InstructionFormat;
 
-// ============ Skill root definitions ============
+export type ToolDef = Contracts.ToolDef;
+export type MirrorGroup = Contracts.MirrorGroup;
+export type PresetInfo = Contracts.PresetInfo;
+export type CcSkillsConfig = Contracts.CcSkillsConfig;
 
-export type RootScope = 'global' | 'workspace';
-export type RootLayout = 'folder-tree' | 'rules-file' | 'single-md';
+export type ScoreAxes = Contracts.ScoreAxes;
+export type Tab = Contracts.Tab;
+export type Segment = Contracts.Segment;
+export type ItemPayload = Contracts.ItemPayload;
+export type Group = Contracts.Group;
+
+export type MsgFromExt = Contracts.HubMsgFromExt;
+export type MsgFromView = Contracts.HubMsgFromView;
+
+// ─── Extension-only domain types (no webview client touches these) ─────
 
 export interface SkillRoot {
   tool: ToolId;
   label: string;
   icon: string;
-  scopes: RootScope[]; // where this root applies
-  segments: string[]; // joined under home (global) or workspace
+  scopes: RootScope[];
+  segments: string[];
   layout: RootLayout;
 }
-
-// ============ Domain ============
 
 export interface Source {
   id: string;
@@ -102,14 +111,7 @@ export interface MemoryProject {
   count: number;
 }
 
-// ============ Scoring ============
-
-export interface ScoreAxes {
-  clarity: number;
-  completeness: number;
-  examples: number;
-  focus: number;
-}
+// ─── Scoring (extension-only) ──────────────────────────────────────────
 
 export interface ScoreResult {
   total: number;
@@ -131,11 +133,11 @@ export interface ScoreContext {
   dupMap?: Map<string, number>;
 }
 
-// ============ Data sources (per-tab) ============
+// ─── Data sources (extension-only) ─────────────────────────────────────
 
 export interface FetchContext {
   scope: ScopeFilter;
-  tool: ToolFilter;
+  enabledTools: ReadonlySet<string>;
   activeFolderDir: string | null;
   workspaceDir: string | null;
   favorites: ReadonlySet<string>;
@@ -149,53 +151,7 @@ export interface DataSource {
   fetch(ctx: FetchContext): Group[] | Promise<Group[]>;
 }
 
-// ============ Webview message protocol ============
-
-export interface Tab {
-  id: TabId;
-  label: string;
-  desc: string;
-}
-export interface Segment {
-  id: string;
-  label: string;
-}
-
-export interface ItemPayload {
-  id: string;
-  title: string;
-  subtitle?: string;
-  meta?: string;
-  badge?: string;
-  path?: string;
-  mdPath?: string | null;
-  exists?: boolean;
-  hasBlock?: boolean;
-  tool?: string;
-  kind?: string;
-  readOnly?: boolean;
-  score?: { pct: number; grade: string; color: string; axes?: ScoreAxes; issues: string[] };
-  actions?: ActionName[];
-}
-
-export interface Group {
-  title: string;
-  items: ItemPayload[];
-}
-
-export type MsgFromExt =
-  | { type: 'init'; tabs: Tab[]; scopes: Segment[]; tools: Segment[]; scope: ScopeFilter; tool: ToolFilter }
-  | { type: 'activeFolder'; dir: string | null; label: string | null }
-  | { type: 'data'; tab: TabId; items: Group[] };
-
-export type MsgFromView =
-  | { type: 'setScope'; scope: ScopeFilter }
-  | { type: 'setTool'; tool: ToolFilter }
-  | { type: 'refresh' }
-  | { type: 'createSkill' }
-  | { type: 'action'; action: ActionName; payload: ItemPayload };
-
-// ============ Actions ============
+// ─── Actions (extension-only) ──────────────────────────────────────────
 
 export interface ActionContext {
   refresh(): void;
@@ -203,7 +159,7 @@ export interface ActionContext {
 
 export type ActionHandler = (payload: ItemPayload, ctx: ActionContext) => Promise<void>;
 
-// ============ Commands ============
+// ─── Commands (extension-only) ─────────────────────────────────────────
 
 export interface SkillCommandArg {
   dir: string;
@@ -229,13 +185,3 @@ export interface CommandDef {
   handler: (...args: any[]) => any;
   needs?: 'workspace' | 'editor';
 }
-
-// ============ Mirror Groups (parallel file sync) ============
-
-export interface MirrorGroup {
-  id: string;
-  label: string;
-  paths: string[]; // absolute or ~/-prefixed
-  alwaysMirror?: boolean; // skip Save confirm; auto-write to peers
-}
-

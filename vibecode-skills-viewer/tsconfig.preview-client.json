@@ -10,5 +10,5 @@
     "esModuleInterop": false,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/preview/client/**/*.ts"]
+  "include": ["src/contracts/**/*.d.ts", "src/preview/client/**/*.ts"]
 }

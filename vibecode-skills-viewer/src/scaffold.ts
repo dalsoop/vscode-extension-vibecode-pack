@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as state from './state';
+import { t } from './i18n';
 
 export function sanitizeName(s: string): string {
   return s
@@ -82,24 +83,27 @@ export async function runWizard(): Promise<string | undefined> {
   if (!scope) return;
   const targetDir = resolveTargetDir(scope.target);
   if (!targetDir) {
-    vscode.window.showErrorMessage('No workspace open for that target.');
+    vscode.window.showErrorMessage(t('scaffold.error.noWorkspace'));
     return;
   }
-  const rawName = await vscode.window.showInputBox({ prompt: 'Skill name', placeHolder: 'my-cool-skill' });
+  const rawName = await vscode.window.showInputBox({
+    prompt: t('scaffold.prompt.name'),
+    placeHolder: t('scaffold.placeholder.name')
+  });
   if (!rawName) return;
   const name = sanitizeName(rawName);
   if (!name) return;
-  const description = await vscode.window.showInputBox({ prompt: 'Short description (1 sentence)' });
+  const description = await vscode.window.showInputBox({ prompt: t('scaffold.prompt.description') });
   if (description === undefined) return;
   const whenToUse = await vscode.window.showInputBox({
-    prompt: '"When to use" — situational trigger',
-    value: 'When the user requests ...'
+    prompt: t('scaffold.prompt.whenToUse'),
+    value: t('scaffold.whenToUse.value')
   });
   if (whenToUse === undefined) return;
 
   const dir = path.join(targetDir, name);
   if (fs.existsSync(dir)) {
-    vscode.window.showErrorMessage(`Skill already exists: ${dir}`);
+    vscode.window.showErrorMessage(t('scaffold.error.alreadyExists', dir));
     return;
   }
   fs.mkdirSync(dir, { recursive: true });
@@ -109,6 +113,6 @@ export async function runWizard(): Promise<string | undefined> {
   await state.markInstalled(dir);
   const doc = await vscode.workspace.openTextDocument(mdPath);
   await vscode.window.showTextDocument(doc);
-  vscode.window.showInformationMessage(`Skill "${name}" created.`);
+  vscode.window.showInformationMessage(t('scaffold.success.created', name));
   return dir;
 }

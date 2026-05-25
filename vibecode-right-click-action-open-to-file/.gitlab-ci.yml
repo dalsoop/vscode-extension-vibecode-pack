@@ -1,0 +1,60 @@
+stages:
+  - install
+  - lint
+  - build
+
+default:
+  image: node:20-alpine
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+      - .npm/
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+
+install:
+  stage: install
+  script:
+    - node --version && npm --version
+    - npm ci --cache .npm --prefer-offline
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+format-check:
+  stage: lint
+  script:
+    - npm run format:check
+  allow_failure: true
+
+eslint:
+  stage: lint
+  script:
+    - npm run lint
+  allow_failure: false
+
+typecheck:
+  stage: lint
+  script:
+    - npm run typecheck
+  allow_failure: false
+
+sync-check:
+  stage: lint
+  script:
+    - npm run sync:check
+  allow_failure: false
+
+build:
+  stage: build
+  script:
+    - npm run build
+    - npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license --out vibecode-right-click-action-open-to-file-${CI_COMMIT_SHORT_SHA}.vsix
+  artifacts:
+    paths:
+      - "*.vsix"
+    expire_in: 30 days
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"

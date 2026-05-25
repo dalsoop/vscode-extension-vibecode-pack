@@ -8,6 +8,7 @@ import * as instructions from './instructions';
 import * as mem from './memory';
 import { readConfig } from './config';
 import * as settingsPanel from './settings/controller';
+import { t } from './i18n';
 import type { CommandDef, SkillCommandArg, FileCommandArg, PreviewArg } from './types';
 
 interface AnyProvider {
@@ -26,41 +27,41 @@ function build(providers: Providers): CommandDef[] {
   const refreshAll = () => Object.values(providers).forEach(p => p?.refresh?.());
 
   return [
-    { id: 'claudeCodexSkills.refresh', handler: refreshAll },
+    { id: 'vibecodeSkills.refresh', handler: refreshAll },
 
     {
-      id: 'claudeCodexSkills.previewSkill',
+      id: 'vibecodeSkills.previewSkill',
       handler: (arg?: PreviewArg) => {
         if (arg) preview.open(arg);
       }
     },
 
     {
-      id: 'claudeCodexSkills.openSkillFile',
+      id: 'vibecodeSkills.openSkillFile',
       handler: async (arg?: SkillCommandArg) => {
         if (arg?.mdPath) await vscode.window.showTextDocument(vscode.Uri.file(arg.mdPath));
       }
     },
 
     {
-      id: 'claudeCodexSkills.revealInFinder',
+      id: 'vibecodeSkills.revealInFinder',
       handler: (arg?: SkillCommandArg) => {
         if (arg?.dir) vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(arg.dir));
       }
     },
 
     {
-      id: 'claudeCodexSkills.copyPath',
+      id: 'vibecodeSkills.copyPath',
       handler: async (arg?: SkillCommandArg) => {
         if (arg?.dir) {
           await vscode.env.clipboard.writeText(arg.dir);
-          vscode.window.setStatusBarMessage(`Copied: ${arg.dir}`, 2000);
+          vscode.window.setStatusBarMessage(t('commands.copy.copied', arg.dir), 2000);
         }
       }
     },
 
     {
-      id: 'claudeCodexSkills.openInTerminal',
+      id: 'vibecodeSkills.openInTerminal',
       handler: (arg?: SkillCommandArg) => {
         if (!arg?.dir) return;
         const term = vscode.window.createTerminal({ name: path.basename(arg.dir), cwd: arg.dir });
@@ -69,17 +70,20 @@ function build(providers: Providers): CommandDef[] {
     },
 
     {
-      id: 'claudeCodexSkills.toggleFavorite',
+      id: 'vibecodeSkills.toggleFavorite',
       handler: async (arg?: SkillCommandArg) => {
         if (!arg?.dir) return;
         const on = await state.toggleFavorite(arg.dir);
-        vscode.window.setStatusBarMessage(on ? '★ Added to favorites' : 'Removed from favorites', 2000);
+        vscode.window.setStatusBarMessage(
+          on ? t('commands.favorites.added') : t('commands.favorites.removed'),
+          2000
+        );
         refreshAll();
       }
     },
 
     {
-      id: 'claudeCodexSkills.createSkill',
+      id: 'vibecodeSkills.createSkill',
       handler: async () => {
         const dir = await scaffold.runWizard();
         if (dir) refreshAll();
@@ -87,20 +91,21 @@ function build(providers: Providers): CommandDef[] {
     },
 
     {
-      id: 'claudeCodexSkills.deleteSkill',
+      id: 'vibecodeSkills.deleteSkill',
       needs: 'workspace',
       handler: async (arg?: SkillCommandArg) => {
         if (!arg?.dir) return;
         if (arg.source?.readOnly) {
-          vscode.window.showWarningMessage('Cannot delete read-only skill.');
+          vscode.window.showWarningMessage(t('commands.delete.readOnly'));
           return;
         }
+        const confirmLabel = t('commands.delete.confirmAction');
         const ans = await vscode.window.showWarningMessage(
-          `Delete "${path.basename(arg.dir)}"?\n${arg.dir}`,
+          t('commands.delete.confirm', path.basename(arg.dir), arg.dir),
           { modal: true },
-          'Delete'
+          confirmLabel
         );
-        if (ans !== 'Delete') return;
+        if (ans !== confirmLabel) return;
         fs.rmSync(arg.dir, { recursive: true, force: true });
         await state.removeInstallTime(arg.dir);
         refreshAll();
@@ -108,7 +113,7 @@ function build(providers: Providers): CommandDef[] {
     },
 
     {
-      id: 'claudeCodexSkills.syncInstructions',
+      id: 'vibecodeSkills.syncInstructions',
       needs: 'workspace',
       handler: async () => {
         const targets = Object.entries(instructions.TARGETS).map(([k, v]) => ({
@@ -118,7 +123,7 @@ function build(providers: Providers): CommandDef[] {
         }));
         const picked = await vscode.window.showQuickPick(targets, {
           canPickMany: true,
-          placeHolder: 'Pick targets to sync'
+          placeHolder: t('commands.quickPick.pickSyncTargets')
         });
         if (!picked) return;
         const written: string[] = [];
@@ -127,35 +132,35 @@ function build(providers: Providers): CommandDef[] {
             written.push(await instructions.syncTarget(p.key));
           } catch {}
         }
-        vscode.window.showInformationMessage(`Synced ${written.length} file(s)`);
+        vscode.window.showInformationMessage(t('commands.sync.done', written.length));
         refreshAll();
       }
     },
 
     {
-      id: 'claudeCodexSkills.syncToThisFile',
+      id: 'vibecodeSkills.syncToThisFile',
       handler: async (arg?: FileCommandArg) => {
         if (!arg?.abs) return;
         const block = instructions.renderBlock(readConfig().instructionFormat);
         fs.mkdirSync(path.dirname(arg.abs), { recursive: true });
         const cur = fs.existsSync(arg.abs) ? fs.readFileSync(arg.abs, 'utf8') : '';
         fs.writeFileSync(arg.abs, instructions.injectBlock(cur, block), 'utf8');
-        vscode.window.setStatusBarMessage(`Synced → ${path.basename(arg.abs)}`, 2500);
+        vscode.window.setStatusBarMessage(t('commands.sync.toFile', path.basename(arg.abs)), 2500);
         refreshAll();
       }
     },
 
     {
-      id: 'claudeCodexSkills.openMemoryIndex',
+      id: 'vibecodeSkills.openMemoryIndex',
       handler: async () => {
         const dir = mem.currentWorkspaceMemoryDir();
         if (!dir) {
-          vscode.window.showInformationMessage('No workspace open.');
+          vscode.window.showInformationMessage(t('commands.memory.noWorkspace'));
           return;
         }
         const indexPath = path.join(dir, 'MEMORY.md');
         if (!fs.existsSync(indexPath)) {
-          vscode.window.showInformationMessage(`No memory yet.\n${dir}`);
+          vscode.window.showInformationMessage(t('commands.memory.noMemory', dir));
           return;
         }
         await vscode.window.showTextDocument(vscode.Uri.file(indexPath));
@@ -163,13 +168,15 @@ function build(providers: Providers): CommandDef[] {
     },
 
     {
-      id: 'claudeCodexSkills.reportBug',
+      id: 'vibecodeSkills.reportBug',
       handler: () =>
-        vscode.env.openExternal(vscode.Uri.parse('https://github.com/dalsoop/claude-codex-skills-viewer/issues/new'))
+        vscode.env.openExternal(
+          vscode.Uri.parse('https://gitlab.internal.kr/workspace/apps/vscode-extension-mono/-/issues/new')
+        )
     },
 
     {
-      id: 'claudeCodexSkills.openSettings',
+      id: 'vibecodeSkills.openSettings',
       handler: () => {
         if (extContext) settingsPanel.open(extContext);
       }
@@ -183,11 +190,11 @@ function gate(def: CommandDef): CommandDef {
     ...def,
     handler: (...args: any[]) => {
       if (def.needs === 'workspace' && !vscode.workspace.workspaceFolders?.length) {
-        vscode.window.showWarningMessage(`Command "${def.id}" requires an open workspace.`);
+        vscode.window.showWarningMessage(t('commands.gate.needsWorkspace', def.id));
         return;
       }
       if (def.needs === 'editor' && !vscode.window.activeTextEditor) {
-        vscode.window.showWarningMessage(`Command "${def.id}" requires an active editor.`);
+        vscode.window.showWarningMessage(t('commands.gate.needsEditor', def.id));
         return;
       }
       return def.handler(...args);
@@ -202,7 +209,7 @@ export function register(context: vscode.ExtensionContext, providers: Providers)
   }
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(e => {
-      if (e.affectsConfiguration('claudeCodexSkills')) {
+      if (e.affectsConfiguration('vibecodeSkills')) {
         Object.values(providers).forEach(p => p?.refresh?.());
       }
     })

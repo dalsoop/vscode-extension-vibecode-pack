@@ -12,6 +12,7 @@ import { readConfig } from '../config';
 import { findMirrors, mirrorWrite, detectDrift } from '../mirrors';
 import { listPerSkillFiles } from '../instructionsDetector';
 import { log } from '../logger';
+import { t, getDict, getLocale, onDidChangeLocale } from '../i18n';
 import { buildHtml } from './view';
 
 export interface PreviewPayload {
@@ -57,6 +58,7 @@ interface PayloadDto {
   sections: SectionDto[];
   aux: Array<{ name: string; abs: string; size: number; age: string }>;
   toc: Array<{ id: string; label: string; level: number; score: number }>;
+  i18n: { locale: string; dict: Record<string, string> };
 }
 
 function renderMd(input: string): string {
@@ -190,10 +192,11 @@ function buildPayload(p: PreviewPayload): PayloadDto | null {
     aux,
     toc: sections.map(s => ({
       id: s.id,
-      label: s.heading || (s.canonical === 'frontmatter' ? 'Frontmatter' : s.id),
+      label: s.heading || (s.canonical === 'frontmatter' ? t('preview.section.frontmatter') : s.id),
       level: s.level ?? (s.canonical === 'frontmatter' ? 0 : 2),
       score: s.score.pct
-    }))
+    })),
+    i18n: { locale: getLocale(), dict: getDict() }
   };
 }
 
@@ -229,7 +232,7 @@ function setupWatcher(s: PanelState): void {
 }
 
 // ── Messages ────────────────────────────────────────────────────────────
-async function handleMessage(msg: any, s: PanelState): Promise<void> {
+async function handleMessage(msg: Contracts.PreviewMsgFromView | undefined, s: PanelState): Promise<void> {
   if (!msg) return;
   const mdPath = s.payload.mdPath;
   if (!mdPath) return;
@@ -249,7 +252,7 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
       return;
 
     case 'toggle-score-breakdown': {
-      const cfg = vscode.workspace.getConfiguration('claudeCodexSkills');
+      const cfg = vscode.workspace.getConfiguration('vibecodeSkills');
       await cfg.update('showScoreBreakdown', !!msg.value, vscode.ConfigurationTarget.Global);
       sendPayload(s);
       return;
@@ -265,11 +268,11 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
       return;
     case 'copy-md':
       await vscode.env.clipboard.writeText(fs.readFileSync(mdPath, 'utf8'));
-      vscode.window.setStatusBarMessage('Copied SKILL.md', 2000);
+      vscode.window.setStatusBarMessage(t('preview.copy.skillMd'), 2000);
       return;
     case 'copy-path':
       await vscode.env.clipboard.writeText(s.payload.dir);
-      vscode.window.setStatusBarMessage(`Copied: ${s.payload.dir}`, 2000);
+      vscode.window.setStatusBarMessage(t('preview.copy.dir', s.payload.dir), 2000);
       return;
     case 'finder':
       vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(s.payload.dir));
@@ -289,7 +292,7 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
       const result = validateCandidate(original, msg.sectionId, msg.content);
       if (!result.ok || !result.next) {
         send(s.panel, 'save-error', { error: result.error || 'Validation failed' });
-        vscode.window.showErrorMessage(`Save aborted: ${result.error}`);
+        vscode.window.showErrorMessage(t('preview.save.aborted', result.error || ''));
         return;
       }
       fs.writeFileSync(mdPath, result.next, 'utf8');
@@ -302,16 +305,16 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
           const msgs: string[] = [];
           if (wr.written.length) msgs.push(`mirrored to ${wr.written.length}`);
           if (wr.skipped.length) msgs.push(`${wr.skipped.length} skipped`);
-          vscode.window.setStatusBarMessage(`Saved + ${msgs.join(', ')}`, 3500);
+          vscode.window.setStatusBarMessage(t('preview.save.withMirrors', msgs.join(', ')), 3500);
           if (wr.skipped.length) {
             const detail = wr.skipped.map(x => `${x.path}: ${x.reason}`).join('\n');
-            vscode.window.showWarningMessage(`Some mirror targets skipped:\n${detail}`);
+            vscode.window.showWarningMessage(t('preview.save.someMirrorsSkipped', detail));
           }
         } else {
-          vscode.window.setStatusBarMessage(`Saved section "${msg.sectionId}"`, 2500);
+          vscode.window.setStatusBarMessage(t('preview.save.section', msg.sectionId), 2500);
         }
       } else {
-        vscode.window.setStatusBarMessage(`Saved section "${msg.sectionId}"`, 2500);
+        vscode.window.setStatusBarMessage(t('preview.save.section', msg.sectionId), 2500);
       }
       s.editingSections.delete(msg.sectionId);
       sendPayload(s, 'saved');
@@ -340,7 +343,7 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
           error: `Auto-fix didn't apply: ${result.error}. Try opening the file manually.`
         });
       } else {
-        vscode.window.setStatusBarMessage('Frontmatter auto-fixed', 2500);
+        vscode.window.setStatusBarMessage(t('preview.frontmatter.autoFixed'), 2500);
         sendPayload(s, 'saved');
       }
       return;
@@ -360,7 +363,7 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
       // msg.peer = absolute peer path
       const peerPath = String(msg.peer || '');
       if (!peerPath || !fs.existsSync(peerPath)) {
-        vscode.window.showWarningMessage(`Mirror peer not found: ${peerPath}`);
+        vscode.window.showWarningMessage(t('preview.mirror.peerNotFound', peerPath));
         return;
       }
       await vscode.commands.executeCommand(
@@ -379,7 +382,7 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
       }
       const targets = findMirrors(mdPath).flatMap(m => m.targets);
       if (!targets.length) {
-        vscode.window.showInformationMessage('No mirror peers configured for this file.');
+        vscode.window.showInformationMessage(t('preview.mirror.noPeers'));
         return;
       }
       const content = fs.readFileSync(mdPath, 'utf8');
@@ -387,10 +390,10 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
       const parts: string[] = [];
       if (wr.written.length) parts.push(`synced to ${wr.written.length}`);
       if (wr.skipped.length) parts.push(`${wr.skipped.length} skipped`);
-      vscode.window.setStatusBarMessage(parts.join(', ') || 'Sync done', 3000);
+      vscode.window.setStatusBarMessage(parts.join(', ') || t('preview.sync.done'), 3000);
       if (wr.skipped.length) {
         vscode.window.showWarningMessage(
-          `Some mirror targets skipped:\n${wr.skipped.map(x => `${x.path}: ${x.reason}`).join('\n')}`
+          t('preview.sync.warnings', wr.skipped.map(x => `${x.path}: ${x.reason}`).join('\n'))
         );
       }
       sendPayload(s, 'saved');
@@ -413,7 +416,7 @@ async function handleMessage(msg: any, s: PanelState): Promise<void> {
         const next = removeSection(original, msg.sectionId);
         fs.writeFileSync(mdPath, next, 'utf8');
         s.editingSections.delete(msg.sectionId);
-        vscode.window.setStatusBarMessage(`Deleted section "${msg.sectionId}"`, 2500);
+        vscode.window.setStatusBarMessage(t('preview.delete.section', msg.sectionId), 2500);
         sendPayload(s, 'saved');
       } catch (e: any) {
         send(s.panel, 'save-error', { error: e.message });
@@ -469,7 +472,7 @@ export function open(payload: PreviewPayload, extensionPath: string): void {
     return;
   }
   const panel = vscode.window.createWebviewPanel(
-    'claudeCodexSkillsPreview',
+    'vibecodeSkillsPreview',
     payload.name,
     { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
     {
@@ -486,7 +489,11 @@ export function open(payload: PreviewPayload, extensionPath: string): void {
   setupWatcher(state);
 
   state.configListener = vscode.workspace.onDidChangeConfiguration(e => {
-    if (e.affectsConfiguration('claudeCodexSkills.showScoreBreakdown')) sendPayload(state);
+    if (e.affectsConfiguration('vibecodeSkills.showScoreBreakdown')) sendPayload(state);
+  });
+  const localeSub = onDidChangeLocale(() => {
+    panel.webview.html = buildHtml(panel.webview, extensionPath);
+    sendPayload(state);
   });
 
   panel.webview.onDidReceiveMessage(msg => {
@@ -495,6 +502,7 @@ export function open(payload: PreviewPayload, extensionPath: string): void {
   panel.onDidDispose(() => {
     if (state.watcher) state.watcher.close();
     if (state.configListener) state.configListener.dispose();
+    localeSub.dispose();
     if (active === state) active = null;
   });
 }

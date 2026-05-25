@@ -6,7 +6,7 @@ import { describe, it, beforeEach, afterEach } from 'mocha';
 import * as vscode from 'vscode';
 import { findMirrors, allMirrorTargets, mirrorWrite, detectDrift, expandPreset, PRESETS } from '../../src/mirrors';
 
-const TMP_ROOT = path.join(os.tmpdir(), `ccskills-mirror-tests-${process.pid}`);
+const TMP_ROOT = path.join(os.tmpdir(), `vibeskills-mirror-tests-${process.pid}`);
 
 function file(rel: string, content = ''): string {
   const abs = path.join(TMP_ROOT, rel);

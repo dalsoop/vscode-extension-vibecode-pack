@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode .env Import-Only",
+  "ext.description": "Open .env files in a paste-only secure view — keys are visible, values are never displayed.",
+  "editor.displayName": "Vibecode .env (Import Only)"
+}

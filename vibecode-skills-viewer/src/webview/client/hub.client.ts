@@ -2,61 +2,18 @@
 // dist/webview/client/hub.js and injected via <script src="..."> by HubProvider.
 // No imports — runs as a plain script in a sandboxed browser context.
 //
-// Types here MUST stay in sync with src/types.ts MsgFromExt / MsgFromView /
-// ItemPayload / Group / Tab / Segment. Keep duplicated locally so this file
-// is fully standalone for separate compilation.
-
-interface Tab {
-  id: string;
-  label: string;
-  desc: string;
-}
-interface Segment {
-  id: string;
-  label: string;
-}
-interface ScoreInfo {
-  pct: number;
-  grade: string;
-  color: string;
-  issues?: string[];
-}
-interface Item {
-  id: string;
-  title: string;
-  subtitle?: string;
-  meta?: string;
-  badge?: string;
-  path?: string;
-  mdPath?: string | null;
-  tool?: string;
-  score?: ScoreInfo;
-  actions?: string[];
-}
-interface Group {
-  title: string;
-  items: Item[];
-}
-interface ActiveFolder {
-  dir: string | null;
-  label: string | null;
-}
-
-type MsgFromExt =
-  | { type: 'init'; tabs: Tab[]; scopes: Segment[]; tools: Segment[]; scope: string; tool: string }
-  | { type: 'activeFolder'; dir: string | null; label: string | null }
-  | { type: 'data'; tab: string; items: Group[] };
+// All shared types come from the ambient `Contracts.*` namespace declared in
+// src/contracts/*.d.ts (single source of truth shared with the extension).
 
 interface ViewState {
-  tabs: Tab[];
-  scopes: Segment[];
-  tools: Segment[];
-  scope: string;
-  tool: string;
-  active: string;
-  data: Record<string, Group[]>;
+  tabs: Contracts.Tab[];
+  scopes: Contracts.Segment[];
+  scope: Contracts.ScopeFilter;
+  active: Contracts.TabId;
+  data: Record<string, Contracts.Group[]>;
   filter: string;
-  activeFolder: ActiveFolder | null;
+  activeFolder: Contracts.ActiveFolder | null;
+  dict: Record<string, string>;
 }
 
 declare function acquireVsCodeApi(): { postMessage(msg: any): void };
@@ -65,14 +22,22 @@ const vscode = acquireVsCodeApi();
 const state: ViewState = {
   tabs: [],
   scopes: [],
-  tools: [],
   scope: 'all',
-  tool: 'all',
   active: 'skill',
   data: {},
   filter: '',
-  activeFolder: null
+  activeFolder: null,
+  dict: {}
 };
+
+function t(key: string, ...args: Array<string | number>): string {
+  const raw = state.dict[key] ?? key;
+  if (!args.length) return raw;
+  return raw.replace(/\{(\d+)\}/g, (_m, i) => {
+    const v = args[Number(i)];
+    return v === undefined ? '' : String(v);
+  });
+}
 
 const $ = (id: string): HTMLElement => document.getElementById(id) as HTMLElement;
 const esc = (s: any): string =>
@@ -91,30 +56,19 @@ const CODICONS: Record<string, string> = {
 
 function renderTabs(): void {
   $('tabs').innerHTML = state.tabs
-    .map(t => `<button class="tab ${t.id === state.active ? 'active' : ''}" data-tab="${t.id}">${t.label}</button>`)
+    .map(
+      tab => `<button class="tab ${tab.id === state.active ? 'active' : ''}" data-tab="${tab.id}">${tab.label}</button>`
+    )
     .join('');
   document.querySelectorAll<HTMLButtonElement>('.tab').forEach(b => {
     b.onclick = () => {
-      state.active = b.dataset.tab!;
+      state.active = b.dataset.tab as Contracts.TabId;
       renderTabs();
       renderContent();
     };
   });
-  const t = state.tabs.find(x => x.id === state.active);
-  $('desc').textContent = t ? t.desc : '';
-}
-
-function renderTools(): void {
-  $('tools').innerHTML = state.tools
-    .map(t => `<button class="seg ${t.id === state.tool ? 'active' : ''}" data-tool="${t.id}">${t.label}</button>`)
-    .join('');
-  document.querySelectorAll<HTMLButtonElement>('#tools .seg').forEach(b => {
-    b.onclick = () => {
-      state.tool = b.dataset.tool!;
-      renderTools();
-      vscode.postMessage({ type: 'setTool', tool: state.tool });
-    };
-  });
+  const active = state.tabs.find(x => x.id === state.active);
+  $('desc').textContent = active ? active.desc : '';
 }
 
 function renderScopes(): void {
@@ -128,20 +82,20 @@ function renderScopes(): void {
     .join('');
   const hint =
     state.scope === 'this' && state.activeFolder
-      ? `<span class="scope-hint" title="${esc(state.activeFolder.dir || '')}"><span class="codicon codicon-folder"></span> ${esc(state.activeFolder.label || '(no folder)')}</span>`
+      ? `<span class="scope-hint" title="${esc(state.activeFolder.dir || '')}"><span class="codicon codicon-folder"></span> ${esc(state.activeFolder.label || t('hub.activeFolder.none'))}</span>`
       : '';
   $('scopes').innerHTML = html + hint;
   document.querySelectorAll<HTMLButtonElement>('#scopes .seg').forEach(b => {
     b.onclick = () => {
       if (b.classList.contains('disabled')) return;
-      state.scope = b.dataset.scope!;
+      state.scope = b.dataset.scope as Contracts.ScopeFilter;
       renderScopes();
       vscode.postMessage({ type: 'setScope', scope: state.scope });
     };
   });
 }
 
-function findItem(id: string): Item | null {
+function findItem(id: string): Contracts.ItemPayload | null {
   for (const g of state.data[state.active] || []) {
     const it = g.items.find(x => x.id === id);
     if (it) return it;
@@ -149,11 +103,12 @@ function findItem(id: string): Item | null {
   return null;
 }
 
-function itemHtml(it: Item): string {
+function itemHtml(it: Contracts.ItemPayload): string {
   const acts = (it.actions || [])
     .map(a => {
       const ic = CODICONS[a] || 'symbol-method';
-      return `<button class="act" data-a="${a}" data-id="${esc(it.id)}" title="${a}"><span class="codicon codicon-${ic}"></span></button>`;
+      const title = t(`hub.item.actionTitle.${a}`);
+      return `<button class="act" data-a="${a}" data-id="${esc(it.id)}" title="${esc(title)}"><span class="codicon codicon-${ic}"></span></button>`;
     })
     .join('');
   const badge =
@@ -163,7 +118,7 @@ function itemHtml(it: Item): string {
         ? '<span class="badge star">★</span>'
         : '';
   const score = it.score
-    ? `<span class="score ${it.score.color}" title="${esc((it.score.issues || []).join('\n') || 'No issues')}">${it.score.pct}</span>`
+    ? `<span class="score ${it.score.color}" title="${esc((it.score.issues || []).join('\n') || t('hub.score.noIssues'))}">${it.score.pct}</span>`
     : '';
   return `<div class="item" data-id="${esc(it.id)}">
     <div class="item-body">
@@ -195,9 +150,7 @@ function renderContent(): void {
   }
   if (!total) {
     const hint =
-      state.scope === 'this' && !state.activeFolder
-        ? 'No active editor — open a file to use This Folder scope.'
-        : 'No items';
+      state.scope === 'this' && !state.activeFolder ? t('hub.empty.noActiveFolder') : t('hub.empty.noItems');
     parts.push(`<div class="empty">${esc(hint)}</div>`);
   }
   $('content').innerHTML = parts.join('');
@@ -228,15 +181,13 @@ $('refresh').onclick = () => vscode.postMessage({ type: 'refresh' });
 $('add').onclick = () => vscode.postMessage({ type: 'createSkill' });
 
 window.addEventListener('message', ev => {
-  const m: MsgFromExt = ev.data;
+  const m: Contracts.HubMsgFromExt = ev.data;
   if (m.type === 'init') {
     state.tabs = m.tabs;
     state.scopes = m.scopes;
-    state.tools = m.tools;
     state.scope = m.scope;
-    state.tool = m.tool;
+    state.dict = m.i18n?.dict || {};
     renderTabs();
-    renderTools();
     renderContent();
   } else if (m.type === 'activeFolder') {
     state.activeFolder = { dir: m.dir, label: m.label };

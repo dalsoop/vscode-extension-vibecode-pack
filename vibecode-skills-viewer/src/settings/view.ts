@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { t } from '../i18n';
 
 export const STYLE = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,6 +47,23 @@ export const STYLE = `
   .mg-head { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
   .mg-head .input.mg-label { flex: 1; font-weight: 600; }
   .cs-empty { padding: 14px; text-align: center; color: var(--vscode-descriptionForeground); font-style: italic; font-size: 11px; }
+
+  /* Top tab navigation */
+  .settings-tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--vscode-panel-border); margin-bottom: 18px; padding-bottom: 4px; position: sticky; top: 0; background: var(--vscode-editor-background); z-index: 10; }
+  .settings-tab { padding: 6px 14px; border: none; background: transparent; color: var(--vscode-descriptionForeground); font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 4px; }
+  .settings-tab:hover { background: var(--vscode-toolbar-hoverBackground); color: var(--vscode-foreground); }
+  .settings-tab.active { color: var(--vscode-foreground); background: var(--vscode-toolbar-activeBackground, var(--vscode-button-secondaryBackground)); border-bottom: 2px solid var(--vscode-focusBorder); border-radius: 4px 4px 0 0; }
+  .settings-content { padding: 0; }
+
+  /* Tool card list (Tools tab) */
+  .tool-card-list { display: flex; flex-direction: column; gap: 8px; }
+  .tool-card { display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--vscode-panel-border); border-radius: 5px; background: var(--vscode-input-background); }
+  .tool-card-enable { display: inline-flex; align-items: center; cursor: pointer; }
+  .tool-card-enable input { width: 16px; height: 16px; cursor: pointer; }
+  .tool-card-label { font-weight: 600; }
+  .tool-card-id { font-family: ui-monospace, monospace; font-size: 11px; color: var(--vscode-descriptionForeground); white-space: nowrap; }
+  .tool-card-badge { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 8px; background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); text-transform: uppercase; letter-spacing: 0.04em; margin-left: 4px; }
+  .tool-card-delete { width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
 `;
 
 export function buildHtml(webview: vscode.Webview, extensionPath: string): string {
@@ -68,10 +86,10 @@ export function buildHtml(webview: vscode.Webview, extensionPath: string): strin
 <style>${STYLE}</style>
 </head><body>
 <header>
-  <h1>Settings</h1>
-  <div class="subtitle">Claude &amp; Codex Skills Viewer · <span id="version"></span></div>
+  <h1>${t('settings.title')}</h1>
+  <div class="subtitle">${t('settings.subtitle', '<span id="version"></span>')}</div>
 </header>
-<main id="main"><p style="text-align:center; padding:40px; color:var(--vscode-descriptionForeground)">Loading…</p></main>
+<main id="main"><p style="text-align:center; padding:40px; color:var(--vscode-descriptionForeground)">${t('settings.loading')}</p></main>
 <script src="${scriptUri}"></script>
 </body></html>`;
 }

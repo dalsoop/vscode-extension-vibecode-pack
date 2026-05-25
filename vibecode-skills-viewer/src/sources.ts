@@ -118,9 +118,10 @@ export function getStandardSources(): Source[] {
   const wsFolder = vscode.workspace.workspaceFolders?.[0];
   const ws = wsFolder ? wsFolder.uri.fsPath : null;
 
+  const enabledIds = new Set(cfg.tools.filter(t => t.enabled).map(t => t.id));
   if (cfg.includeGlobal) {
     for (const r of rootsFor('global')) {
-      if (cfg.tools !== 'all' && cfg.tools !== r.tool) continue;
+      if (!enabledIds.has(r.tool)) continue;
       sources.push(sourceFrom(r, 'global', home, 'global'));
     }
     for (const dir of cfg.extraGlobalRoots) {
@@ -129,7 +130,7 @@ export function getStandardSources(): Source[] {
   }
   if (cfg.includeWorkspace && ws) {
     for (const r of rootsFor('workspace')) {
-      if (cfg.tools !== 'all' && cfg.tools !== r.tool) continue;
+      if (!enabledIds.has(r.tool)) continue;
       sources.push(sourceFrom(r, 'workspace', ws, 'ws'));
     }
     for (const dir of cfg.extraWorkspaceRoots) {

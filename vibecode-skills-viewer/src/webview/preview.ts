@@ -9,7 +9,7 @@ export function setExtensionPath(p: string): void {
 
 export function open(payload: PreviewPayload): void {
   if (!extensionPathCache) {
-    const ext = vscode.extensions.getExtension('dalsoop.claude-codex-skills-viewer');
+    const ext = vscode.extensions.getExtension('dalsoop.vibecode-skills-viewer');
     extensionPathCache = ext?.extensionPath ?? '';
   }
   openInteractive(payload, extensionPathCache);

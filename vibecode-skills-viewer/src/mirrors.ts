@@ -1,6 +1,6 @@
 // Mirror Groups — write the same content to a configured set of parallel files.
 // Two sources of "mirror peers":
-//  1. Explicit groups in claudeCodexSkills.mirrorGroups (manual)
+//  1. Explicit groups in vibecodeSkills.mirrorGroups (manual)
 //  2. Auto: SKILL.md files under .../skills/<name>/SKILL.md sharing the same <name>
 //     (only when mirrorSkillsByName=true)
 //

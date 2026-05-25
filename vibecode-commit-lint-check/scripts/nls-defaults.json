@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode Commit Lint Check",
+  "ext.description": "Lint commit messages against bundled commitlint templates (Conventional, PHP/Laravel, Node, Python). Right-click a folder to scaffold a config, or run the CLI check on the last commit from the palette.",
+  "ext.category": "Vibecode"
+}

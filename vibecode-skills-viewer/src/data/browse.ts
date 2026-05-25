@@ -1,4 +1,5 @@
 import { getCatalogOrEmpty } from '../catalog';
+import { t } from '../i18n';
 import type { DataSource, FetchContext, Group, ItemPayload } from '../types';
 
 export class BrowseSource implements DataSource {
@@ -11,12 +12,12 @@ export class BrowseSource implements DataSource {
     if (!cat.sources.length) return [];
     return [
       {
-        title: `Remote Sources (${cat.sources.length})`,
+        title: t('hub.groups.remoteSources', cat.sources.length),
         items: cat.sources.map(
           (s): ItemPayload => ({
             id: s.id,
             title: s.name,
-            subtitle: `${s.repo}@${s.branch || 'main'}`,
+            subtitle: t('hub.item.subtitleRepoBranch', s.repo, s.branch || 'main'),
             meta: s.tier,
             path: `https://github.com/${s.repo}`,
             actions: ['github']

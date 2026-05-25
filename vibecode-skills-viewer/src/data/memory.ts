@@ -1,6 +1,7 @@
 import * as mem from '../memory';
 import * as analyzer from '../analyzer';
 import * as path from 'path';
+import { t } from '../i18n';
 import type { DataSource, FetchContext, Group, ItemPayload } from '../types';
 
 function renderFiles(dir: string): ItemPayload[] {
@@ -32,19 +33,19 @@ export class MemorySource implements DataSource {
     if (ctx.scope === 'this') {
       if (ctx.activeFolderDir) {
         out.push({
-          title: `This Folder · ${path.basename(ctx.activeFolderDir)}`,
+          title: t('hub.groups.thisFolder', path.basename(ctx.activeFolderDir)),
           items: renderFiles(mem.memoryDirFor(ctx.activeFolderDir))
         });
       }
       return out;
     }
     if ((ctx.scope === 'all' || ctx.scope === 'workspace') && ctx.workspaceDir) {
-      out.push({ title: 'Current Workspace', items: renderFiles(mem.memoryDirFor(ctx.workspaceDir)) });
+      out.push({ title: t('hub.groups.currentWorkspace'), items: renderFiles(mem.memoryDirFor(ctx.workspaceDir)) });
     }
     if (ctx.scope === 'all' || ctx.scope === 'global') {
       const all = mem.listAllProjectMemories();
       out.push({
-        title: `All Projects (${all.length})`,
+        title: t('hub.groups.allProjects', all.length),
         items: all.map(p => ({
           id: p.memDir,
           title: p.label,

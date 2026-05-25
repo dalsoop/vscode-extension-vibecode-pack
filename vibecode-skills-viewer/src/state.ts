@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { bus } from './bus';
 
-const FAVORITES_KEY = 'ccskills.favorites';
-const INSTALL_TIMES_KEY = 'ccskills.installTimes';
-const RECENT_KEY = 'ccskills.recent';
+const FAVORITES_KEY = 'vibeskills.favorites';
+const INSTALL_TIMES_KEY = 'vibeskills.installTimes';
+const RECENT_KEY = 'vibeskills.recent';
 const NEW_BADGE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 let ctx: vscode.ExtensionContext | null = null;

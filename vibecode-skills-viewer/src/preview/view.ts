@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { t } from '../i18n';
 
 export const STYLE = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -160,7 +161,7 @@ export function buildHtml(webview: vscode.Webview, extensionPath: string): strin
 <style>${STYLE}</style>
 </head><body>
 <header>
-  <h1 class="title" id="title">Loading…</h1>
+  <h1 class="title" id="title">${t('preview.shell.loading')}</h1>
   <div class="meta" id="meta"></div>
   <div class="toolbar" id="toolbar"></div>
 </header>

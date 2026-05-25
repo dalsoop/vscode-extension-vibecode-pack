@@ -66,9 +66,9 @@ function read(input: any = {}): string {
 }
 
 const TOOLS = [
-  { name: 'claudeCodexSkills_list', handler: listInstalled, prepareMsg: () => 'Listing installed skills' },
-  { name: 'claudeCodexSkills_search', handler: search, prepareMsg: (i: any) => `Searching "${i.query || ''}"` },
-  { name: 'claudeCodexSkills_read', handler: read, prepareMsg: (i: any) => `Reading skill "${i.name || ''}"` }
+  { name: 'vibecodeSkills_list', handler: listInstalled, prepareMsg: () => 'Listing installed skills' },
+  { name: 'vibecodeSkills_search', handler: search, prepareMsg: (i: any) => `Searching "${i.query || ''}"` },
+  { name: 'vibecodeSkills_read', handler: read, prepareMsg: (i: any) => `Reading skill "${i.name || ''}"` }
 ];
 
 export function registerAll(context: vscode.ExtensionContext): void {

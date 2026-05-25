@@ -9,7 +9,7 @@ function ensure(): vscode.LogOutputChannel | null {
   if (channel) return channel;
   if (fallback) return null;
   try {
-    channel = vscode.window.createOutputChannel('Claude & Codex Skills', { log: true });
+    channel = vscode.window.createOutputChannel('Vibecode Skills', { log: true });
     return channel;
   } catch {
     fallback = true;
@@ -37,7 +37,7 @@ function emit(level: LogLevel, msg: string, ...rest: unknown[]): void {
   } else {
     // pre-init / non-vscode (tests, smoke check) → console
     const c = level === 'error' || level === 'warn' ? console.error : console.warn;
-    c(`[ccskills ${level}]`, msg, ...rest);
+    c(`[vibeskills ${level}]`, msg, ...rest);
   }
 }
 

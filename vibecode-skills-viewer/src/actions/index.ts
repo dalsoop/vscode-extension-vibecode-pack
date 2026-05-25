@@ -12,7 +12,7 @@ const open: ActionHandler = async (p, _ctx) => {
 
 const preview: ActionHandler = async (p, _ctx) => {
   if (!p.path) return;
-  await vscode.commands.executeCommand('claudeCodexSkills.previewSkill', {
+  await vscode.commands.executeCommand('vibecodeSkills.previewSkill', {
     dir: p.path,
     mdPath: p.mdPath,
     name: p.title || path.basename(p.path),
@@ -36,7 +36,7 @@ const fav: ActionHandler = async (p, ctx) => {
 
 const sync: ActionHandler = async (p, ctx) => {
   if (!p.path) return;
-  await vscode.commands.executeCommand('claudeCodexSkills.syncToThisFile', { abs: p.path });
+  await vscode.commands.executeCommand('vibecodeSkills.syncToThisFile', { abs: p.path });
   ctx.refresh();
 };
 
