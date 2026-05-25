@@ -4,9 +4,11 @@
   "ext.category": "Vibecode",
   "view.container.title": "Commit Lint",
   "view.templates.name": "Templates",
+  "config.checkLastCommit.command": "Shell command run by 'Check Last Commit Message' in a workspace terminal. Defaults to `npx --yes commitlint --from HEAD~1 --to HEAD --verbose`.",
   "cmd.addTemplate": "Vibecode - Add Custom Commit Lint Template",
   "cmd.applyTemplate": "Vibecode - Apply Commit Lint Template (internal)",
   "cmd.checkLastCommit": "Vibecode - Check Last Commit Message",
   "cmd.initFromTemplate": "Vibecode - Init Commit Lint From Template",
+  "cmd.openSettings": "Vibecode - Open Commit Lint Settings",
   "cmd.refreshTree": "Vibecode - Refresh Commit Lint Templates"
 }

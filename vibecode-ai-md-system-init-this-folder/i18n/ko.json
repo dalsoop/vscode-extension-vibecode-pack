@@ -1,20 +1,28 @@
 {
   "ext": {
-    "displayName": "바이브코드 에이전트 폴더 초기화",
-    "description": "사이드바에 템플릿(use-case 레시피) 카탈로그. 각 템플릿은 도구별(claude/codex/gemini/cursor) 변형 보유. 클릭 → 도구 선택 → 타겟 폴더에 설치. 기본 도구는 설정 가능.",
+    "displayName": "바이브코드 AI MD 시스템 초기화",
+    "description": "사이드바에서 템플릿×도구(claude/codex/gemini/cursor/windsurf/cline/aider/continue) 체크박스로 골라 새 폴더에 설치. 워크스페이스 루트 자동 감지로 이미 설치된 도구는 비활성. 기존 폴더를 user template 으로 promote 가능. User template 우클릭으로 rename/delete/reveal.",
     "category": "바이브코드",
-    "viewContainerTitle": "바이브코드 에이전트",
+    "viewContainerTitle": "바이브코드 AI MD",
     "viewTemplates": "템플릿"
   },
   "cfg": {
     "defaultTool": "템플릿 적용 시 도구 선택 단계에서 미리 선택될 기본 도구. <template>/<tool>/ 의 tool 폴더 이름과 일치해야 합니다."
   },
+  "welcome": {
+    "empty": "템플릿이 없습니다.\n[폴더를 User Template 으로 promote](command:vibecodeAiMdSystem.promoteTemplate)\n[새로고침](command:vibecodeAiMdSystem.refreshTemplates)"
+  },
   "commands": {
     "initTemplateHere": "바이브코드 - 여기에 에이전트 정의 템플릿 초기화",
     "checkUpstream": "바이브코드 - 에이전트 정의 업스트림 확인",
-    "applyTemplate": "바이브코드 - 템플릿 적용…",
+    "applyTemplate": "바이브코드 - 선택된 도구 변형 설치",
     "openTemplatesFolder": "바이브코드 - 템플릿 폴더 열기 (SSOT)",
-    "refreshTemplates": "바이브코드 - 템플릿 새로고침"
+    "promoteTemplate": "바이브코드 - 폴더를 User Template 으로 promote",
+    "refreshTemplates": "바이브코드 - 템플릿 새로고침",
+    "deleteUserTemplate": "바이브코드 - User Template 삭제",
+    "renameUserTemplate": "바이브코드 - User Template 이름 변경",
+    "revealTemplateSource": "바이브코드 - 템플릿 원본 폴더 열기",
+    "reinstallTool": "바이브코드 - 도구 강제 재설치 (덮어쓰기)"
   },
   "runtime": {
     "No folder selected.": "선택된 폴더가 없습니다.",
@@ -33,17 +41,34 @@
     "Pull (upstream → local)": "Pull (업스트림 → 로컬)",
     "Push (local → upstream)": "Push (로컬 → 업스트림)",
     "Stub: would {0}. Sync logic is not implemented in v0.1.": "Stub: \"{0}\" 을(를) 수행했을 것. v0.1 에서 동기화 로직은 미구현.",
-    "Extension not found.": "확장을 찾을 수 없습니다.",
-    "No templates available.": "사용 가능한 템플릿이 없습니다.",
-    "Template \"{0}\" has no tool variants.": "템플릿 \"{0}\" 에 도구 변형이 없습니다.",
-    "Pick a template": "템플릿 선택",
-    "Pick tool variants (multi-select, space to toggle)": "도구 변형 선택 (다중 선택 — Space 로 토글)",
-    "default": "기본",
+    "Apply Template must be invoked from the sidebar (no provider attached).": "Apply Template 은 사이드바에서 호출되어야 합니다 (provider 미연결).",
+    "No tool variants selected. Check items in the sidebar first.": "선택된 도구 변형이 없습니다. 사이드바에서 먼저 체크하세요.",
     "Install here": "여기에 설치",
     "Pick the target folder": "대상 폴더 선택",
     "{0} file(s) already exist in the target folder. Overwrite?": "대상 폴더에 이미 {0}개 파일이 있습니다. 덮어쓸까요?",
     "Overwrite": "덮어쓰기",
     "Skip existing": "기존 파일은 건너뛰기",
-    "Installed {0} → {1}  ({2} tool(s): {3})": "설치 완료: {0} → {1}  ({2}개 도구: {3})"
+    "Installed {0} variant(s) → {1}  ({2})": "{0}개 변형 설치됨 → {1}  ({2})",
+    "No known tool markers found in this folder. Looking for: {0}": "이 폴더에 알려진 도구 마커가 없습니다. 검색 대상: {0}",
+    "Tools detected — select which to promote": "감지된 도구 — promote 할 것 선택",
+    "New template name": "새 템플릿 이름",
+    "Saved as ~/.vibecode-ai-md-system/templates/<name>/<tool>/<files>": "저장 위치: ~/.vibecode-ai-md-system/templates/<name>/<tool>/<files>",
+    "User template \"{0}\" already exists. Overwrite?": "User template \"{0}\" 이 이미 있습니다. 덮어쓸까요?",
+    "Saved user template \"{0}\" ({1} tool(s), {2} marker(s)). Refreshing sidebar.": "User template \"{0}\" 저장됨 ({1}개 도구, {2}개 마커). 사이드바 새로고침합니다.",
+    "Use this folder as source": "이 폴더를 source 로 사용",
+    "Pick a folder to promote into a user template": "User template 으로 promote 할 폴더 선택",
+    "Right-click a user template (👤 group) to delete it.": "User template(👤 그룹) 항목을 우클릭하여 삭제하세요.",
+    "Delete user template \"{0}\"?": "User template \"{0}\" 을(를) 삭제할까요?",
+    "This removes {0} permanently. Bundled templates are unaffected.": "{0} 을(를) 영구 삭제합니다. Bundled 템플릿은 영향 없음.",
+    "Delete": "삭제",
+    "Deleted user template \"{0}\".": "User template \"{0}\" 삭제됨.",
+    "Right-click a user template (👤 group) to rename it.": "User template(👤 그룹) 항목을 우클릭하여 이름을 바꾸세요.",
+    "Rename user template": "User template 이름 변경",
+    "A template named \"{0}\" already exists.": "\"{0}\" 이라는 템플릿이 이미 있습니다.",
+    "Renamed \"{0}\" → \"{1}\".": "이름 변경됨: \"{0}\" → \"{1}\".",
+    "Right-click a tool variant (☐ leaf) to re-install.": "도구 변형(☐ leaf) 을 우클릭해서 재설치하세요.",
+    "Open a workspace folder first — re-install targets the workspace root.": "워크스페이스 폴더를 먼저 여세요 — 재설치는 워크스페이스 루트를 대상으로 합니다.",
+    "Force re-install \"{0}/{1}\" → {2}? {3} file(s) will be overwritten.": "강제 재설치 \"{0}/{1}\" → {2}? {3}개 파일 덮어쓰기.",
+    "Re-installed {0}/{1} → {2}": "재설치됨: {0}/{1} → {2}"
   }
 }

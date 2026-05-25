@@ -33,5 +33,17 @@
   "Private key: {0}": "개인키 파일: {0}",
   ".gitignore was updated.": ".gitignore 가 업데이트되었습니다.",
   ".gitignore already excludes the key file.": ".gitignore 가 이미 키 파일을 제외하고 있습니다.",
-  "Run `npx dotenvx run -- <your command>` to decrypt at runtime.": "런타임 복호화는 `npx dotenvx run -- <명령어>` 로 실행하세요."
+  "Run `npx dotenvx run -- <your command>` to decrypt at runtime.": "런타임 복호화는 `npx dotenvx run -- <명령어>` 로 실행하세요.",
+  "Strategy": "전략",
+  "Workspace .env files": "워크스페이스 .env 파일",
+  "No .env files in this workspace": "워크스페이스에 .env 파일이 없습니다",
+  "Open Encrypted": "암호화 에디터로 열기",
+  "Enable Encryption": "암호화 활성화",
+  "{0} keys · all encrypted": "키 {0}개 · 전체 암호화됨",
+  "{0} keys · {1} encrypted": "키 {0}개 · {1}개 암호화됨",
+  "{0} keys · plaintext": "키 {0}개 · 평문",
+  "Runtime decrypt: `npx dotenvx run -- <cmd>`": "런타임 복호화: `npx dotenvx run -- <명령>`",
+  "Strategy: {0}. Click to change.": "전략: {0}. 클릭해 변경.",
+  "Select encryption strategy": "암호화 전략 선택",
+  "Strategy changed to {0}.": "전략을 {0} 로 변경했습니다."
 }

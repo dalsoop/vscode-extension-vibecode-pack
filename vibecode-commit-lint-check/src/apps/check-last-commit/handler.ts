@@ -37,7 +37,17 @@ export async function handler(arg: vscode.Uri | undefined): Promise<void> {
 
   const term = findOrCreateTerminal('commitlint: last commit', cwd);
   term.show(true);
-  term.sendText('npx --yes commitlint --from HEAD~1 --to HEAD --verbose', true);
+  term.sendText(resolveCheckCommand(), true);
+}
+
+function resolveCheckCommand(): string {
+  const configured = vscode.workspace
+    .getConfiguration('vibecodeCommitLint')
+    .get<string>('checkLastCommit.command');
+  const trimmed = configured?.trim();
+  return trimmed && trimmed.length > 0
+    ? trimmed
+    : 'npx --yes commitlint --from HEAD~1 --to HEAD --verbose';
 }
 
 function findOrCreateTerminal(name: string, cwd: string): vscode.Terminal {

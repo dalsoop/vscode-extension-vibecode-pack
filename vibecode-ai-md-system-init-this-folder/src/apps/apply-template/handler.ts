@@ -1,18 +1,12 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
 import type { Selection } from '../../sidebar';
+import { findConflicts, copyTree } from '../../copy-utils';
 
 /**
  * Apply all sidebar-checked template/tool variants into a single target folder.
- *
- * Called by the sidebar's view-title 🚀 Apply Selected button (and via palette).
- * The provider is injected at extension activation; the handler exported here is a
- * thin shell — the real entry is `applyHandler(provider)` below, wired in extension.ts.
+ * The real entry is `applyHandler(getSelections, onAfter)`, wired in extension.ts.
  */
 export async function handler(): Promise<void> {
-  // Sidebar-less invocations from arbitrary contexts shouldn't happen — extension.ts wires
-  // applyHandler(provider) directly. Keep this as a defensive no-op + helpful warning.
   vscode.window.showWarningMessage(
     vscode.l10n.t('Apply Template must be invoked from the sidebar (no provider attached).')
   );
@@ -32,7 +26,6 @@ export function applyHandler(getSelections: () => Selection[], onAfter: () => vo
     const target = await pickTargetFolder();
     if (!target) return;
 
-    // Aggregate conflicts across all selected variants — single modal for the whole install.
     const allConflicts: Array<{ template: string; tool: string; rel: string }> = [];
     for (const s of selections) {
       const conflicts = await findConflicts(s.variantRootUri.fsPath, target.fsPath);
@@ -90,59 +83,4 @@ async function pickTargetFolder(): Promise<vscode.Uri | undefined> {
     defaultUri
   });
   return picked?.[0];
-}
-
-async function findConflicts(srcRoot: string, dstRoot: string): Promise<string[]> {
-  const conflicts: string[] = [];
-  const walk = async (srcDir: string, relDir: string): Promise<void> => {
-    const entries = await fs.promises.readdir(srcDir, { withFileTypes: true });
-    for (const e of entries) {
-      const rel = relDir ? path.join(relDir, e.name) : e.name;
-      const dst = path.join(dstRoot, rel);
-      if (e.isDirectory()) {
-        await walk(path.join(srcDir, e.name), rel);
-      } else if (e.isFile()) {
-        try {
-          await fs.promises.access(dst);
-          conflicts.push(rel);
-        } catch {
-          // doesn't exist — no conflict
-        }
-      }
-    }
-  };
-  await walk(srcRoot, '');
-  return conflicts.sort();
-}
-
-interface CopyOpts {
-  overwrite: boolean;
-}
-
-async function copyTree(srcRoot: string, dstRoot: string, opts: CopyOpts): Promise<void> {
-  const walk = async (srcDir: string, dstDir: string): Promise<void> => {
-    await fs.promises.mkdir(dstDir, { recursive: true });
-    const entries = await fs.promises.readdir(srcDir, { withFileTypes: true });
-    for (const e of entries) {
-      const src = path.join(srcDir, e.name);
-      const dst = path.join(dstDir, e.name);
-      if (e.isDirectory()) {
-        await walk(src, dst);
-      } else if (e.isFile()) {
-        const exists = await fileExists(dst);
-        if (exists && !opts.overwrite) continue;
-        await fs.promises.copyFile(src, dst);
-      }
-    }
-  };
-  await walk(srcRoot, dstRoot);
-}
-
-async function fileExists(p: string): Promise<boolean> {
-  try {
-    await fs.promises.access(p);
-    return true;
-  } catch {
-    return false;
-  }
 }

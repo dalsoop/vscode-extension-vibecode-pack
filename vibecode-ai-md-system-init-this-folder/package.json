@@ -48,7 +48,11 @@
             "claude",
             "codex",
             "cursor",
-            "gemini"
+            "gemini",
+            "windsurf",
+            "cline",
+            "aider",
+            "continue"
           ],
           "default": "claude",
           "description": "%cfg.defaultTool%"
@@ -72,6 +76,12 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "vibecodeAiMdSystem.templates",
+        "contents": "%welcome.empty%"
+      }
+    ],
     "commands": [
       {
         "command": "vibecodeAiMdSystem.applyTemplate",
@@ -86,6 +96,12 @@
         "icon": "$(cloud)"
       },
       {
+        "command": "vibecodeAiMdSystem.deleteUserTemplate",
+        "title": "%cmd.deleteUserTemplate%",
+        "category": "%ext.category%",
+        "icon": "$(trash)"
+      },
+      {
         "command": "vibecodeAiMdSystem.initTemplateHere",
         "title": "%cmd.initTemplateHere%",
         "category": "%ext.category%",
@@ -98,23 +114,52 @@
         "icon": "$(folder-opened)"
       },
       {
+        "command": "vibecodeAiMdSystem.promoteTemplate",
+        "title": "%cmd.promoteTemplate%",
+        "category": "%ext.category%",
+        "icon": "$(archive)"
+      },
+      {
         "command": "vibecodeAiMdSystem.refreshTemplates",
         "title": "%cmd.refreshTemplates%",
         "category": "%ext.category%",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecodeAiMdSystem.reinstallTool",
+        "title": "%cmd.reinstallTool%",
+        "category": "%ext.category%",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "vibecodeAiMdSystem.renameUserTemplate",
+        "title": "%cmd.renameUserTemplate%",
+        "category": "%ext.category%",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "vibecodeAiMdSystem.revealTemplateSource",
+        "title": "%cmd.revealTemplateSource%",
+        "category": "%ext.category%",
+        "icon": "$(folder-opened)"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "vibecodeAiMdSystem.applyTemplate",
-          "when": "view == vibecodeAiMdSystem.templates",
+          "when": "view == vibecodeAiMdSystem.templates && vibecodeAiMdSystem.hasSelection",
           "group": "navigation@10"
         },
         {
           "command": "vibecodeAiMdSystem.openTemplatesFolder",
           "when": "view == vibecodeAiMdSystem.templates",
           "group": "navigation@5"
+        },
+        {
+          "command": "vibecodeAiMdSystem.promoteTemplate",
+          "when": "view == vibecodeAiMdSystem.templates",
+          "group": "navigation@7"
         },
         {
           "command": "vibecodeAiMdSystem.refreshTemplates",
@@ -136,6 +181,28 @@
           "group": "6_rca"
         }
       ],
+      "view/item/context": [
+        {
+          "command": "vibecodeAiMdSystem.deleteUserTemplate",
+          "when": "view == vibecodeAiMdSystem.templates && viewItem == templateItem-user",
+          "group": "inline"
+        },
+        {
+          "command": "vibecodeAiMdSystem.reinstallTool",
+          "when": "view == vibecodeAiMdSystem.templates && viewItem == toolItem-installed",
+          "group": "inline"
+        },
+        {
+          "command": "vibecodeAiMdSystem.renameUserTemplate",
+          "when": "view == vibecodeAiMdSystem.templates && viewItem == templateItem-user",
+          "group": "1_modify@1"
+        },
+        {
+          "command": "vibecodeAiMdSystem.revealTemplateSource",
+          "when": "view == vibecodeAiMdSystem.templates && viewItem =~ /^(templateItem|toolItem)/",
+          "group": "9_reveal@1"
+        }
+      ],
       "explorer/context": [
         {
           "command": "vibecodeAiMdSystem.initTemplateHere",
@@ -155,6 +222,9 @@
         },
         {
           "command": "vibecodeAiMdSystem.openTemplatesFolder"
+        },
+        {
+          "command": "vibecodeAiMdSystem.promoteTemplate"
         },
         {
           "command": "vibecodeAiMdSystem.refreshTemplates"

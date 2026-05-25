@@ -1,13 +1,19 @@
 {
-  "ext.displayName": "바이브코드 에이전트 폴더 초기화",
-  "ext.description": "사이드바에 템플릿(use-case 레시피) 카탈로그. 각 템플릿은 도구별(claude/codex/gemini/cursor) 변형 보유. 클릭 → 도구 선택 → 타겟 폴더에 설치. 기본 도구는 설정 가능.",
+  "ext.displayName": "바이브코드 AI MD 시스템 초기화",
+  "ext.description": "사이드바에서 템플릿×도구(claude/codex/gemini/cursor/windsurf/cline/aider/continue) 체크박스로 골라 새 폴더에 설치. 워크스페이스 루트 자동 감지로 이미 설치된 도구는 비활성. 기존 폴더를 user template 으로 promote 가능. User template 우클릭으로 rename/delete/reveal.",
   "ext.category": "바이브코드",
-  "ext.viewContainerTitle": "바이브코드 에이전트",
+  "ext.viewContainerTitle": "바이브코드 AI MD",
   "ext.viewTemplates": "템플릿",
   "cfg.defaultTool": "템플릿 적용 시 도구 선택 단계에서 미리 선택될 기본 도구. <template>/<tool>/ 의 tool 폴더 이름과 일치해야 합니다.",
-  "cmd.applyTemplate": "바이브코드 - 템플릿 적용…",
+  "welcome.empty": "템플릿이 없습니다.\n[폴더를 User Template 으로 promote](command:vibecodeAiMdSystem.promoteTemplate)\n[새로고침](command:vibecodeAiMdSystem.refreshTemplates)",
+  "cmd.applyTemplate": "바이브코드 - 선택된 도구 변형 설치",
   "cmd.checkUpstream": "바이브코드 - 에이전트 정의 업스트림 확인",
+  "cmd.deleteUserTemplate": "바이브코드 - User Template 삭제",
   "cmd.initTemplateHere": "바이브코드 - 여기에 에이전트 정의 템플릿 초기화",
   "cmd.openTemplatesFolder": "바이브코드 - 템플릿 폴더 열기 (SSOT)",
-  "cmd.refreshTemplates": "바이브코드 - 템플릿 새로고침"
+  "cmd.promoteTemplate": "바이브코드 - 폴더를 User Template 으로 promote",
+  "cmd.refreshTemplates": "바이브코드 - 템플릿 새로고침",
+  "cmd.reinstallTool": "바이브코드 - 도구 강제 재설치 (덮어쓰기)",
+  "cmd.renameUserTemplate": "바이브코드 - User Template 이름 변경",
+  "cmd.revealTemplateSource": "바이브코드 - 템플릿 원본 폴더 열기"
 }

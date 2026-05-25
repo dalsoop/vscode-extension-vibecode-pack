@@ -1,13 +1,19 @@
 {
-  "ext.displayName": "Vibecode Agent Init This Folder",
-  "ext.description": "Sidebar catalog of templates (use-case recipes) with per-tool variants (claude / codex / gemini / cursor). Click a template → pick tool → install into a target folder. Default tool is configurable.",
+  "ext.displayName": "Vibecode AI MD System Init",
+  "ext.description": "Sidebar catalog of templates with per-tool variants (claude / codex / gemini / cursor / windsurf / cline / aider / continue). Pick checkboxes → install into a folder. Workspace-root pre-flight auto-disables already-installed tools. Existing folders can be promoted into user templates. Right-click user templates to rename/delete/reveal.",
   "ext.category": "Vibecode",
-  "ext.viewContainerTitle": "Vibecode Agents",
+  "ext.viewContainerTitle": "Vibecode AI MD",
   "ext.viewTemplates": "Templates",
-  "cfg.defaultTool": "Default tool variant pre-selected in the Apply Template tool picker. Must match a subfolder name under <template>/.",
-  "cmd.applyTemplate": "Vibecode Agent - Apply Template…",
+  "cfg.defaultTool": "Default tool variant pre-selected on each template's first reveal. Must match a subfolder name under <template>/.",
+  "welcome.empty": "No templates yet.\n[Promote a folder as User Template](command:vibecodeAiMdSystem.promoteTemplate)\n[Refresh](command:vibecodeAiMdSystem.refreshTemplates)",
+  "cmd.applyTemplate": "Vibecode - Install Selected Tool Variants",
   "cmd.checkUpstream": "Vibecode - Check Agent Template Upstream",
+  "cmd.deleteUserTemplate": "Vibecode - Delete User Template",
   "cmd.initTemplateHere": "Vibecode - Init Agent Template Here",
   "cmd.openTemplatesFolder": "Vibecode - Open Templates Folder (SSOT)",
-  "cmd.refreshTemplates": "Vibecode - Refresh Agent Templates"
+  "cmd.promoteTemplate": "Vibecode - Add Folder as User Template",
+  "cmd.refreshTemplates": "Vibecode - Refresh Agent Templates",
+  "cmd.reinstallTool": "Vibecode - Force Re-install (Overwrite)",
+  "cmd.renameUserTemplate": "Vibecode - Rename User Template",
+  "cmd.revealTemplateSource": "Vibecode - Reveal Template Source"
 }

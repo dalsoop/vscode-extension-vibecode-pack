@@ -14,31 +14,68 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "scripts": {
-    "build": "npm run sync && tsc -p .",
-    "watch": "tsc -p . -w",
+    "build": "npm run sync && npm run build:ext && npm run build:webview",
+    "build:ext": "node scripts/build-ext.mjs --production",
+    "build:webview": "tsc -p src/webview/client/tsconfig.json",
+    "watch": "node scripts/build-ext.mjs --watch",
     "sync": "node scripts/sync-nls.mjs",
     "sync:check": "node scripts/sync-nls.mjs --check",
-    "typecheck": "tsc -p . --noEmit",
+    "typecheck": "tsc -p . --noEmit && tsc -p src/webview/client/tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "vscode:prepublish": "npm run build",
-    "package": "npx --yes @vscode/vsce@latest package --allow-missing-repository --skip-license"
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license --baseContentUrl https://dalsoop.com"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.95.0",
+    "esbuild": "^0.28.0",
     "eslint": "^9.39.4",
     "prettier": "^3.8.3",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.59.4"
   },
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibeEnvEncryption",
+          "title": "%view.container.title%",
+          "icon": "icons/lock.svg"
+        }
+      ]
+    },
+    "views": {
+      "vibeEnvEncryption": [
+        {
+          "id": "vibeEnvEncryption.hub",
+          "name": "%view.hub%",
+          "type": "webview"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "vibecode-env-viewer-encryption.enableEncryption",
         "title": "%command.enableEncryption.title%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "vibecode-env-viewer-encryption.refreshHub",
+        "title": "%command.refreshHub.title%",
+        "category": "%command.category%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecode-env-viewer-encryption.selectStrategy",
+        "title": "%command.selectStrategy.title%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "vibecode-env-viewer-encryption.openEncrypted",
+        "title": "%command.openEncrypted.title%",
         "category": "%command.category%"
       }
     ],
@@ -50,9 +87,26 @@
           "group": "7_modification"
         }
       ],
+      "view/title": [
+        {
+          "command": "vibecode-env-viewer-encryption.refreshHub",
+          "when": "view == vibeEnvEncryption.hub",
+          "group": "navigation@1"
+        }
+      ],
       "commandPalette": [
         {
           "command": "vibecode-env-viewer-encryption.enableEncryption"
+        },
+        {
+          "command": "vibecode-env-viewer-encryption.refreshHub"
+        },
+        {
+          "command": "vibecode-env-viewer-encryption.selectStrategy"
+        },
+        {
+          "command": "vibecode-env-viewer-encryption.openEncrypted",
+          "when": "false"
         }
       ]
     },
@@ -61,11 +115,21 @@
         "viewType": "vibecodeEnvViewerEncryptionImport.editor",
         "displayName": "%editor.displayName%",
         "selector": [
-          { "filenamePattern": ".env" },
-          { "filenamePattern": ".env.local" },
-          { "filenamePattern": ".env.development" },
-          { "filenamePattern": ".env.production" },
-          { "filenamePattern": ".env.staging" }
+          {
+            "filenamePattern": ".env"
+          },
+          {
+            "filenamePattern": ".env.local"
+          },
+          {
+            "filenamePattern": ".env.development"
+          },
+          {
+            "filenamePattern": ".env.production"
+          },
+          {
+            "filenamePattern": ".env.staging"
+          }
         ],
         "priority": "option"
       }
@@ -75,7 +139,11 @@
       "properties": {
         "vibecodeEnvViewerEncryption.strategy": {
           "type": "string",
-          "enum": ["none", "dotenvx", "infisical"],
+          "enum": [
+            "none",
+            "dotenvx",
+            "infisical"
+          ],
           "default": "none",
           "enumDescriptions": [
             "%config.strategy.none.description%",
