@@ -16,8 +16,8 @@
   ],
   "main": "./dist/extension.js",
   "scripts": {
-    "build": "npm run sync && tsc -p .",
-    "watch": "tsc -p . -w",
+    "build": "npm run sync && node scripts/build-ext.mjs --production",
+    "watch": "node scripts/build-ext.mjs --watch",
     "sync": "node scripts/sync-contributions.mjs",
     "sync:check": "node scripts/sync-contributions.mjs --check",
     "typecheck": "tsc -p . --noEmit",
@@ -26,7 +26,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "vscode:prepublish": "npm run build",
-    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license"
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license",
+    "build:dev": "npm run sync && node scripts/build-ext.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -34,7 +35,8 @@
     "eslint": "^9.39.4",
     "prettier": "^3.8.3",
     "typescript": "^5.6.0",
-    "typescript-eslint": "^8.59.4"
+    "typescript-eslint": "^8.59.4",
+    "esbuild": "^0.24.0"
   },
   "contributes": {
     "commands": [
@@ -127,5 +129,6 @@
         }
       ]
     }
-  }
+  },
+  "license": "MIT"
 }

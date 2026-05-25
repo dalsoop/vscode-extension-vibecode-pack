@@ -1,0 +1,17 @@
+{
+  "ext.displayName": "Vibecode File Lines Viewer",
+  "ext.description": "Sidebar view that sorts workspace files by line count to surface refactor targets.",
+  "ext.category": "Vibecode",
+  "view.container.title": "Vibecode File Lines",
+  "view.lineRanking.name": "Line Ranking",
+  "config.topN": "Maximum number of files to show in the flat ranking view.",
+  "config.warnThreshold": "Files at or above this line count are visually highlighted.",
+  "config.maxFileSizeKB": "Files larger than this size are skipped without reading.",
+  "config.respectGitignore": "Apply .gitignore rules when scanning.",
+  "config.respectFilesExclude": "Apply VSCode files.exclude when scanning.",
+  "config.defaultGrouping": "Initial view mode: flat ranking or grouped by extension.",
+  "config.additionalBinaryExtensions": "Additional extensions to treat as binary (with leading dot, e.g. \".bin\").",
+  "cmd.openSettings": "Vibecode - Open Line Ranking Settings",
+  "cmd.refresh": "Vibecode - Refresh Line Ranking",
+  "cmd.toggleView": "Vibecode - Toggle Line Ranking View Mode"
+}

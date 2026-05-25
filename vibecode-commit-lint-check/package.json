@@ -18,9 +18,9 @@
   ],
   "main": "./dist/extension.js",
   "scripts": {
-    "build": "npm run sync && node scripts/build-ext.mjs --production",
-    "build:dev": "npm run sync && node scripts/build-ext.mjs",
-    "watch": "node scripts/build-ext.mjs --watch",
+    "build": "npm run sync && node ../tools/build-ext.mjs --production --main-fields module,main",
+    "build:dev": "npm run sync && node ../tools/build-ext.mjs --main-fields module,main",
+    "watch": "node ../tools/build-ext.mjs --watch --main-fields module,main",
     "test": "node --test tests/*.test.mjs",
     "sync": "node scripts/sync-contributions.mjs",
     "sync:check": "node scripts/sync-contributions.mjs --check",

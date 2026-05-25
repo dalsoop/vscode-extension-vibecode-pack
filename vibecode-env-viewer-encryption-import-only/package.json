@@ -15,9 +15,9 @@
   "main": "./dist/extension.js",
   "scripts": {
     "build": "npm run sync && npm run build:ext && npm run build:webview",
-    "build:ext": "node scripts/build-ext.mjs --production",
+    "build:ext": "node ../tools/build-ext.mjs --production",
     "build:webview": "tsc -p src/webview/client/tsconfig.json",
-    "watch": "node scripts/build-ext.mjs --watch",
+    "watch": "node ../tools/build-ext.mjs --watch",
     "sync": "node scripts/sync-nls.mjs",
     "sync:check": "node scripts/sync-nls.mjs --check",
     "typecheck": "tsc -p . --noEmit && tsc -p src/webview/client/tsconfig.json --noEmit",
@@ -157,5 +157,7 @@
   },
   "dependencies": {
     "eciesjs": "^0.5.0"
-  }
+  },
+  "license": "MIT",
+  "icon": "icon.png"
 }

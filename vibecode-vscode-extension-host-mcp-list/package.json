@@ -1,0 +1,135 @@
+{
+  "name": "vibecode-vscode-extension-host-mcp-list",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "0.1.1",
+  "publisher": "dalsoop",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": [
+    "Other",
+    "AI"
+  ],
+  "activationEvents": [
+    "onView:vibecodeMcpList.tree"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "npm run sync && node scripts/build-ext.mjs --production && tsc -p tsconfig.detail-client.json",
+    "build:dev": "npm run sync && node scripts/build-ext.mjs && tsc -p tsconfig.detail-client.json",
+    "watch": "node scripts/build-ext.mjs --watch",
+    "sync": "node scripts/sync-contributions.mjs",
+    "sync:check": "node scripts/sync-contributions.mjs --check",
+    "typecheck": "tsc -p . --noEmit && tsc -p tsconfig.detail-client.json --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "node --test tests/*.test.mjs",
+    "vscode:prepublish": "npm run build",
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "esbuild": "^0.28.0",
+    "eslint": "^9.39.4",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibecode-mcp-list",
+          "title": "%ext.viewContainer%",
+          "icon": "resources/activitybar.svg"
+        }
+      ]
+    },
+    "views": {
+      "vibecode-mcp-list": [
+        {
+          "id": "vibecodeMcpList.tree",
+          "name": "%ext.view%"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vibecodeMcpList.copyCommand",
+        "title": "%cmd.copyCommand%",
+        "category": "%ext.category%",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "vibecodeMcpList.openDetail",
+        "title": "%cmd.openDetail%",
+        "category": "%ext.category%"
+      },
+      {
+        "command": "vibecodeMcpList.openUserMcpJson",
+        "title": "%cmd.openUserMcpJson%",
+        "category": "%ext.category%",
+        "icon": "$(file)"
+      },
+      {
+        "command": "vibecodeMcpList.openWorkspaceMcpJson",
+        "title": "%cmd.openWorkspaceMcpJson%",
+        "category": "%ext.category%",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "vibecodeMcpList.refresh",
+        "title": "%cmd.refresh%",
+        "category": "%ext.category%",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "vibecodeMcpList.copyCommand",
+          "when": "view == vibecodeMcpList.tree && viewItem == mcpServerItem",
+          "group": "inline"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "vibecodeMcpList.openUserMcpJson",
+          "when": "view == vibecodeMcpList.tree",
+          "group": "1_open"
+        },
+        {
+          "command": "vibecodeMcpList.openWorkspaceMcpJson",
+          "when": "view == vibecodeMcpList.tree && workspaceFolderCount > 0",
+          "group": "1_open"
+        },
+        {
+          "command": "vibecodeMcpList.refresh",
+          "when": "view == vibecodeMcpList.tree",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecodeMcpList.copyCommand"
+        },
+        {
+          "command": "vibecodeMcpList.openUserMcpJson"
+        },
+        {
+          "command": "vibecodeMcpList.openWorkspaceMcpJson"
+        },
+        {
+          "command": "vibecodeMcpList.refresh"
+        }
+      ]
+    }
+  },
+  "license": "MIT",
+  "icon": "icon.png"
+}

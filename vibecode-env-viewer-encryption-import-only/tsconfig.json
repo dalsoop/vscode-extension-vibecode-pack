@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "lib": ["ES2022"],
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDirs": ["src", "../packages/vibecode-core"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -17,6 +17,10 @@
     "noUnusedParameters": false,
     "noImplicitAny": false
   },
-  "include": ["src/**/*.ts", "src/contracts/**/*.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/contracts/**/*.d.ts",
+    "../packages/vibecode-core/crypto/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist", "src/webview/client"]
 }

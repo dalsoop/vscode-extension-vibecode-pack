@@ -1,0 +1,17 @@
+{
+  "nls": {
+    "ext.displayName": "Vibecode Browser Preview",
+    "ext.description": "Live preview HTML files via a local HTTP server (rooted at the workspace) + iframe. Auto-reloads on any file save inside the workspace.",
+    "editor.displayName": "Vibecode Browser Preview"
+  },
+  "runtime": {
+    "Reload": "Reload",
+    "Edit Source": "Edit Source",
+    "Open in External Browser": "Open in External Browser",
+    "Starting preview server…": "Starting preview server…",
+    "Server error: {0}": "Server error: {0}",
+    "Retry": "Retry",
+    "Open a folder first": "Open a folder first",
+    "This unsaved HTML file has no folder to serve from. Save it inside a folder or open a workspace folder.": "This unsaved HTML file has no folder to serve from. Save it inside a folder or open a workspace folder."
+  }
+}

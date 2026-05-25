@@ -1,0 +1,5 @@
+{
+  "No folder selected.": "No folder selected.",
+  "No package.json found in {0}.": "No package.json found in {0}.",
+  "{0} is not a VSCode extension (no engines.vscode in package.json).": "{0} is not a VSCode extension (no engines.vscode in package.json)."
+}

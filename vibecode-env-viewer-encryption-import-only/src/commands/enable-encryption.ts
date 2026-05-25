@@ -5,8 +5,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { SETTING_KEY, STRATEGY_ID } from '../crypto';
-import { bootstrapDotenvxKeys, type BootstrapResult } from '../crypto/dotenvx';
+import { SETTING_KEY, STRATEGY_ID, bootstrapDotenvxKeys, type BootstrapResult } from '../crypto';
 
 export const COMMAND_ID = 'vibecode-env-viewer-encryption.enableEncryption';
 

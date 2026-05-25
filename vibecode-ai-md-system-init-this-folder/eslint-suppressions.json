@@ -1,0 +1,7 @@
+{
+  "scripts/render-templates.mjs": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 3
+    }
+  }
+}

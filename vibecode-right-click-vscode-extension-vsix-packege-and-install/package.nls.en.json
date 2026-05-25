@@ -1,0 +1,6 @@
+{
+  "ext.displayName": "Vibecode Right-Click VSIX Package & Install",
+  "ext.description": "Right-click a VSCode extension folder to package and install the .vsix in one step.",
+  "ext.category": "Vibecode",
+  "cmd.packageAndInstall": "Vibecode - Package & Install VSCode Extension"
+}

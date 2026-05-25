@@ -1,0 +1,34 @@
+{
+  "ext": {
+    "displayName": "Vibecode File Lines Viewer",
+    "description": "Sidebar view that sorts workspace files by line count to surface refactor targets.",
+    "category": "Vibecode"
+  },
+  "view": {
+    "container": { "title": "Vibecode File Lines" },
+    "lineRanking": { "name": "Line Ranking" }
+  },
+  "config": {
+    "topN": "Maximum number of files to show in the flat ranking view.",
+    "warnThreshold": "Files at or above this line count are visually highlighted.",
+    "maxFileSizeKB": "Files larger than this size are skipped without reading.",
+    "respectGitignore": "Apply .gitignore rules when scanning.",
+    "respectFilesExclude": "Apply VSCode files.exclude when scanning.",
+    "defaultGrouping": "Initial view mode: flat ranking or grouped by extension.",
+    "additionalBinaryExtensions": "Additional extensions to treat as binary (with leading dot, e.g. \".bin\")."
+  },
+  "commands": {
+    "refresh": "Vibecode - Refresh Line Ranking",
+    "toggleView": "Vibecode - Toggle Line Ranking View Mode",
+    "openSettings": "Vibecode - Open Line Ranking Settings"
+  },
+  "runtime": {
+    "Scanning {0} / {1} files...": "Scanning {0} / {1} files...",
+    "Scan complete: {0} files indexed.": "Scan complete: {0} files indexed.",
+    "View mode: {0}": "View mode: {0}",
+    "Flat ranking": "Flat ranking",
+    "Grouped by extension": "Grouped by extension",
+    "No files indexed yet.": "No files indexed yet.",
+    "{0} files, {1} lines": "{0} files, {1} lines"
+  }
+}

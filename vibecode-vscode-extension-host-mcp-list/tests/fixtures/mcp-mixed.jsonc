@@ -1,0 +1,7 @@
+{
+  // user comment
+  "servers": {
+    "a": { "command": "node", "args": ["server.js"] },
+    "b": { "url": "http://localhost:8080/mcp", "type": "http" }
+  }
+}

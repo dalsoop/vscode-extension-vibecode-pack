@@ -1,0 +1,6 @@
+{
+  "servers": {
+    "remote-http": { "url": "http://localhost:3000/mcp" },
+    "remote-sse": { "url": "https://example.com/mcp", "type": "sse" }
+  }
+}

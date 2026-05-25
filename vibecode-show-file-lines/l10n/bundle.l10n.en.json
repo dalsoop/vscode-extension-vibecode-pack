@@ -1,0 +1,9 @@
+{
+  "Scanning {0} / {1} files...": "Scanning {0} / {1} files...",
+  "Scan complete: {0} files indexed.": "Scan complete: {0} files indexed.",
+  "View mode: {0}": "View mode: {0}",
+  "Flat ranking": "Flat ranking",
+  "Grouped by extension": "Grouped by extension",
+  "No files indexed yet.": "No files indexed yet.",
+  "{0} files, {1} lines": "{0} files, {1} lines"
+}

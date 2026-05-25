@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "github": {
+      "command": "/usr/local/bin/github-mcp",
+      "args": ["--token", "$GITHUB_TOKEN"],
+      "env": { "GITHUB_TOKEN": "secret" }
+    }
+  }
+}

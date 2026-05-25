@@ -1,0 +1,10 @@
+{
+  "empty.placeholder": "MCP 서버를 찾지 못했습니다.",
+  "error.parseMcpJson": "{0} 파싱 실패: {1}",
+  "error.scanSource": "{0} 스캔 실패: {1}",
+  "group.extension": "Extension",
+  "group.user": "User",
+  "group.workspace": "Workspace",
+  "info.copiedCommand": "클립보드에 복사했습니다.",
+  "info.noWorkspaceFolder": "열린 워크스페이스 폴더가 없습니다."
+}

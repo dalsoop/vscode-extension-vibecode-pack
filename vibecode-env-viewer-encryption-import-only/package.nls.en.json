@@ -1,0 +1,17 @@
+{
+  "ext.displayName": "Vibecode .env Import-Only (Encrypted)",
+  "ext.description": "Paste-only + on-disk encrypted editor for .env files. Activated via 'Reopen Editor With…' when a sibling .env.keys is present. Values are auto-encrypted on save and decrypted in the view so it looks like the normal variant — keys remain plaintext.",
+  "editor.displayName": "Vibecode .env (Import-Only, Encrypted)",
+  "view.container.title": "Vibecode .env Encryption",
+  "view.hub": "Encryption Hub",
+  "config.title": "Vibecode .env Encryption",
+  "config.strategy.description": "Encryption backend used when writing values. `none` stores plaintext (same as the normal variant). `dotenvx` encrypts values with DOTENV_PUBLIC_KEY and requires a sibling .env.keys file — bootstrap once with `npx dotenvx encrypt`.",
+  "config.strategy.none.description": "No encryption — values stored as plaintext.",
+  "config.strategy.dotenvx.description": "secp256k1 ECIES encryption, dotenvx-compatible. Requires DOTENV_PUBLIC_KEY in .env and a sibling .env.keys file.",
+  "config.strategy.infisical.description": "(Stub — not implemented) Remote secret store. Values will be replaced by reference tokens. Falls back to `none` until the SDK is wired up.",
+  "command.category": "Vibecode - .env Encryption",
+  "command.enableEncryption.title": "Vibecode - Enable Encryption (Generate .env.keys)",
+  "command.refreshHub.title": "Vibecode - Refresh Encryption Hub",
+  "command.selectStrategy.title": "Vibecode - Select Encryption Strategy",
+  "command.openEncrypted.title": "Vibecode - Open in Encrypted Editor"
+}

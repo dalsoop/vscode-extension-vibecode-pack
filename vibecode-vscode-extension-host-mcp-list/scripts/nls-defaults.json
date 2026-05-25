@@ -1,0 +1,7 @@
+{
+  "ext.displayName": "Vibecode - VSCode Host MCP List",
+  "ext.description": "List MCP servers from user mcp.json, workspace mcp.json, and extension contributes.",
+  "ext.category": "Vibecode MCP List",
+  "ext.viewContainer": "MCP List",
+  "ext.view": "MCP Servers"
+}
