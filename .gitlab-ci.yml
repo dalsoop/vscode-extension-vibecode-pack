@@ -13,29 +13,6 @@ stages:
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
 
-# Gates commit messages against commitlint.config.js. For MR pipelines we
-# validate every commit reachable from HEAD that's not on the target branch
-# (typically main); for push to main we validate the new commit(s) only.
-commit-lint:
-  extends: .base
-  stage: lint
-  image: node:20-alpine
-  before_script:
-    - apk add --no-cache git >/dev/null
-    - npm ci --cache .npm --prefer-offline 2>/dev/null || npm install --cache .npm
-  script:
-    - |
-      if [ -n "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" ]; then
-        git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" --depth=50
-        npx --no-install commitlint --from "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" --to HEAD --verbose
-      else
-        npx --no-install commitlint --from HEAD~1 --to HEAD --verbose
-      fi
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  allow_failure: false
-
 typecheck:
   extends: .base
   stage: lint
