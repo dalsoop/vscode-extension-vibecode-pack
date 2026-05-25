@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode .env Import-Only (Encrypted)",
+  "ext.description": "Paste-only secure editor for .env files with at-rest encryption. Activate via 'Reopen Editor With…' when a sibling .env.keys exists. Values are encrypted on write, decrypted on view; keys remain visible.",
+  "editor.displayName": "Vibecode .env (Encrypted Import Only)"
+}

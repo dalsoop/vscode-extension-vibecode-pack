@@ -1,8 +1,7 @@
 {
   "ext.displayName": "Vibecode Extension Menu List",
-  "ext.description": "Click the V icon in the Activity Bar — the primary sidebar slides open with a webview listing every installed vibecode-* extension and its commands as clickable cards. Card click runs the command. Includes a palette-based QuickPick catalog as a keyboard alternative.",
+  "ext.description": "Click the V icon in the Activity Bar — the primary sidebar slides open with a webview listing every installed vibecode-* extension and its commands as clickable cards. Card click runs the command.",
   "ext.category": "Vibecode",
   "viewContainer.vibecode": "Vibecode",
-  "view.vibecodeMenuList.sidebar": "Extensions",
-  "cmd.showCatalog": "Vibecode - Show Extension Menu Catalog"
+  "view.vibecodeMenuList.sidebar": "Extensions"
 }

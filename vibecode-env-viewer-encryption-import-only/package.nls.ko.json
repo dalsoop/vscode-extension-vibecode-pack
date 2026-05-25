@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "바이브코드 .env 가져오기 전용 (암호화)",
+  "ext.description": ".env 파일용 붙여넣기 전용 + 디스크 암호화 에디터. 같은 폴더에 .env.keys 가 있을 때 'Reopen Editor With…' 로 활성화. 값은 저장 시 자동 암호화되고 뷰에서는 복호화되어 일반 변형처럼 보임 — 키는 평문 노출.",
+  "editor.displayName": "바이브코드 .env (가져오기 전용, 암호화)"
+}

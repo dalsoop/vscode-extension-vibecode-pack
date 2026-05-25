@@ -13,6 +13,7 @@ import {
   type ExampleResolver
 } from './example-resolver';
 import { handle } from './handlers';
+import { getActiveStrategy } from './crypto';
 import { getL10nBundle } from './l10n-bundle';
 import { buildHtml } from './webview/html';
 import type {
@@ -24,7 +25,7 @@ import type {
   WebviewToHost
 } from './messages';
 
-export const VIEW_TYPE = 'vibecodeEnvViewerNormalImport.editor';
+export const VIEW_TYPE = 'vibecodeEnvViewerEncryptionImport.editor';
 
 export class EnvImportEditorProvider implements vscode.CustomTextEditorProvider {
   private readonly exampleResolver: ExampleResolver;
@@ -98,8 +99,9 @@ export class EnvImportEditorProvider implements vscode.CustomTextEditorProvider 
       if (e.document.uri.toString() === document.uri.toString()) postUpdate();
     });
 
+    const crypto = await getActiveStrategy(document.uri);
     const msgSub = webviewPanel.webview.onDidReceiveMessage((msg: WebviewToHost) =>
-      handle(msg, { document, exampleResolver: this.exampleResolver, postError })
+      handle(msg, { document, exampleResolver: this.exampleResolver, crypto, postError })
     );
 
     webviewPanel.onDidDispose(() => {

@@ -1,7 +1,7 @@
 {
   "ext": {
     "displayName": "바이브코드 확장 메뉴 리스트",
-    "description": "Activity Bar 의 `V` 아이콘 클릭 → 좌측 Primary Sidebar 가 슬라이드오픈 되며 webview 가 설치된 모든 vibecode-* 확장과 각 command 를 카드로 표시. 카드 클릭으로 즉시 실행. 키보드용 QuickPick 카탈로그도 팔레트로 제공.",
+    "description": "Activity Bar 의 `V` 아이콘 클릭 → 좌측 Primary Sidebar 가 슬라이드오픈 되며 webview 가 설치된 모든 vibecode-* 확장과 각 command 를 카드로 표시. 카드 클릭으로 즉시 실행.",
     "category": "바이브코드"
   },
   "viewContainers": {
@@ -10,17 +10,11 @@
   "views": {
     "vibecodeMenuList.sidebar": "확장"
   },
-  "commands": {
-    "showCatalog": "바이브코드 - 확장 메뉴 카탈로그 열기 (QuickPick)"
-  },
   "runtime": {
-    "No vibecode-* extensions with commands found.": "명령을 제공하는 vibecode-* 확장이 설치되어 있지 않습니다.",
     "No vibecode-* extensions installed.": "설치된 vibecode-* 확장이 없습니다.",
     "Filter commands…": "명령 필터…",
     "No matching commands.": "일치하는 명령이 없습니다.",
     "Refresh": "새로고침",
-    "Vibecode extension command catalog ({0} commands)": "Vibecode 확장 명령 카탈로그 ({0}개)",
-    "Type to filter — select to run": "필터 입력 — 선택 시 실행",
     "Failed to run {0}: {1}": "{0} 실행 실패: {1}"
   }
 }

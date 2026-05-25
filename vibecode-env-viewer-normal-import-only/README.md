@@ -1,4 +1,4 @@
-# vibecode-env-import-only
+# vibecode-env-viewer-normal-import-only
 
 `.env` 파일을 **붙여넣기 전용 보안 뷰**로 연다. 키는 보이지만 값은 어떤 경우에도 화면에 표시되지 않는다.
 
@@ -32,7 +32,7 @@
 ## 아키텍처
 
 ```
-vibecode-env-import-only/
+vibecode-env-viewer-normal-import-only/
 ├── package.json                  # contributes.customEditors 수동 선언 (정적)
 ├── package.nls.json              # 자동 생성 — 영문 라벨
 ├── package.nls.ko.json           # 자동 생성 — 한국어 라벨
