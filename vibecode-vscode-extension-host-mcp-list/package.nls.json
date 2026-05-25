@@ -1,0 +1,12 @@
+{
+  "cmd.copyCommand": "Vibecode MCP List - Copy Command",
+  "cmd.openDetail": "Vibecode MCP List - Open Detail",
+  "cmd.openUserMcpJson": "Vibecode MCP List - Open User mcp.json",
+  "cmd.openWorkspaceMcpJson": "Vibecode MCP List - Open Workspace mcp.json",
+  "cmd.refresh": "Vibecode MCP List - Refresh",
+  "ext.category": "Vibecode MCP List",
+  "ext.description": "List MCP servers from user mcp.json, workspace mcp.json, and extension contributes.",
+  "ext.displayName": "Vibecode - VSCode Host MCP List",
+  "ext.view": "MCP Servers",
+  "ext.viewContainer": "MCP List"
+}

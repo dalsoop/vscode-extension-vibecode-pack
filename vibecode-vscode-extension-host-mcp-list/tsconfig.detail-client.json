@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "none",
+    "lib": ["ES2020", "DOM"],
+    "outFile": "dist/views/detail-panel/client/detail-client.js",
+    "strict": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src/views/detail-panel/contracts/**/*.d.ts",
+    "src/views/detail-panel/client/**/*.ts"
+  ]
+}

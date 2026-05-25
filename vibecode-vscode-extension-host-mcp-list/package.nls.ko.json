@@ -1,0 +1,12 @@
+{
+  "cmd.copyCommand": "명령어 복사",
+  "cmd.openDetail": "MCP 서버 상세 열기",
+  "cmd.openUserMcpJson": "User mcp.json 열기",
+  "cmd.openWorkspaceMcpJson": "워크스페이스 mcp.json 열기",
+  "cmd.refresh": "새로 고침",
+  "ext.category": "Vibecode MCP 목록",
+  "ext.description": "User mcp.json, 워크스페이스 mcp.json, 확장 contributes 의 MCP 서버를 한 목록으로 보여줍니다.",
+  "ext.displayName": "Vibecode - VSCode 호스트 MCP 목록",
+  "ext.view": "MCP 서버",
+  "ext.viewContainer": "MCP 목록"
+}

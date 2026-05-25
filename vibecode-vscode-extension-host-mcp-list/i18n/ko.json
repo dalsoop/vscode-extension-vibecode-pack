@@ -1,0 +1,26 @@
+{
+  "ext": {
+    "displayName": "Vibecode - VSCode 호스트 MCP 목록",
+    "description": "User mcp.json, 워크스페이스 mcp.json, 확장 contributes 의 MCP 서버를 한 목록으로 보여줍니다.",
+    "category": "Vibecode MCP 목록",
+    "viewContainer": "MCP 목록",
+    "view": "MCP 서버"
+  },
+  "commands": {
+    "refresh": "새로 고침",
+    "openUserMcpJson": "User mcp.json 열기",
+    "openWorkspaceMcpJson": "워크스페이스 mcp.json 열기",
+    "openDetail": "MCP 서버 상세 열기",
+    "copyCommand": "명령어 복사"
+  },
+  "runtime": {
+    "group.user": "User",
+    "group.workspace": "Workspace",
+    "group.extension": "Extension",
+    "empty.placeholder": "MCP 서버를 찾지 못했습니다.",
+    "error.parseMcpJson": "{0} 파싱 실패: {1}",
+    "error.scanSource": "{0} 스캔 실패: {1}",
+    "info.noWorkspaceFolder": "열린 워크스페이스 폴더가 없습니다.",
+    "info.copiedCommand": "클립보드에 복사했습니다."
+  }
+}

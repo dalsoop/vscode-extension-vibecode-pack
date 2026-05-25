@@ -1,0 +1,26 @@
+{
+  "ext": {
+    "displayName": "Vibecode - VSCode Host MCP List",
+    "description": "List MCP servers from user mcp.json, workspace mcp.json, and extension contributes.",
+    "category": "Vibecode MCP List",
+    "viewContainer": "MCP List",
+    "view": "MCP Servers"
+  },
+  "commands": {
+    "refresh": "Refresh",
+    "openUserMcpJson": "Open User mcp.json",
+    "openWorkspaceMcpJson": "Open Workspace mcp.json",
+    "openDetail": "Open MCP Server Detail",
+    "copyCommand": "Copy Command"
+  },
+  "runtime": {
+    "group.user": "User",
+    "group.workspace": "Workspace",
+    "group.extension": "Extension",
+    "empty.placeholder": "No MCP servers found.",
+    "error.parseMcpJson": "Failed to parse {0}: {1}",
+    "error.scanSource": "Failed to scan {0}: {1}",
+    "info.noWorkspaceFolder": "No workspace folder is open.",
+    "info.copiedCommand": "Copied to clipboard."
+  }
+}
