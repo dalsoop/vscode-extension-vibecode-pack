@@ -15,6 +15,10 @@ export async function handler(arg: vscode.Uri | undefined): Promise<void> {
     vscode.window.showWarningMessage(vscode.l10n.t('Cannot open terminal: {0}', cwd));
     return;
   }
-  const term = vscode.window.createTerminal({ name: path.basename(cwd), cwd });
+  const name = path.basename(cwd);
+  const existing = vscode.window.terminals.find(t => t.name === name);
+  const term = existing && existing.exitStatus === undefined
+    ? existing
+    : vscode.window.createTerminal({ name, cwd });
   term.show();
 }
