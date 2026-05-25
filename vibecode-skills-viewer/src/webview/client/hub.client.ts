@@ -5,6 +5,8 @@
 // All shared types come from the ambient `Contracts.*` namespace declared in
 // src/contracts/*.d.ts (single source of truth shared with the extension).
 
+/// <reference path="./_tree.ts" />
+
 interface ViewState {
   tabs: Contracts.Tab[];
   scopes: Contracts.Segment[];
@@ -18,6 +20,9 @@ interface ViewState {
   data: Record<string, Contracts.Group[]>;
   filter: string;
   activeFolder: Contracts.ActiveFolder | null;
+  // Expanded tree-node ids (client-only, persists across re-renders during
+  // session but not across reloads). Visual only.
+  expandedIds: Set<string>;
   dict: Record<string, string>;
 }
 
@@ -35,6 +40,7 @@ const state: ViewState = {
   data: {},
   filter: '',
   activeFolder: null,
+  expandedIds: new Set<string>(),
   dict: {}
 };
 
@@ -124,10 +130,21 @@ function renderScopes(): void {
   });
 }
 
+// Recursive lookup — items can be nested via `children` for folder-depth view.
 function findItem(id: string): Contracts.ItemPayload | null {
+  const visit = (arr: readonly Contracts.ItemPayload[]): Contracts.ItemPayload | null => {
+    for (const it of arr) {
+      if (it.id === id) return it;
+      if (it.children?.length) {
+        const found = visit(it.children);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
   for (const g of state.data[state.active] || []) {
-    const it = g.items.find(x => x.id === id);
-    if (it) return it;
+    const found = visit(g.items);
+    if (found) return found;
   }
   return null;
 }
@@ -149,9 +166,12 @@ function itemHtml(it: Contracts.ItemPayload): string {
   const score = it.score
     ? `<span class="score ${it.score.color}" title="${esc((it.score.issues || []).join('\n') || t('hub.score.noIssues'))}">${it.score.pct}</span>`
     : '';
+  // Prominent right-aligned count badge ("(152)"). Used for line counts on
+  // files and item counts on folders.
+  const metric = it.metric ? `<span class="item-metric">(${it.metric.count})</span>` : '';
   return `<div class="item" data-id="${esc(it.id)}">
     <div class="item-body">
-      <div class="item-title">${badge}${score}<span>${esc(it.title)}</span></div>
+      <div class="item-title">${badge}${score}<span>${esc(it.title)}</span>${metric}</div>
       ${it.subtitle ? `<div class="item-subtitle">${esc(it.subtitle)}</div>` : ''}
       ${it.meta ? `<div class="item-meta">${esc(it.meta)}</div>` : ''}
     </div>
@@ -169,20 +189,28 @@ function renderContent(): void {
   renderScopes();
   const groups = state.data[state.active] || [];
   const f = state.filter.toLowerCase();
+  // Filter only the top-level items by chip + text; children pass through
+  // (they're context for the matching parent).
+  const matchesFilter = (it: Contracts.ItemPayload): boolean => {
+    if (!f) return true;
+    return (it.title + ' ' + (it.subtitle || '') + ' ' + (it.meta || '')).toLowerCase().includes(f);
+  };
+
   const parts: string[] = [];
   let total = 0;
   for (const g of groups) {
-    const items = g.items.filter(it => {
-      if (!passesToolChip(it)) return false;
-      if (!f) return true;
-      return (it.title + ' ' + (it.subtitle || '') + ' ' + (it.meta || '')).toLowerCase().includes(f);
-    });
+    const items = g.items.filter(it => passesToolChip(it) && matchesFilter(it));
     if (!items.length) continue;
     total += items.length;
     parts.push(
       `<div class="group"><div class="group-title">${esc(g.title)} <span style="opacity:0.6">(${items.length})</span></div>`
     );
-    for (const it of items) parts.push(itemHtml(it));
+    parts.push(
+      Tree.render(items, {
+        expandedIds: state.expandedIds,
+        renderLeaf: ({ item }) => itemHtml(item)
+      })
+    );
     parts.push('</div>');
   }
   if (!total) {
@@ -192,12 +220,22 @@ function renderContent(): void {
   }
   $('content').innerHTML = parts.join('');
 
+  // Expand/collapse chevron clicks — flip the id in expandedIds and re-render.
+  Tree.bindToggles($('content'), id => {
+    if (state.expandedIds.has(id)) state.expandedIds.delete(id);
+    else state.expandedIds.add(id);
+    renderContent();
+  });
+
   document.querySelectorAll<HTMLElement>('.item').forEach(el => {
     el.onclick = e => {
       if ((e.target as Element).closest('.act')) return;
+      if ((e.target as Element).closest('.tree-chevron')) return;
       const item = findItem(el.dataset.id!);
       if (!item) return;
-      const preferred = state.active === 'skill' ? 'preview' : 'open';
+      // Leaf files in the tree open directly; skill nodes prefer preview.
+      const preferred =
+        item.kind === 'file' ? 'open' : state.active === 'skill' ? 'preview' : 'open';
       vscode.postMessage({ type: 'action', action: preferred, payload: item });
     };
   });

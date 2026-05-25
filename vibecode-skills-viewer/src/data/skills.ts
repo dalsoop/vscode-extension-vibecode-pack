@@ -2,6 +2,7 @@ import { collectAllSkills, collectSkillsUnder } from '../sources';
 import * as analyzer from '../analyzer';
 import * as mem from '../memory';
 import * as state from '../state';
+import { readFolderTree } from './folderTree';
 import type { DataSource, FetchContext, Group, ItemPayload, Skill, ToolId } from '../types';
 
 function passesScope(srcScope: string, scope: FetchContext['scope']): boolean {
@@ -41,6 +42,7 @@ export class SkillSource implements DataSource {
     for (const it of items) {
       const key = `${it.source.label} · ${it.source.scope}`;
       const sc = analyzer.score({ name: it.name, dir: it.dir, mdPath: it.info?.mdPath }, { dupMap });
+      const children = readFolderTree(it.dir);
       (groups[key] = groups[key] || []).push({
         id: it.dir,
         title: it.name,
@@ -48,7 +50,6 @@ export class SkillSource implements DataSource {
         meta: [
           it.info?.frontmatterError ? `⚠ YAML: ${it.info.frontmatterError.message.slice(0, 80)}` : '',
           (it.info?.categories || []).join(' · '),
-          sc.lines ? `${sc.lines} lines` : '',
           sc.chars ? `${(sc.chars / 1024).toFixed(1)}KB` : '',
           sc.mtime ? mem.formatAge(sc.mtime) : ''
         ]
@@ -58,9 +59,12 @@ export class SkillSource implements DataSource {
         path: it.dir,
         mdPath: it.info?.mdPath,
         tool: it.source.tool,
+        kind: 'skill',
         readOnly: !!it.source.readOnly,
         score: { pct: sc.pct, grade: sc.grade, color: sc.color, axes: sc.axes, issues: sc.issues },
-        actions: ['open', 'preview', 'fav', 'finder']
+        metric: sc.lines ? { count: sc.lines, unit: 'lines' } : undefined,
+        actions: ['open', 'preview', 'fav', 'finder'],
+        children: children.length ? children : undefined
       });
     }
 
