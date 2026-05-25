@@ -3,7 +3,7 @@
   "ext.description": "Lint commit messages against bundled commitlint templates (Conventional, PHP/Laravel, Node, Python). Right-click a folder or use the sidebar tree view to scaffold a config; run the CLI check on the last commit from the palette or the sidebar.",
   "ext.category": "Vibecode",
   "view.container.title": "Commit Lint",
+  "view.checks.name": "Checks",
   "view.templates.name": "Templates",
-  "config.checkLastCommit.command": "Shell command run by 'Check Last Commit Message' when preferExternal=true and a commitlint.config.* is present. Defaults to `npx --yes commitlint --from HEAD~1 --to HEAD --verbose`.",
-  "config.checkLastCommit.preferExternal": "If true and a commitlint.config.* is detected in the workspace, run the external commitlint CLI in a terminal instead of the built-in validator. Default: false (use the bundled validator - no npm install required)."
+  "config.checkLastCommit.command": "Shell command run by 'Check Last Commit Message' in a workspace terminal. Defaults to `npx --yes commitlint --from HEAD~1 --to HEAD --verbose`."
 }
