@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
+import { BrowserPreviewEditorProvider } from './editor-provider';
 
-export function activate(_context: vscode.ExtensionContext): void {
-  // Filled in Task 9.
+export function activate(context: vscode.ExtensionContext): void {
+  context.subscriptions.push(BrowserPreviewEditorProvider.register(context));
 }
 
 export function deactivate(): void {
-  // nothing
+  // nothing — subscriptions are disposed by VSCode
 }
