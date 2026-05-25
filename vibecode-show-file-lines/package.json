@@ -17,8 +17,8 @@
   ],
   "main": "./dist/extension.js",
   "scripts": {
-    "build": "npm run sync && tsc -p .",
-    "watch": "tsc -p . -w",
+    "build": "npm run sync && node scripts/build-ext.mjs --production",
+    "watch": "node scripts/build-ext.mjs --watch",
     "sync": "node scripts/sync-contributions.mjs",
     "sync:check": "node scripts/sync-contributions.mjs --check",
     "typecheck": "tsc -p . --noEmit",
@@ -29,7 +29,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "vscode:prepublish": "npm run build",
-    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license"
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license",
+    "build:dev": "npm run sync && node scripts/build-ext.mjs"
   },
   "dependencies": {
     "ignore": "^5.3.2"
@@ -41,7 +42,8 @@
     "prettier": "^3.8.3",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.59.4",
-    "vitest": "^2.1.0"
+    "vitest": "^2.1.0",
+    "esbuild": "^0.24.0"
   },
   "contributes": {
     "viewsContainers": {
