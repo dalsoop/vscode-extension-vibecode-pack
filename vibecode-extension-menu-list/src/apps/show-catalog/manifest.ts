@@ -4,16 +4,7 @@ export const manifest: AppManifest = {
   id: 'showCatalog',
   title: 'Vibecode - Show Extension Menu Catalog',
   description:
-    'List every installed vibecode-* extension and its registered commands in a QuickPick. Selecting an item runs the command via vscode.commands.executeCommand.',
+    'Open a QuickPick listing every command from every installed vibecode-* extension. Type-to-filter alternative to the sidebar.',
   icon: 'list-tree',
-  menus: [
-    {
-      where: 'vibecodeMenu.explorerContext',
-      group: '9_meta@99'
-    },
-    {
-      where: 'vibecodeMenu.editorContext',
-      group: '9_meta@99'
-    }
-  ]
+  menus: []
 };

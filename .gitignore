@@ -20,3 +20,7 @@ node_modules/
 
 # Empty/test artifacts that shouldn't ship
 index.html
+
+# macOS Finder noise — "무제 폴더" = "Untitled Folder"
+무제 폴더/
+Untitled Folder/

@@ -1,8 +1,7 @@
 {
   "ext.displayName": "Vibecode Extension Menu List",
-  "ext.description": "Hosts shared `Vibecode` submenus (explorer/context, editor/context, editor/title) that all vibecode-* extensions can contribute into, plus a palette command listing every installed vibecode-* command.",
+  "ext.description": "Click the V icon in the Activity Bar — the primary sidebar slides open with a webview listing every installed vibecode-* extension and its commands as clickable cards. Card click runs the command. Includes a palette-based QuickPick catalog as a keyboard alternative.",
   "ext.category": "Vibecode",
-  "submenu.vibecodeMenu.explorerContext": "Vibecode",
-  "submenu.vibecodeMenu.editorContext": "Vibecode",
-  "submenu.vibecodeMenu.editorTitle": "Vibecode"
+  "viewContainer.vibecode": "Vibecode",
+  "view.vibecodeMenuList.sidebar": "Extensions"
 }
