@@ -28,6 +28,10 @@ export interface L10nBundle {
   copySelector: string;
   none: string;
   snapshotsHint: string;
+  notes: string;
+  notesPlaceholder: string;
+  changesLabel: string;
+  zipAlsoSaved: string;
 }
 
 export function getL10nBundle(): L10nBundle {
@@ -58,6 +62,10 @@ export function getL10nBundle(): L10nBundle {
     unpin: vscode.l10n.t('Unpin'),
     copySelector: vscode.l10n.t('Copy selector'),
     none: vscode.l10n.t('(none)'),
-    snapshotsHint: vscode.l10n.t('Snapshots are written to .vibecode/browser-preview/ — added to .gitignore automatically.')
+    snapshotsHint: vscode.l10n.t('Snapshots are written to .vibecode/browser-preview/ — added to .gitignore automatically.'),
+    notes: vscode.l10n.t('Notes'),
+    notesPlaceholder: vscode.l10n.t('Notes for publisher…'),
+    changesLabel: vscode.l10n.t('Changes ({0})'),
+    zipAlsoSaved: vscode.l10n.t('ZIP also saved')
   };
 }

@@ -24,7 +24,7 @@ export const CLIENT_SCRIPT = `
 
     let baseUrl = null;
     let inspectorOn = false;
-    const pins = new Map(); // pickId -> { card, data }
+    const pins = new Map(); // pickId -> { card, data, overrideState, badgeEl }
     const seenAssetUrls = new Set();
 
     function setOverlay(opts) {
@@ -83,6 +83,46 @@ export const CLIENT_SCRIPT = `
     }
     function hideToast() { toast.classList.remove('visible'); }
 
+    // ---- per-pin override state + badge ----
+    function recomputeBadge(pickId) {
+      const entry = pins.get(pickId);
+      if (!entry) return;
+      const s = entry.overrideState;
+      let count = 0;
+      for (const v of s.classToggles.values()) if (v) count++;
+      if (s.inlineStyle.trim()) count++;
+      if (s.forceState) count++;
+      if (s.notes.trim()) count++;
+      entry.badgeEl.textContent = '▲' + count;
+      entry.badgeEl.classList.toggle('zero', count === 0);
+      entry.badgeEl.title = (l10n.changesLabel || 'Changes ({0})').replace('{0}', String(count));
+    }
+
+    function updateClassToggleState(pickId, cls, enabled) {
+      const entry = pins.get(pickId);
+      if (!entry) return;
+      entry.overrideState.classToggles.set(cls, enabled);
+      recomputeBadge(pickId);
+    }
+    function updateInlineStyleState(pickId, css) {
+      const entry = pins.get(pickId);
+      if (!entry) return;
+      entry.overrideState.inlineStyle = css || '';
+      recomputeBadge(pickId);
+    }
+    function updateForceStateState(pickId, state) {
+      const entry = pins.get(pickId);
+      if (!entry) return;
+      entry.overrideState.forceState = state || null;
+      recomputeBadge(pickId);
+    }
+    function updateNotesState(pickId, notes) {
+      const entry = pins.get(pickId);
+      if (!entry) return;
+      entry.overrideState.notes = notes || '';
+      recomputeBadge(pickId);
+    }
+
     // ---- pin card rendering ----
     function renderPinCard(pick) {
       const card = document.createElement('div');
@@ -91,6 +131,9 @@ export const CLIENT_SCRIPT = `
 
       const header = document.createElement('div');
       header.className = 'pin-header';
+      const badge = document.createElement('span');
+      badge.className = 'pin-badge zero';
+      badge.textContent = '▲0';
       const sel = document.createElement('div');
       sel.className = 'pin-selector';
       sel.textContent = pick.selector;
@@ -106,11 +149,11 @@ export const CLIENT_SCRIPT = `
       unpinBtn.onclick = () => unpinLocal(pick.id);
       actions.appendChild(copyBtn);
       actions.appendChild(unpinBtn);
+      header.appendChild(badge);
       header.appendChild(sel);
       header.appendChild(actions);
       card.appendChild(header);
 
-      // matched CSS
       const cssBlock = document.createElement('div');
       cssBlock.className = 'pin-block';
       const cssLabel = document.createElement('label');
@@ -132,7 +175,6 @@ export const CLIENT_SCRIPT = `
       cssBlock.appendChild(cssBox);
       card.appendChild(cssBlock);
 
-      // computed
       const compBlock = document.createElement('div');
       compBlock.className = 'pin-block';
       const compLabel = document.createElement('label');
@@ -148,7 +190,6 @@ export const CLIENT_SCRIPT = `
       compBlock.appendChild(compGrid);
       card.appendChild(compBlock);
 
-      // overrides
       const ov = document.createElement('div');
       ov.className = 'pin-block pin-overrides';
       const ovLabel = document.createElement('label');
@@ -163,6 +204,7 @@ export const CLIENT_SCRIPT = `
           const cls = togInput.value.trim();
           togInput.value = '';
           addToggle(pick.id, togWrap, cls, true);
+          updateClassToggleState(pick.id, cls, true);
           postToIframe({ type: 'bp:toggleClass', pickId: pick.id, className: cls, enabled: true });
         }
       };
@@ -178,6 +220,7 @@ export const CLIENT_SCRIPT = `
       styleTa.oninput = () => {
         clearTimeout(styleTimer);
         styleTimer = setTimeout(() => {
+          updateInlineStyleState(pick.id, styleTa.value);
           postToIframe({ type: 'bp:setInlineStyle', pickId: pick.id, css: styleTa.value });
         }, 200);
       };
@@ -193,13 +236,30 @@ export const CLIENT_SCRIPT = `
         forceSel.appendChild(o);
       }
       forceSel.onchange = () => {
+        updateForceStateState(pick.id, forceSel.value || null);
         postToIframe({ type: 'bp:setForceState', pickId: pick.id, state: forceSel.value || null });
       };
       ov.appendChild(forceSel);
 
+      const notesLabel = document.createElement('label');
+      notesLabel.textContent = l10n.notes || 'Notes';
+      ov.appendChild(notesLabel);
+      const notesTa = document.createElement('textarea');
+      notesTa.className = 'notes-ta';
+      notesTa.placeholder = l10n.notesPlaceholder || 'Notes for publisher…';
+      let notesTimer = null;
+      notesTa.oninput = () => {
+        clearTimeout(notesTimer);
+        notesTimer = setTimeout(() => {
+          updateNotesState(pick.id, notesTa.value);
+          postToIframe({ type: 'bp:setNotes', pickId: pick.id, notes: notesTa.value });
+        }, 200);
+      };
+      ov.appendChild(notesTa);
+
       card.appendChild(ov);
 
-      return card;
+      return { card, badge };
     }
 
     function addToggle(pickId, togWrap, cls, enabled) {
@@ -209,17 +269,27 @@ export const CLIENT_SCRIPT = `
       const lbl = document.createElement('label');
       const cb = document.createElement('input');
       cb.type = 'checkbox'; cb.id = id; cb.checked = enabled;
-      cb.onchange = () => postToIframe({ type: 'bp:toggleClass', pickId, className: cls, enabled: cb.checked });
+      cb.onchange = () => {
+        updateClassToggleState(pickId, cls, cb.checked);
+        postToIframe({ type: 'bp:toggleClass', pickId, className: cls, enabled: cb.checked });
+      };
       lbl.appendChild(cb); lbl.appendChild(document.createTextNode(' ' + cls));
       togWrap.appendChild(lbl);
     }
 
     function addPin(pick) {
       if (pins.has(pick.id)) return;
-      const card = renderPinCard(pick);
-      pins.set(pick.id, { card, data: pick });
+      const { card, badge } = renderPinCard(pick);
+      const overrideState = {
+        classToggles: new Map(),
+        inlineStyle: '',
+        forceState: null,
+        notes: ''
+      };
+      pins.set(pick.id, { card, data: pick, overrideState, badgeEl: badge });
       pinsEmpty.style.display = 'none';
       pinsList.appendChild(card);
+      recomputeBadge(pick.id);
     }
 
     function unpinLocal(pickId) {
@@ -231,7 +301,6 @@ export const CLIENT_SCRIPT = `
       postToIframe({ type: 'bp:unpin', pickId });
     }
 
-    // ---- asset rendering ----
     function addAsset(asset) {
       if (seenAssetUrls.has(asset.url)) return;
       seenAssetUrls.add(asset.url);
@@ -244,7 +313,6 @@ export const CLIENT_SCRIPT = `
       assetsList.appendChild(row);
     }
 
-    // ---- toolbar buttons ----
     btnReload && btnReload.addEventListener('click', () => vscode.postMessage({ type: 'manualReload' }));
     btnEdit && btnEdit.addEventListener('click', () => vscode.postMessage({ type: 'editSource' }));
     btnOpen && btnOpen.addEventListener('click', () => vscode.postMessage({ type: 'openExternal' }));
@@ -254,15 +322,12 @@ export const CLIENT_SCRIPT = `
     });
     overlayRetry && overlayRetry.addEventListener('click', () => vscode.postMessage({ type: 'retry' }));
 
-    // ---- messages from extension host ----
     window.addEventListener('message', (event) => {
       const msg = event.data;
       if (!msg || typeof msg !== 'object') return;
-      // bp:* messages come from the iframe; everything else from the ext host
       if (typeof msg.type === 'string' && msg.type.startsWith('bp:')) {
         switch (msg.type) {
           case 'bp:ready':
-            // iframe inspector ready — apply current toggle state
             postToIframe({ type: 'bp:setInspectorMode', on: inspectorOn });
             break;
           case 'bp:pinned':

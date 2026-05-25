@@ -79,6 +79,10 @@ export const INSPECTOR_SCRIPT = `
     return out;
   }
 
+  function classListOf(el) {
+    return (el.className || '').toString().trim().split(/\\s+/).filter(Boolean);
+  }
+
   // ---- hover overlay ----
   var overlay = document.createElement('div');
   overlay.id = '__bp_overlay';
@@ -114,7 +118,7 @@ export const INSPECTOR_SCRIPT = `
   }
 
   // ---- pin registry ----
-  var pins = new Map();   // pickId -> { el, overrides }
+  var pins = new Map();   // pickId -> { el, overrides, baseline, originalInlineStyle }
   var nextPickId = 1;
 
   function isInspectableEl(el) {
@@ -144,8 +148,16 @@ export const INSPECTOR_SCRIPT = `
 
   function pinElement(el) {
     const id = nextPickId++;
-    const overrides = { classToggles: [], inlineStyle: '', forceState: null };
-    pins.set(id, { el, overrides, originalInlineStyle: el.getAttribute('style') || '' });
+    const overrides = { classToggles: [], inlineStyle: '', forceState: null, notes: '' };
+    const baseline = {
+      className: el.className.toString(),
+      classes: classListOf(el),
+      inlineStyle: el.getAttribute('style') || '',
+      forceState: null,
+      notes: '',
+      computed: computedFor(el)
+    };
+    pins.set(id, { el, overrides, baseline, originalInlineStyle: baseline.inlineStyle });
     post({
       type: 'bp:pinned',
       pick: snapshotPick(id, el, overrides)
@@ -163,8 +175,53 @@ export const INSPECTOR_SCRIPT = `
       overrides: {
         classToggles: overrides.classToggles.slice(),
         inlineStyle: overrides.inlineStyle,
-        forceState: overrides.forceState
+        forceState: overrides.forceState,
+        notes: overrides.notes
       }
+    };
+  }
+
+  function diffArrays(a, b) {
+    const setA = new Set(a);
+    const setB = new Set(b);
+    const added = [];
+    const removed = [];
+    for (const x of b) if (!setA.has(x)) added.push(x);
+    for (const x of a) if (!setB.has(x)) removed.push(x);
+    return { added, removed };
+  }
+
+  function computeDelta(pin) {
+    const el = pin.el;
+    const baseline = pin.baseline;
+    const overrides = pin.overrides;
+    const currentClasses = classListOf(el);
+    const classDiff = diffArrays(baseline.classes, currentClasses);
+    const currentInline = el.getAttribute('style') || '';
+    const inlineChanged = currentInline !== baseline.inlineStyle;
+    const forceChanged = (overrides.forceState || null) !== (baseline.forceState || null);
+    const notesChanged = (overrides.notes || '') !== (baseline.notes || '');
+    const curComputed = computedFor(el);
+    const computedDelta = {};
+    for (const k of Object.keys(curComputed)) {
+      const before = baseline.computed[k] || '';
+      const after = curComputed[k] || '';
+      if (before !== after) computedDelta[k] = { before, after };
+    }
+    const hasAnyChange =
+      classDiff.added.length > 0 ||
+      classDiff.removed.length > 0 ||
+      inlineChanged ||
+      forceChanged ||
+      notesChanged ||
+      Object.keys(computedDelta).length > 0;
+    return {
+      classes: classDiff,
+      inlineStyle: { before: baseline.inlineStyle, after: currentInline, changed: inlineChanged },
+      forceState: { before: baseline.forceState, after: overrides.forceState || null, changed: forceChanged },
+      notes: { before: baseline.notes, after: overrides.notes || '', changed: notesChanged },
+      computed: computedDelta,
+      __hasAnyChange: hasAnyChange
     };
   }
 
@@ -248,7 +305,12 @@ export const INSPECTOR_SCRIPT = `
   function applyForceState(pickId, state) {
     const pin = pins.get(pickId); if (!pin) return;
     pin.overrides.forceState = state || null;
-    // v0.2: label only — no actual pseudo-class simulation
+    // v0.2/v0.3: label only — no actual pseudo-class simulation
+  }
+
+  function applyNotes(pickId, notes) {
+    const pin = pins.get(pickId); if (!pin) return;
+    pin.overrides.notes = String(notes || '');
   }
 
   function unpin(pickId) {
@@ -258,8 +320,18 @@ export const INSPECTOR_SCRIPT = `
   // ---- snapshot collector ----
   function collectSnapshot() {
     const picksArr = [];
+    const changesArr = [];
     for (const [id, pin] of pins.entries()) {
       picksArr.push(snapshotPick(id, pin.el, pin.overrides));
+      const delta = computeDelta(pin);
+      const hasAnyChange = !!delta.__hasAnyChange;
+      delete delta.__hasAnyChange;
+      changesArr.push({
+        pickId: id,
+        selector: buildSelector(pin.el),
+        delta,
+        hasAnyChange
+      });
     }
     // Hide overlay/tooltip before capturing outerHTML
     hideOverlay();
@@ -272,6 +344,7 @@ export const INSPECTOR_SCRIPT = `
       outerHTML,
       picks: picksArr,
       assets: assets.slice(),
+      changes: changesArr,
       viewport: { width: window.innerWidth, height: window.innerHeight },
       userAgent: navigator.userAgent
     };
@@ -298,6 +371,9 @@ export const INSPECTOR_SCRIPT = `
         break;
       case 'bp:setForceState':
         applyForceState(msg.pickId, msg.state || null);
+        break;
+      case 'bp:setNotes':
+        applyNotes(msg.pickId, msg.notes);
         break;
       case 'bp:unpin':
         unpin(msg.pickId);
