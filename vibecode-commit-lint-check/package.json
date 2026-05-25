@@ -20,6 +20,7 @@
   "scripts": {
     "build": "npm run sync && tsc -p .",
     "watch": "tsc -p . -w",
+    "test": "node --test tests/*.test.mjs",
     "sync": "node scripts/sync-contributions.mjs",
     "sync:check": "node scripts/sync-contributions.mjs --check",
     "typecheck": "tsc -p . --noEmit",
@@ -42,6 +43,11 @@
     "configuration": {
       "title": "%ext.category%",
       "properties": {
+        "vibecodeCommitLint.checkLastCommit.preferExternal": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.checkLastCommit.preferExternal%"
+        },
         "vibecodeCommitLint.checkLastCommit.command": {
           "type": "string",
           "default": "npx --yes commitlint --from HEAD~1 --to HEAD --verbose",
