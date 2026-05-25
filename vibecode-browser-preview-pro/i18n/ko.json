@@ -12,6 +12,25 @@
     "Server error: {0}": "서버 오류: {0}",
     "Retry": "다시 시도",
     "Open a folder first": "먼저 폴더를 열어주세요",
-    "This unsaved HTML file has no folder to serve from. Save it inside a folder or open a workspace folder.": "저장되지 않은 HTML 파일은 서빙할 폴더가 없습니다. 폴더 안에 저장하거나 워크스페이스 폴더를 여세요."
+    "This unsaved HTML file has no folder to serve from. Save it inside a folder or open a workspace folder.": "저장되지 않은 HTML 파일은 서빙할 폴더가 없습니다. 폴더 안에 저장하거나 워크스페이스 폴더를 여세요.",
+    "Inspector": "인스펙터",
+    "Save Snapshot": "스냅샷 저장",
+    "Inspector unavailable (file too large)": "인스펙터 사용 불가 (파일 너무 큼)",
+    "Snapshot saved to {0}": "{0} 에 스냅샷 저장됨",
+    "Open Snapshot Folder": "스냅샷 폴더 열기",
+    "Snapshot failed: {0}": "스냅샷 저장 실패: {0}",
+    "No pins yet. Click an element in the preview to inspect it.": "아직 핀이 없습니다. 프리뷰에서 요소를 클릭해 살펴보세요.",
+    "Assets": "에셋",
+    "Pins": "핀",
+    "Selector": "셀렉터",
+    "Matched CSS": "매칭 CSS",
+    "Computed": "컴퓨티드",
+    "Class toggles": "클래스 토글",
+    "Inline style": "인라인 스타일",
+    "Force state": "Force state",
+    "Unpin": "핀 제거",
+    "Copy selector": "셀렉터 복사",
+    "(none)": "(없음)",
+    "Snapshots are written to .vibecode/browser-preview/ — added to .gitignore automatically.": "스냅샷은 .vibecode/browser-preview/ 에 저장됩니다 — .gitignore 에 자동으로 추가됩니다."
   }
 }
