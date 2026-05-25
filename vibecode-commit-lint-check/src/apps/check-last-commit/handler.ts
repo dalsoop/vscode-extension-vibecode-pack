@@ -35,9 +35,15 @@ export async function handler(arg: vscode.Uri | undefined): Promise<void> {
     if (choice !== vscode.l10n.t('Run anyway')) return;
   }
 
-  const term = vscode.window.createTerminal({ name: 'commitlint: last commit', cwd });
+  const term = findOrCreateTerminal('commitlint: last commit', cwd);
   term.show(true);
   term.sendText('npx --yes commitlint --from HEAD~1 --to HEAD --verbose', true);
+}
+
+function findOrCreateTerminal(name: string, cwd: string): vscode.Terminal {
+  const existing = vscode.window.terminals.find(t => t.name === name);
+  if (existing && existing.exitStatus === undefined) return existing;
+  return vscode.window.createTerminal({ name, cwd });
 }
 
 async function resolveCwd(arg: vscode.Uri | undefined): Promise<string | undefined> {
