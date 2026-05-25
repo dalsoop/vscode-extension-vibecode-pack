@@ -1,0 +1,5 @@
+{
+  "label": "Subject ≤ 100 chars",
+  "description": "First line of HEAD commit fits in 100 characters (matches commitlint.config.js header-max-length)",
+  "command": "git log -1 --pretty=%s | awk '{exit (length>100)}'"
+}

@@ -9,5 +9,9 @@
   },
   "dependencies": {
     "eciesjs": "^0.5.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1"
   }
 }

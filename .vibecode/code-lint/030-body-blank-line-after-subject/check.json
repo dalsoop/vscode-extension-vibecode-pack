@@ -1,0 +1,5 @@
+{
+  "label": "Blank line after subject",
+  "description": "Line 2 of HEAD commit message is empty (or message has only one line)",
+  "command": "git log -1 --pretty=%B | awk 'NR==2 && NF{exit 1} END{exit 0}'"
+}
