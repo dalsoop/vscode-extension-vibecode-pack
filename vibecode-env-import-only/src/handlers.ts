@@ -3,11 +3,14 @@
 // (HTML, webview lifecycle) lives in the provider.
 
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import * as parser from './env-parser';
+import type { ExampleResolver } from './example-resolver';
 import type { WebviewToHost } from './messages';
 
 export interface HandlerContext {
   document: vscode.TextDocument;
+  exampleResolver: ExampleResolver;
   postError: (message: string) => void;
 }
 
@@ -28,6 +31,9 @@ export async function handle(msg: WebviewToHost, ctx: HandlerContext): Promise<v
 
       case 'requestDelete':
         return await confirmAndDelete(ctx, msg.key);
+
+      case 'importFromExample':
+        return await importFromExample(ctx);
     }
   } catch (err) {
     ctx.postError(String((err as Error).message ?? err));
@@ -70,6 +76,26 @@ async function confirmAndDelete(ctx: HandlerContext, key: string): Promise<void>
   );
   if (!choice) return;
   await mutate(ctx.document, ls => parser.removeKey(ls, key));
+}
+
+async function importFromExample(ctx: HandlerContext): Promise<void> {
+  const exampleUri = await ctx.exampleResolver.resolve(ctx.document.uri);
+  if (!exampleUri) {
+    return ctx.postError(vscode.l10n.t('No .env.example / .env.template found in this folder.'));
+  }
+  const text = await fs.promises.readFile(exampleUri.fsPath, 'utf8');
+  const exampleKeys = parser.keyList(parser.parse(text)).map(e => e.key);
+  const primaryKeys = new Set(parser.keyList(parser.parse(ctx.document.getText())).map(e => e.key));
+  const missing = exampleKeys.filter(k => !primaryKeys.has(k));
+  if (missing.length === 0) return;
+
+  await mutate(ctx.document, ls => {
+    let next = ls;
+    for (const k of missing) {
+      next = parser.setValue(next, k, '');
+    }
+    return next;
+  });
 }
 
 async function mutate(

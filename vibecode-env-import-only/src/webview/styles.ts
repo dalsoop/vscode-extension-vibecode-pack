@@ -114,4 +114,38 @@ button.danger { color: var(--vscode-errorForeground); }
 
 .key-edit { display: flex; gap: 4px; align-items: center; }
 .key-edit input { font-weight: 600; }
+
+/* Example/schema section */
+.example-meta {
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.85em;
+  margin: 4px 0 8px;
+}
+.example-block { margin: 8px 0 12px; }
+.example-block .label {
+  font-size: 0.85em;
+  color: var(--vscode-descriptionForeground);
+  margin-bottom: 4px;
+}
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.85em;
+  background: var(--vscode-badge-background, rgba(127,127,127,0.18));
+  color: var(--vscode-badge-foreground, var(--vscode-foreground));
+}
+.chip.warn {
+  background: var(--vscode-inputValidation-warningBackground, rgba(255,165,0,0.18));
+  color: var(--vscode-inputValidation-warningForeground, var(--vscode-foreground));
+}
+.example-actions { margin-top: 8px; }
+.in-sync {
+  color: var(--vscode-charts-green, var(--vscode-foreground));
+  font-size: 0.9em;
+  margin: 4px 0;
+}
 `;

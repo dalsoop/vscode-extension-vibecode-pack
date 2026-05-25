@@ -1,0 +1,13 @@
+{
+  "title": "Conventional Commits (default)",
+  "description": "Baseline @commitlint/config-conventional setup. No hook installer — pair with husky/pre-commit/captainhook separately.",
+  "files": [
+    {
+      "path": "commitlint.config.js",
+      "content": "module.exports = {\n  extends: ['@commitlint/config-conventional']\n};\n"
+    }
+  ],
+  "postInstall": [
+    "npm install --save-dev @commitlint/cli @commitlint/config-conventional"
+  ]
+}

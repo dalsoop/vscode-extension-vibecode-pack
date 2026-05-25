@@ -4,8 +4,7 @@ export const TABS: Tab[] = [
   { id: 'skill', label: 'SKILL.md', desc: 'Skills' },
   { id: 'rootmd', label: 'Root MD', desc: 'CLAUDE.md / .cursorrules / etc.' },
   { id: 'agent', label: 'AGENTS.md', desc: 'Agent manifests' },
-  { id: 'memory', label: 'Memory', desc: 'Per-project memory entries' },
-  { id: 'browse', label: 'Browse', desc: 'Remote catalog' }
+  { id: 'memory', label: 'Memory', desc: 'Per-project memory entries' }
 ];
 
 export const SCOPES: Segment[] = [

@@ -23,6 +23,9 @@ export function buildHtml(webview: vscode.Webview): string {
   <div class="hint" id="hint"></div>
   <div class="error" id="error"></div>
 
+  <h2 id="example-section-title" style="display:none"></h2>
+  <div id="example-section"></div>
+
   <h2 id="add-section-title"></h2>
   <div class="add-row" id="add-row"></div>
 

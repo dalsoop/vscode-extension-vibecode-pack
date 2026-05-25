@@ -1,7 +1,15 @@
 declare namespace Contracts {
   // ─── Hub sidebar (src/webview/) ───────────────────────────────────────
   type HubMsgFromExt =
-    | { type: 'init'; tabs: Tab[]; scopes: Segment[]; scope: ScopeFilter; i18n: WebviewI18n }
+    | {
+        type: 'init';
+        tabs: Tab[];
+        scopes: Segment[];
+        tools: Segment[];
+        showToolChips: boolean;
+        scope: ScopeFilter;
+        i18n: WebviewI18n;
+      }
     | { type: 'activeFolder'; dir: string | null; label: string | null }
     | { type: 'data'; tab: TabId; items: Group[] };
 

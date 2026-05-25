@@ -23,8 +23,8 @@ declare namespace Contracts {
 
   type ScopeId = 'global' | 'workspace' | 'extension' | 'this folder';
   type ScopeFilter = 'all' | 'global' | 'workspace' | 'this';
-  type TabId = 'skill' | 'rootmd' | 'agent' | 'memory' | 'browse';
-  type ActionName = 'open' | 'preview' | 'finder' | 'fav' | 'sync' | 'github' | 'create';
+  type TabId = 'skill' | 'rootmd' | 'agent' | 'memory';
+  type ActionName = 'open' | 'preview' | 'finder' | 'fav' | 'sync' | 'create';
 
   type RootScope = 'global' | 'workspace';
   type RootLayout = 'folder-tree' | 'rules-file' | 'single-md';

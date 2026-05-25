@@ -1,0 +1,100 @@
+{
+  "name": "vibecode-extension-menu-list",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "0.1.0",
+  "publisher": "dalsoop",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "npm run sync && tsc -p .",
+    "watch": "tsc -p . -w",
+    "sync": "node scripts/sync-contributions.mjs",
+    "sync:check": "node scripts/sync-contributions.mjs --check",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vscode:prepublish": "npm run build",
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license --baseContentUrl https://dalsoop.com"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "submenus": [
+      {
+        "id": "vibecodeMenu.explorerContext",
+        "label": "%submenu.vibecodeMenu.explorerContext%"
+      },
+      {
+        "id": "vibecodeMenu.editorContext",
+        "label": "%submenu.vibecodeMenu.editorContext%"
+      },
+      {
+        "id": "vibecodeMenu.editorTitle",
+        "label": "%submenu.vibecodeMenu.editorTitle%"
+      }
+    ],
+    "commands": [
+      {
+        "command": "vibecodeMenuList.showCatalog",
+        "title": "%cmd.showCatalog%",
+        "category": "%ext.category%",
+        "icon": "$(list-tree)"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "submenu": "vibecodeMenu.explorerContext",
+          "group": "6_rca@5"
+        }
+      ],
+      "editor/context": [
+        {
+          "submenu": "vibecodeMenu.editorContext",
+          "group": "6_rca@5"
+        }
+      ],
+      "editor/title": [
+        {
+          "submenu": "vibecodeMenu.editorTitle",
+          "group": "navigation@99"
+        }
+      ],
+      "vibecodeMenu.explorerContext": [
+        {
+          "command": "vibecodeMenuList.showCatalog",
+          "group": "9_meta@99"
+        }
+      ],
+      "vibecodeMenu.editorContext": [
+        {
+          "command": "vibecodeMenuList.showCatalog",
+          "group": "9_meta@99"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecodeMenuList.showCatalog"
+        }
+      ]
+    }
+  }
+}

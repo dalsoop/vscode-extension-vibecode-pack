@@ -8,6 +8,11 @@
 interface ViewState {
   tabs: Contracts.Tab[];
   scopes: Contracts.Segment[];
+  // Tool quick-filter chips at the top. `tool === 'all'` means no filter;
+  // any other id narrows visible items to that source.tool client-side.
+  tools: Contracts.Segment[];
+  tool: string;
+  showToolChips: boolean;
   scope: Contracts.ScopeFilter;
   active: Contracts.TabId;
   data: Record<string, Contracts.Group[]>;
@@ -22,6 +27,9 @@ const vscode = acquireVsCodeApi();
 const state: ViewState = {
   tabs: [],
   scopes: [],
+  tools: [],
+  tool: 'all',
+  showToolChips: true,
   scope: 'all',
   active: 'skill',
   data: {},
@@ -50,7 +58,6 @@ const CODICONS: Record<string, string> = {
   finder: 'folder-opened',
   fav: 'star-full',
   sync: 'sync',
-  github: 'github',
   create: 'add'
 };
 
@@ -71,13 +78,36 @@ function renderTabs(): void {
   $('desc').textContent = active ? active.desc : '';
 }
 
+function renderTools(): void {
+  const host = $('tools');
+  if (!state.showToolChips || state.tools.length === 0) {
+    host.setAttribute('hidden', '');
+    host.innerHTML = '';
+    return;
+  }
+  host.removeAttribute('hidden');
+  host.innerHTML = state.tools
+    .map(
+      tool =>
+        `<button class="seg ${tool.id === state.tool ? 'active' : ''}" data-tool="${tool.id}">${esc(tool.label)}</button>`
+    )
+    .join('');
+  document.querySelectorAll<HTMLButtonElement>('#tools .seg').forEach(b => {
+    b.onclick = () => {
+      state.tool = b.dataset.tool || 'all';
+      renderTools();
+      // Client-side filter only — no round-trip; just re-render the
+      // currently loaded items with the new visibility decision.
+      renderContent();
+    };
+  });
+}
+
 function renderScopes(): void {
-  const browseOnly = state.active === 'browse';
   const html = state.scopes
     .map(s => {
-      const disabled = browseOnly && s.id !== 'all';
-      const cls = ['seg', s.id === state.scope ? 'active' : '', disabled ? 'disabled' : ''].filter(Boolean).join(' ');
-      return `<button class="${cls}" data-scope="${s.id}"${disabled ? ' disabled' : ''}>${s.label}</button>`;
+      const cls = ['seg', s.id === state.scope ? 'active' : ''].filter(Boolean).join(' ');
+      return `<button class="${cls}" data-scope="${s.id}">${s.label}</button>`;
     })
     .join('');
   const hint =
@@ -87,7 +117,6 @@ function renderScopes(): void {
   $('scopes').innerHTML = html + hint;
   document.querySelectorAll<HTMLButtonElement>('#scopes .seg').forEach(b => {
     b.onclick = () => {
-      if (b.classList.contains('disabled')) return;
       state.scope = b.dataset.scope as Contracts.ScopeFilter;
       renderScopes();
       vscode.postMessage({ type: 'setScope', scope: state.scope });
@@ -130,6 +159,12 @@ function itemHtml(it: Contracts.ItemPayload): string {
   </div>`;
 }
 
+function passesToolChip(it: Contracts.ItemPayload): boolean {
+  // 'all' or item without a tool tag: always show.
+  if (state.tool === 'all' || !it.tool) return true;
+  return it.tool === state.tool;
+}
+
 function renderContent(): void {
   renderScopes();
   const groups = state.data[state.active] || [];
@@ -137,9 +172,11 @@ function renderContent(): void {
   const parts: string[] = [];
   let total = 0;
   for (const g of groups) {
-    const items = g.items.filter(
-      it => !f || (it.title + ' ' + (it.subtitle || '') + ' ' + (it.meta || '')).toLowerCase().includes(f)
-    );
+    const items = g.items.filter(it => {
+      if (!passesToolChip(it)) return false;
+      if (!f) return true;
+      return (it.title + ' ' + (it.subtitle || '') + ' ' + (it.meta || '')).toLowerCase().includes(f);
+    });
     if (!items.length) continue;
     total += items.length;
     parts.push(
@@ -185,9 +222,17 @@ window.addEventListener('message', ev => {
   if (m.type === 'init') {
     state.tabs = m.tabs;
     state.scopes = m.scopes;
+    state.tools = m.tools;
+    state.showToolChips = m.showToolChips;
     state.scope = m.scope;
     state.dict = m.i18n?.dict || {};
+    // If the currently-selected chip was hidden by user toggling tools off,
+    // fall back to 'all' so we don't end up filtering by a ghost tool.
+    if (state.tool !== 'all' && !state.tools.some(s => s.id === state.tool)) {
+      state.tool = 'all';
+    }
     renderTabs();
+    renderTools();
     renderContent();
   } else if (m.type === 'activeFolder') {
     state.activeFolder = { dir: m.dir, label: m.label };

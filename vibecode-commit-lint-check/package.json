@@ -37,5 +37,59 @@
     "prettier": "^3.8.3",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "vibecodeCommitLint.addTemplate",
+        "title": "%cmd.addTemplate%",
+        "category": "%ext.category%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "vibecodeCommitLint.checkLastCommit",
+        "title": "%cmd.checkLastCommit%",
+        "category": "%ext.category%",
+        "icon": "$(check-all)"
+      },
+      {
+        "command": "vibecodeCommitLint.initFromTemplate",
+        "title": "%cmd.initFromTemplate%",
+        "category": "%ext.category%",
+        "icon": "$(rocket)"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "vibecodeCommitLint.addTemplate",
+          "when": "explorerResourceIsFolder",
+          "group": "6_rca@11"
+        },
+        {
+          "command": "vibecodeCommitLint.initFromTemplate",
+          "when": "explorerResourceIsFolder",
+          "group": "6_rca@10"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "vibecodeCommitLint.checkLastCommit",
+          "when": "resourceFilename == 'COMMIT_EDITMSG'",
+          "group": "navigation@10"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecodeCommitLint.addTemplate"
+        },
+        {
+          "command": "vibecodeCommitLint.checkLastCommit"
+        },
+        {
+          "command": "vibecodeCommitLint.initFromTemplate"
+        }
+      ]
+    }
   }
 }

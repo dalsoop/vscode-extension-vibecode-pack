@@ -10,7 +10,10 @@ export const STYLE = `
   .tab:hover { color: var(--vscode-foreground); }
   .tab.active { color: var(--vscode-foreground); border-bottom-color: var(--vscode-focusBorder); }
   .segs { display: flex; gap: 4px; padding: 6px 8px 4px; border-bottom: 1px solid var(--vscode-panel-border); background: var(--vscode-sideBar-background); flex-wrap: wrap; align-items: center; }
-  #scopes { position: sticky; top: 31px; z-index: 9; }
+  #tools  { position: sticky; top: 31px; z-index: 9; }
+  #tools[hidden] { display: none; }
+  #scopes { position: sticky; top: 63px; z-index: 9; }
+  #tools[hidden] + #scopes { top: 31px; }
   .seg { padding: 2px 9px; cursor: pointer; border: 1px solid var(--vscode-panel-border); background: transparent; color: var(--vscode-descriptionForeground); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; border-radius: 10px; white-space: nowrap; }
   .seg:hover { background: var(--vscode-toolbar-hoverBackground); color: var(--vscode-foreground); }
   .seg.active { background: var(--vscode-focusBorder); border-color: var(--vscode-focusBorder); color: var(--vscode-button-foreground, #fff); }
@@ -67,6 +70,7 @@ export function buildHtml(webview: vscode.Webview, extensionPath: string): strin
 <style>${STYLE}</style>
 </head><body>
 <div class="tabs" id="tabs"></div>
+<div class="segs" id="tools"></div>
 <div class="segs" id="scopes"></div>
 <div class="toolbar">
   <input class="search" id="q" placeholder="${t('hub.shell.filter')}">

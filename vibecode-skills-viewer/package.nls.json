@@ -63,5 +63,6 @@
   "cfg.instructionFormat": "Output format when syncing skills into instruction files",
   "cfg.githubToken": "Optional GitHub token for higher rate limits when browsing/installing remote skills (also reads GITHUB_TOKEN env)",
   "cfg.language": "Display language for extension UI. \"Auto\" follows the VSCode locale.",
-  "cfg.language.auto": "Auto (follow VSCode)"
+  "cfg.language.auto": "Auto (follow VSCode)",
+  "cfg.showToolChips": "Show the AI tool filter chip row (All / Claude / Codex / …) at the top of the sidebar. Click a chip to temporarily narrow the visible items to one tool."
 }

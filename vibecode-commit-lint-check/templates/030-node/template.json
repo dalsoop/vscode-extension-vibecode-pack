@@ -1,0 +1,19 @@
+{
+  "title": "Node.js (husky v9)",
+  "description": "Conventional commits + husky v9 commit-msg hook. Runs `npx husky init` after install, then writes .husky/commit-msg.",
+  "files": [
+    {
+      "path": "commitlint.config.js",
+      "content": "module.exports = {\n  extends: ['@commitlint/config-conventional']\n};\n"
+    },
+    {
+      "path": ".husky/commit-msg",
+      "content": "npx --no -- commitlint --edit \"$1\"\n"
+    }
+  ],
+  "postInstall": [
+    "npm install --save-dev @commitlint/cli @commitlint/config-conventional husky",
+    "npx husky init",
+    "chmod +x .husky/commit-msg"
+  ]
+}

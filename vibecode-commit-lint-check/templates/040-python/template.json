@@ -1,0 +1,19 @@
+{
+  "title": "Python (pre-commit framework)",
+  "description": "Conventional commits + pre-commit-framework commit-msg hook via alessandrojcm/commitlint-pre-commit-hook. Requires Node (for commitlint) and Python (for pre-commit).",
+  "files": [
+    {
+      "path": "commitlint.config.js",
+      "content": "module.exports = {\n  extends: ['@commitlint/config-conventional']\n};\n"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "content": "repos:\n  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook\n    rev: v9.18.0\n    hooks:\n      - id: commitlint\n        stages: [commit-msg]\n        additional_dependencies: ['@commitlint/config-conventional']\n"
+    }
+  ],
+  "postInstall": [
+    "npm install --save-dev @commitlint/cli @commitlint/config-conventional",
+    "pip install --user pre-commit",
+    "pre-commit install --hook-type commit-msg"
+  ]
+}

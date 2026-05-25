@@ -146,21 +146,6 @@
         "icon": "$(trash)"
       },
       {
-        "command": "vibecodeSkills.installRemoteSkill",
-        "title": "%cmd.installRemoteSkill%",
-        "icon": "$(cloud-download)"
-      },
-      {
-        "command": "vibecodeSkills.searchGithub",
-        "title": "%cmd.searchGithub%",
-        "icon": "$(github)"
-      },
-      {
-        "command": "vibecodeSkills.refreshRemote",
-        "title": "%cmd.refreshRemote%",
-        "icon": "$(refresh)"
-      },
-      {
         "command": "vibecodeSkills.syncInstructions",
         "title": "%cmd.syncInstructions%",
         "icon": "$(sync)"
@@ -177,10 +162,6 @@
         "command": "vibecodeSkills.reportBug",
         "title": "%cmd.reportBug%",
         "icon": "$(bug)"
-      },
-      {
-        "command": "vibecodeSkills.openCatalog",
-        "title": "%cmd.openCatalog%"
       },
       {
         "command": "vibecodeSkills.openInstructionFile",
@@ -242,23 +223,13 @@
         },
         {
           "command": "vibecodeSkills.refresh",
-          "when": "view =~ /vibeskills\\./ && view != vibeskills.browse",
+          "when": "view =~ /vibeskills\\./",
           "group": "navigation@3"
         },
         {
           "command": "vibecodeSkills.openMemoryIndex",
           "when": "view == vibeskills.memory",
           "group": "navigation@0"
-        },
-        {
-          "command": "vibecodeSkills.refreshRemote",
-          "when": "view == vibeskills.browse",
-          "group": "navigation@3"
-        },
-        {
-          "command": "vibecodeSkills.searchGithub",
-          "when": "view == vibeskills.browse",
-          "group": "navigation@4"
         },
         {
           "command": "vibecodeSkills.syncInstructions",
@@ -269,11 +240,6 @@
           "command": "vibecodeSkills.syncInstructionsAll",
           "when": "view == vibeskills.rootmd",
           "group": "navigation@2"
-        },
-        {
-          "command": "vibecodeSkills.openCatalog",
-          "when": "view == vibeskills.browse",
-          "group": "1_more@1"
         },
         {
           "command": "vibecodeSkills.openSettings",
@@ -330,16 +296,6 @@
         {
           "command": "vibecodeSkills.openSourceFolder",
           "when": "view =~ /vibeskills\\./ && viewItem =~ /source/",
-          "group": "inline@1"
-        },
-        {
-          "command": "vibecodeSkills.installRemoteSkill",
-          "when": "view == vibeskills.browse && viewItem == remote-skill",
-          "group": "inline@1"
-        },
-        {
-          "command": "vibecodeSkills.refreshRemote",
-          "when": "view == vibeskills.browse && viewItem == remote-source",
           "group": "inline@1"
         },
         {
@@ -643,6 +599,11 @@
           "type": "boolean",
           "default": true,
           "description": "%cfg.includeExtensions%"
+        },
+        "vibecodeSkills.showToolChips": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.showToolChips%"
         },
         "vibecodeSkills.tools": {
           "type": "array",

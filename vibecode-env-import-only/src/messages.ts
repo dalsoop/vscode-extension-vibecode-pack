@@ -8,17 +8,28 @@ export interface EntryView {
   hasValue: boolean;
 }
 
+export interface ExampleInfo {
+  /** Absolute path of the resolved example file, or null if none found. */
+  examplePath: string | null;
+  /** Keys in example that are missing from the primary. */
+  missingKeys: string[];
+  /** Keys in the primary that are not declared in the example. */
+  extraKeys: string[];
+}
+
 export interface InitMessage {
   type: 'init';
   filename: string;
   entries: EntryView[];
   l10n: L10nBundle;
   keyNamePattern: string;
+  example: ExampleInfo;
 }
 
 export interface UpdateMessage {
   type: 'update';
   entries: EntryView[];
+  example: ExampleInfo;
 }
 
 export interface ErrorMessage {
@@ -56,9 +67,14 @@ export interface RenameKeyRequest {
   newKey: string;
 }
 
+export interface ImportFromExampleRequest {
+  type: 'importFromExample';
+}
+
 export type WebviewToHost =
   | SetValueRequest
   | ClearValueRequest
   | AddKeyRequest
   | RequestDelete
-  | RenameKeyRequest;
+  | RenameKeyRequest
+  | ImportFromExampleRequest;

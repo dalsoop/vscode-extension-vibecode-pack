@@ -1,5 +1,5 @@
 {
   "ext.displayName": "바이브코드 .env 가져오기 전용",
-  "ext.description": ".env 파일을 붙여넣기 전용 보안 뷰로 연다 — 키는 보이지만 값은 절대 표시되지 않음.",
+  "ext.description": ".env 계열 파일을 붙여넣기 전용 보안 뷰로 연다 — 키는 보이지만 값은 절대 표시되지 않음. .env.example 과의 스키마 차이 표시 + 누락 키 일괄 추가.",
   "editor.displayName": "바이브코드 .env (가져오기 전용)"
 }

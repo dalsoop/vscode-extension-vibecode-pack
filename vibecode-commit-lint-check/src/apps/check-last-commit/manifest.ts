@@ -9,7 +9,7 @@ export const manifest: AppManifest = {
   menus: [
     {
       where: 'editor/title',
-      when: 'resourceFilename == COMMIT_EDITMSG',
+      when: "resourceFilename == 'COMMIT_EDITMSG'",
       group: 'navigation@10'
     }
   ]

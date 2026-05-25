@@ -73,16 +73,24 @@ export class HubProvider implements vscode.WebviewViewProvider {
   }
 
   private sendAll(): void {
+    const cfg = readConfig();
     const tabs = TABS.map(tab => ({
       ...tab,
       label: t(`hub.tabs.${tab.id}.label`),
       desc: t(`hub.tabs.${tab.id}.desc`)
     }));
     const scopes = SCOPES.map(s => ({ ...s, label: t(`hub.scopes.${s.id}`) }));
+    // Tool chip row: enabled tools from user config, prefixed with All.
+    const tools: Contracts.Segment[] = [
+      { id: 'all', label: t('hub.scopes.all') },
+      ...cfg.tools.filter(td => td.enabled).map(td => ({ id: td.id, label: td.label }))
+    ];
     this.send({
       type: 'init',
       tabs,
       scopes,
+      tools,
+      showToolChips: cfg.showToolChips,
       scope: this.scope,
       i18n: { locale: getLocale(), dict: getDict() }
     });

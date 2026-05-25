@@ -24,10 +24,6 @@ const finder: ActionHandler = async (p, _ctx) => {
   if (p.path) await vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(p.path));
 };
 
-const github: ActionHandler = async (p, _ctx) => {
-  if (p.path) await vscode.env.openExternal(vscode.Uri.parse(p.path));
-};
-
 const fav: ActionHandler = async (p, ctx) => {
   if (!p.path) return;
   await state.toggleFavorite(p.path);
@@ -52,7 +48,6 @@ export const REGISTRY: Record<ActionName, ActionHandler> = {
   open,
   preview,
   finder,
-  github,
   fav,
   sync,
   create
