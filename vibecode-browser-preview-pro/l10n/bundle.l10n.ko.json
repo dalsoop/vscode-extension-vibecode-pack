@@ -25,5 +25,9 @@
   "Unpin": "핀 제거",
   "Copy selector": "셀렉터 복사",
   "(none)": "(없음)",
-  "Snapshots are written to .vibecode/browser-preview/ — added to .gitignore automatically.": "스냅샷은 .vibecode/browser-preview/ 에 저장됩니다 — .gitignore 에 자동으로 추가됩니다."
+  "Snapshots are written to .vibecode/browser-preview/ — added to .gitignore automatically.": "스냅샷은 .vibecode/browser-preview/ 에 저장됩니다 — .gitignore 에 자동으로 추가됩니다.",
+  "Notes": "메모",
+  "Notes for publisher…": "퍼블리셔용 메모…",
+  "Changes ({0})": "변경 사항 ({0})",
+  "ZIP also saved": "ZIP 도 함께 저장됨"
 }
