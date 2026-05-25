@@ -6,19 +6,11 @@
 // that goes into `.env` as the visible "encrypted" value. Runtime decryption
 // is handled by Infisical's SDK / CLI.
 //
-// This file deliberately ships as a registry placeholder so the modular
-// folder structure is documented in code rather than only in prose. The
-// stub throws on every operation that would need the SDK, while keeping
-// `isReady() === false` so the resolver in `../index.ts` silently falls
-// back to NoneStrategy until a real implementation lands.
-//
-// To implement properly we'd need (roughly):
-//   - `@infisical/sdk` (or fetch-based client) wired up here
-//   - settings for: API URL, workspace ID, environment slug, auth token
-//     storage (vscode.SecretStorage, not plain settings)
-//   - reference format decision: `infisical:<id>` vs full URL
-//   - error handling for network failures + token expiry
-//   - `isEncrypted()` matcher for the chosen reference format
+// Ships as a registry placeholder so the modular folder structure is
+// documented in code rather than only in prose. The stub throws on every
+// operation that would need the SDK, while keeping `isReady() === false` so
+// the resolver in `../index.ts` silently falls back to NoneStrategy until a
+// real implementation lands.
 
 import { STRATEGY_ID } from '../constants';
 import type { CryptoStrategy } from '../types';

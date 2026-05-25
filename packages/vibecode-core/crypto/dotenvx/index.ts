@@ -7,14 +7,9 @@
 // Activation: only ready when both a sibling `.env.keys` exists AND the .env
 // file declares DOTENV_PUBLIC_KEY. Otherwise the resolver falls back to
 // NoneStrategy, preserving the normal-variant behavior.
-//
-// v0.1 scope: encrypt-on-write only. The user must bootstrap their keypair
-// out-of-band (`npx dotenvx encrypt`). Bootstrap-from-editor lives in a
-// future `bootstrap.ts` here.
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import type * as vscode from 'vscode';
 import { encrypt as eciesEncrypt } from 'eciesjs';
 import {
   STRATEGY_ID,
@@ -22,7 +17,7 @@ import {
   ENV_KEYS_FILENAME,
   DOTENV_PUBLIC_KEY_VAR
 } from '../constants';
-import type { CryptoStrategy } from '../types';
+import type { CryptoStrategy, EnvFileRef } from '../types';
 import { bootstrapDotenvxKeys } from './bootstrap';
 
 export { bootstrapDotenvxKeys } from './bootstrap';
@@ -31,20 +26,20 @@ export type { BootstrapResult } from './bootstrap';
 export const DotenvxStrategy: CryptoStrategy = {
   id: STRATEGY_ID.DOTENVX,
 
-  async isReady(envUri) {
-    const keysPath = path.join(path.dirname(envUri.fsPath), ENV_KEYS_FILENAME);
+  async isReady(envRef) {
+    const keysPath = path.join(path.dirname(envRef.fsPath), ENV_KEYS_FILENAME);
     if (!(await fileExists(keysPath))) return false;
-    return (await readPublicKey(envUri)) !== null;
+    return (await readPublicKey(envRef)) !== null;
   },
 
-  async encryptValue(value, envUri) {
+  async encryptValue(value, envRef) {
     if (value === '') return value;
     if (isEncryptedValue(value)) return value;
 
-    const publicKeyHex = await readPublicKey(envUri);
+    const publicKeyHex = await readPublicKey(envRef);
     if (!publicKeyHex) {
       throw new Error(
-        `${DOTENV_PUBLIC_KEY_VAR} not found in ${envUri.fsPath}. ` +
+        `${DOTENV_PUBLIC_KEY_VAR} not found in ${envRef.fsPath}. ` +
           `Run \`npx dotenvx encrypt\` once in this folder to bootstrap encryption.`
       );
     }
@@ -57,8 +52,8 @@ export const DotenvxStrategy: CryptoStrategy = {
 
   isEncrypted: isEncryptedValue,
 
-  async initialize(envUri) {
-    await bootstrapDotenvxKeys(envUri.fsPath);
+  async initialize(envRef) {
+    await bootstrapDotenvxKeys(envRef.fsPath);
   }
 };
 
@@ -83,8 +78,8 @@ const PUBLIC_KEY_LINE_RE = new RegExp(
   'm'
 );
 
-async function readPublicKey(envUri: vscode.Uri): Promise<string | null> {
-  const text = await fs.readFile(envUri.fsPath, 'utf8').catch(() => '');
+async function readPublicKey(envRef: EnvFileRef): Promise<string | null> {
+  const text = await fs.readFile(envRef.fsPath, 'utf8').catch(() => '');
   const match = text.match(PUBLIC_KEY_LINE_RE);
   return match ? match[1] : null;
 }

@@ -10,7 +10,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as parser from '../env-parser';
-import { ENCRYPTED_VALUE_PREFIX } from '../crypto/constants';
+import { ENCRYPTED_VALUE_PREFIX } from '../crypto';
 
 export type EncryptionState =
   | { kind: 'empty'; total: 0 }

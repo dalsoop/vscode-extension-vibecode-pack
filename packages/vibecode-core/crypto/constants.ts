@@ -1,8 +1,8 @@
 // Constants shared by every crypto strategy. New strategies plug in by adding
 // an entry to STRATEGY_ID and registering in `./index.ts`.
 //
-// IMPORTANT: STRATEGY_ID values are mirrored in package.json under
-// `contributes.configuration["vibecodeEnvViewerEncryption.strategy"].enum`.
+// IMPORTANT: STRATEGY_ID values are mirrored in each consumer extension's
+// package.json under `contributes.configuration[<setting>].enum`.
 // When adding a new strategy here, update both places.
 
 export const STRATEGY_ID = {
@@ -18,7 +18,7 @@ export const STRATEGY_ID = {
 
 export type StrategyId = (typeof STRATEGY_ID)[keyof typeof STRATEGY_ID];
 
-/** VSCode setting that picks the active strategy. */
+/** VSCode setting that picks the active strategy. Consumers may override. */
 export const SETTING_KEY = {
   STRATEGY: 'vibecodeEnvViewerEncryption.strategy',
 } as const;

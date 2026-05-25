@@ -1,44 +1,31 @@
-// Strategy registry + resolver. To add a new backend:
-//   1. Add an entry to STRATEGY_ID in ./constants.ts
-//   2. Implement CryptoStrategy under ./<id>/index.ts
-//   3. Register it in REGISTRY below
-//
-// Call sites only ever see CryptoStrategy — they never branch on the id.
+// VSCode adapter for the pure crypto core in packages/vibecode-core/crypto.
+// The core is host-agnostic; this file reads the active strategy id from
+// vscode settings and delegates to the core resolver. All other consumers
+// in this extension import only from `./crypto` (this file), so the import
+// surface stays stable.
 
 import * as vscode from 'vscode';
-import { STRATEGY_ID, SETTING_KEY, type StrategyId } from './constants';
-import type { CryptoStrategy } from './types';
-import { NoneStrategy } from './none';
-import { DotenvxStrategy } from './dotenvx';
-import { InfisicalStrategy } from './infisical';
+import {
+  resolveStrategyById,
+  SETTING_KEY,
+  type CryptoStrategy,
+} from '../../../packages/vibecode-core/crypto';
 
-const REGISTRY: Record<StrategyId, CryptoStrategy> = {
-  [STRATEGY_ID.NONE]: NoneStrategy,
-  [STRATEGY_ID.DOTENVX]: DotenvxStrategy,
-  [STRATEGY_ID.INFISICAL]: InfisicalStrategy
-};
-
-/**
- * Resolve the active strategy for a given .env file. Reads the user setting
- * and falls back to `none` if the requested strategy is unknown or its
- * workspace prerequisites are not satisfied.
- */
 export async function getActiveStrategy(envUri: vscode.Uri): Promise<CryptoStrategy> {
-  const requested = readStrategySetting();
-  const candidate = REGISTRY[requested] ?? NoneStrategy;
-  if (await candidate.isReady(envUri)) return candidate;
-  return NoneStrategy;
+  const requested = vscode.workspace.getConfiguration().get<string>(SETTING_KEY.STRATEGY);
+  return resolveStrategyById(requested, envUri);
 }
 
-function readStrategySetting(): StrategyId {
-  const raw = vscode.workspace.getConfiguration().get<string>(SETTING_KEY.STRATEGY);
-  return isStrategyId(raw) ? raw : STRATEGY_ID.NONE;
-}
-
-function isStrategyId(value: unknown): value is StrategyId {
-  return typeof value === 'string' && (Object.values(STRATEGY_ID) as string[]).includes(value);
-}
-
-export { STRATEGY_ID, SETTING_KEY } from './constants';
-export type { CryptoStrategy } from './types';
-export type { StrategyId } from './constants';
+export {
+  STRATEGY_ID,
+  SETTING_KEY,
+  ENCRYPTED_VALUE_PREFIX,
+  ENV_KEYS_FILENAME,
+  DOTENV_PUBLIC_KEY_VAR,
+} from '../../../packages/vibecode-core/crypto/constants';
+export type { StrategyId } from '../../../packages/vibecode-core/crypto/constants';
+export type { CryptoStrategy, EnvFileRef } from '../../../packages/vibecode-core/crypto/types';
+export {
+  bootstrapDotenvxKeys,
+  type BootstrapResult,
+} from '../../../packages/vibecode-core/crypto/dotenvx';
