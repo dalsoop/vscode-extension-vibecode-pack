@@ -4,7 +4,7 @@ import * as path from 'path';
 import { t } from '../i18n';
 import type { DataSource, FetchContext, Group, ItemPayload } from '../types';
 
-function renderFiles(dir: string): ItemPayload[] {
+function renderFiles(dir: string, scope: 'global' | 'workspace' | 'this folder'): ItemPayload[] {
   const files = mem.listMemoryFiles(dir) || [];
   return files.map(fl => {
     const { meta } = mem.parseMemoryEntry(fl.abs);
@@ -17,6 +17,7 @@ function renderFiles(dir: string): ItemPayload[] {
       meta: `${kind} · ${sc.lines} lines · ${mem.formatBytes(fl.size)} · ${mem.formatAge(fl.mtime)}`,
       path: fl.abs,
       kind,
+      scope,
       score: { pct: sc.pct, grade: sc.grade as any, color: sc.color as any, issues: sc.issues },
       actions: ['open', 'finder']
     };
@@ -25,25 +26,18 @@ function renderFiles(dir: string): ItemPayload[] {
 
 export class MemorySource implements DataSource {
   readonly id = 'memory' as const;
-  readonly label = 'Memory';
+  readonly label = 'MEMORY.md';
   readonly desc = 'Per-project memory entries';
 
+  // Always emit every group (scope is client-side filter for chip counts).
   fetch(ctx: FetchContext): Group[] {
     const out: Group[] = [];
-    if (ctx.scope === 'this') {
-      if (ctx.activeFolderDir) {
-        out.push({
-          title: t('hub.groups.thisFolder', path.basename(ctx.activeFolderDir)),
-          items: renderFiles(mem.memoryDirFor(ctx.activeFolderDir))
-        });
-      }
-      return out;
+    if (ctx.workspaceDir) {
+      const items = renderFiles(mem.memoryDirFor(ctx.workspaceDir), 'workspace');
+      if (items.length) out.push({ title: t('hub.groups.currentWorkspace'), items });
     }
-    if ((ctx.scope === 'all' || ctx.scope === 'workspace') && ctx.workspaceDir) {
-      out.push({ title: t('hub.groups.currentWorkspace'), items: renderFiles(mem.memoryDirFor(ctx.workspaceDir)) });
-    }
-    if (ctx.scope === 'all' || ctx.scope === 'global') {
-      const all = mem.listAllProjectMemories();
+    const all = mem.listAllProjectMemories();
+    if (all.length) {
       out.push({
         title: t('hub.groups.allProjects', all.length),
         items: all.map(p => ({
@@ -52,9 +46,16 @@ export class MemorySource implements DataSource {
           subtitle: p.wsPath,
           meta: `${p.count} entries`,
           path: p.memDir,
+          scope: 'global' as const,
           actions: ['finder']
         }))
       });
+    }
+    if (ctx.activeFolderDir) {
+      const items = renderFiles(mem.memoryDirFor(ctx.activeFolderDir), 'this folder');
+      if (items.length) {
+        out.push({ title: t('hub.groups.thisFolder', path.basename(ctx.activeFolderDir)), items });
+      }
     }
     return out;
   }

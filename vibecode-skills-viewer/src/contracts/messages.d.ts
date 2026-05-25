@@ -7,14 +7,12 @@ declare namespace Contracts {
         scopes: Segment[];
         tools: Segment[];
         showToolChips: boolean;
-        scope: ScopeFilter;
         i18n: WebviewI18n;
       }
     | { type: 'activeFolder'; dir: string | null; label: string | null }
     | { type: 'data'; tab: TabId; items: Group[] };
 
   type HubMsgFromView =
-    | { type: 'setScope'; scope: ScopeFilter }
     | { type: 'refresh' }
     | { type: 'createSkill' }
     | { type: 'action'; action: ActionName; payload: ItemPayload };

@@ -67,11 +67,33 @@ const CODICONS: Record<string, string> = {
   create: 'add'
 };
 
+// Count top-level items currently loaded for a single tab. The 'all' tab
+// sums the other tabs (no double-counting because they're different sources
+// with disjoint id namespaces). Counts are unfiltered ("what exists" rather
+// than "what's visible after search/chip"), which keeps the tab label stable
+// while typing in the filter.
+function tabCount(tabId: string): number {
+  if (tabId === 'all') {
+    let total = 0;
+    for (const tab of state.tabs) {
+      if (tab.id === 'all') continue;
+      total += tabCount(tab.id);
+    }
+    return total;
+  }
+  const groups = state.data[tabId] || [];
+  let n = 0;
+  for (const g of groups) n += g.items.length;
+  return n;
+}
+
 function renderTabs(): void {
   $('tabs').innerHTML = state.tabs
-    .map(
-      tab => `<button class="tab ${tab.id === state.active ? 'active' : ''}" data-tab="${tab.id}">${tab.label}</button>`
-    )
+    .map(tab => {
+      const n = tabCount(tab.id);
+      const count = n > 0 ? ` <span class="tab-count">(${n})</span>` : '';
+      return `<button class="tab ${tab.id === state.active ? 'active' : ''}" data-tab="${tab.id}">${esc(tab.label)}${count}</button>`;
+    })
     .join('');
   document.querySelectorAll<HTMLButtonElement>('.tab').forEach(b => {
     b.onclick = () => {
@@ -84,6 +106,43 @@ function renderTabs(): void {
   $('desc').textContent = active ? active.desc : '';
 }
 
+// Iterate every loaded item across all tabs (or just the active tab in
+// non-'all' mode) so we can count by tool / scope without flicker.
+function forEachLoadedItem(cb: (it: Contracts.ItemPayload) => void): void {
+  const tabIds =
+    state.active === 'all' ? state.tabs.map(t => t.id).filter(id => id !== 'all') : [state.active];
+  for (const tabId of tabIds) {
+    for (const g of state.data[tabId] || []) {
+      for (const it of g.items) cb(it);
+    }
+  }
+}
+
+function passesScopeChip(it: Contracts.ItemPayload): boolean {
+  if (state.scope === 'all') return true;
+  if (state.scope === 'this') {
+    const dir = state.activeFolder?.dir;
+    if (!dir) return false;
+    return !!it.path && it.path.startsWith(dir);
+  }
+  return it.scope === state.scope;
+}
+
+function passesToolChipFor(it: Contracts.ItemPayload, toolId: string): boolean {
+  if (toolId === 'all' || !it.tool) return true;
+  return it.tool === toolId;
+}
+
+function passesScopeChipFor(it: Contracts.ItemPayload, scopeId: string): boolean {
+  if (scopeId === 'all') return true;
+  if (scopeId === 'this') {
+    const dir = state.activeFolder?.dir;
+    if (!dir) return false;
+    return !!it.path && it.path.startsWith(dir);
+  }
+  return it.scope === scopeId;
+}
+
 function renderTools(): void {
   const host = $('tools');
   if (!state.showToolChips || state.tools.length === 0) {
@@ -92,11 +151,21 @@ function renderTools(): void {
     return;
   }
   host.removeAttribute('hidden');
+  // Per-chip count: items that pass THIS tool chip (other filters ignored
+  // so the number is stable while typing).
+  const counts: Record<string, number> = {};
+  for (const tool of state.tools) counts[tool.id] = 0;
+  forEachLoadedItem(it => {
+    for (const tool of state.tools) {
+      if (passesToolChipFor(it, tool.id)) counts[tool.id]++;
+    }
+  });
   host.innerHTML = state.tools
-    .map(
-      tool =>
-        `<button class="seg ${tool.id === state.tool ? 'active' : ''}" data-tool="${tool.id}">${esc(tool.label)}</button>`
-    )
+    .map(tool => {
+      const n = counts[tool.id] ?? 0;
+      const countSpan = ` <span class="seg-count">(${n})</span>`;
+      return `<button class="seg ${tool.id === state.tool ? 'active' : ''}" data-tool="${tool.id}">${esc(tool.label)}${countSpan}</button>`;
+    })
     .join('');
   document.querySelectorAll<HTMLButtonElement>('#tools .seg').forEach(b => {
     b.onclick = () => {
@@ -110,10 +179,19 @@ function renderTools(): void {
 }
 
 function renderScopes(): void {
+  const counts: Record<string, number> = {};
+  for (const s of state.scopes) counts[s.id] = 0;
+  forEachLoadedItem(it => {
+    for (const s of state.scopes) {
+      if (passesScopeChipFor(it, s.id)) counts[s.id]++;
+    }
+  });
   const html = state.scopes
     .map(s => {
       const cls = ['seg', s.id === state.scope ? 'active' : ''].filter(Boolean).join(' ');
-      return `<button class="${cls}" data-scope="${s.id}">${s.label}</button>`;
+      const n = counts[s.id] ?? 0;
+      const countSpan = ` <span class="seg-count">(${n})</span>`;
+      return `<button class="${cls}" data-scope="${s.id}">${esc(s.label)}${countSpan}</button>`;
     })
     .join('');
   const hint =
@@ -123,14 +201,17 @@ function renderScopes(): void {
   $('scopes').innerHTML = html + hint;
   document.querySelectorAll<HTMLButtonElement>('#scopes .seg').forEach(b => {
     b.onclick = () => {
+      // Pure client-side — no postMessage needed; just re-render.
       state.scope = b.dataset.scope as Contracts.ScopeFilter;
       renderScopes();
-      vscode.postMessage({ type: 'setScope', scope: state.scope });
+      renderContent();
     };
   });
 }
 
 // Recursive lookup — items can be nested via `children` for folder-depth view.
+// When the 'all' tab is active we scan every tab's data because the rendered
+// rows come from multiple sources.
 function findItem(id: string): Contracts.ItemPayload | null {
   const visit = (arr: readonly Contracts.ItemPayload[]): Contracts.ItemPayload | null => {
     for (const it of arr) {
@@ -142,9 +223,13 @@ function findItem(id: string): Contracts.ItemPayload | null {
     }
     return null;
   };
-  for (const g of state.data[state.active] || []) {
-    const found = visit(g.items);
-    if (found) return found;
+  const tabIds =
+    state.active === 'all' ? state.tabs.map(t => t.id).filter(id => id !== 'all') : [state.active];
+  for (const tabId of tabIds) {
+    for (const g of state.data[tabId] || []) {
+      const found = visit(g.items);
+      if (found) return found;
+    }
   }
   return null;
 }
@@ -185,34 +270,60 @@ function passesToolChip(it: Contracts.ItemPayload): boolean {
   return it.tool === state.tool;
 }
 
-function renderContent(): void {
-  renderScopes();
-  const groups = state.data[state.active] || [];
+// Combined visibility predicate: respects the current tool chip + scope chip.
+function passesChips(it: Contracts.ItemPayload): boolean {
+  return passesToolChip(it) && passesScopeChip(it);
+}
+
+// Render groups for a single tab. Returns the HTML parts + how many items
+// passed the chip/filter combo (so the orchestrator can show the empty hint
+// when nothing matched anywhere).
+function renderTabGroups(tabId: string): { html: string; count: number } {
+  const groups = state.data[tabId] || [];
   const f = state.filter.toLowerCase();
-  // Filter only the top-level items by chip + text; children pass through
-  // (they're context for the matching parent).
   const matchesFilter = (it: Contracts.ItemPayload): boolean => {
     if (!f) return true;
     return (it.title + ' ' + (it.subtitle || '') + ' ' + (it.meta || '')).toLowerCase().includes(f);
   };
-
-  const parts: string[] = [];
-  let total = 0;
+  let html = '';
+  let count = 0;
   for (const g of groups) {
-    const items = g.items.filter(it => passesToolChip(it) && matchesFilter(it));
+    const items = g.items.filter(it => passesChips(it) && matchesFilter(it));
     if (!items.length) continue;
-    total += items.length;
-    parts.push(
-      `<div class="group"><div class="group-title">${esc(g.title)} <span style="opacity:0.6">(${items.length})</span></div>`
-    );
-    parts.push(
+    count += items.length;
+    html +=
+      `<div class="group"><div class="group-title">${esc(g.title)} <span style="opacity:0.6">(${items.length})</span></div>` +
       Tree.render(items, {
         expandedIds: state.expandedIds,
         renderLeaf: ({ item }) => itemHtml(item)
-      })
-    );
-    parts.push('</div>');
+      }) +
+      `</div>`;
   }
+  return { html, count };
+}
+
+function renderContent(): void {
+  renderScopes();
+  const parts: string[] = [];
+  let total = 0;
+
+  if (state.active === 'all') {
+    // Stack every other tab's groups under its own category header.
+    for (const tab of state.tabs) {
+      if (tab.id === 'all') continue;
+      const { html, count } = renderTabGroups(tab.id);
+      if (!html) continue;
+      total += count;
+      parts.push(
+        `<div class="all-category"><div class="all-category-title">${esc(tab.label)} <span class="all-category-count">(${count})</span></div>${html}</div>`
+      );
+    }
+  } else {
+    const { html, count } = renderTabGroups(state.active);
+    total += count;
+    parts.push(html);
+  }
+
   if (!total) {
     const hint =
       state.scope === 'this' && !state.activeFolder ? t('hub.empty.noActiveFolder') : t('hub.empty.noItems');
@@ -262,7 +373,6 @@ window.addEventListener('message', ev => {
     state.scopes = m.scopes;
     state.tools = m.tools;
     state.showToolChips = m.showToolChips;
-    state.scope = m.scope;
     state.dict = m.i18n?.dict || {};
     // If the currently-selected chip was hidden by user toggling tools off,
     // fall back to 'all' so we don't end up filtering by a ghost tool.
@@ -274,9 +384,16 @@ window.addEventListener('message', ev => {
     renderContent();
   } else if (m.type === 'activeFolder') {
     state.activeFolder = { dir: m.dir, label: m.label };
+    // 'this folder' chip count depends on activeFolder.dir, so recompute
+    // tools (no — tools don't depend on folder) and scopes (yes).
     renderScopes();
+    if (state.scope === 'this') renderContent();
   } else if (m.type === 'data') {
     state.data[m.tab] = m.items;
+    // Re-render tabs + chips so (N) counts reflect the just-arrived data.
+    renderTabs();
+    renderTools();
+    renderScopes();
     renderContent();
   }
 });

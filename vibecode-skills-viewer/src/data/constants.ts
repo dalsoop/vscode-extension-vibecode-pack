@@ -1,10 +1,11 @@
 import type { Tab, Segment } from '../types';
 
 export const TABS: Tab[] = [
+  { id: 'all', label: 'All', desc: 'Everything in one view' },
   { id: 'skill', label: 'SKILL.md', desc: 'Skills' },
   { id: 'rootmd', label: 'Root MD', desc: 'CLAUDE.md / .cursorrules / etc.' },
   { id: 'agent', label: 'AGENTS.md', desc: 'Agent manifests' },
-  { id: 'memory', label: 'Memory', desc: 'Per-project memory entries' }
+  { id: 'memory', label: 'MEMORY.md', desc: 'Per-project memory entries' }
 ];
 
 export const SCOPES: Segment[] = [
