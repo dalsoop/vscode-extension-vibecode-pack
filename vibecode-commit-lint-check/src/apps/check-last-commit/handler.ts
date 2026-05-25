@@ -4,14 +4,9 @@ import * as fs from 'fs';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { validateCommitMessage, formatValidationResult } from '../../lint/validator';
+import { getOutputChannel } from '../../checks/outputChannel';
 
 const execFileAsync = promisify(execFile);
-
-let sharedChannel: vscode.OutputChannel | undefined;
-function getChannel(): vscode.OutputChannel {
-  if (!sharedChannel) sharedChannel = vscode.window.createOutputChannel('Vibecode Commit Lint');
-  return sharedChannel;
-}
 
 export async function handler(arg: vscode.Uri | undefined): Promise<void> {
   const cwd = await resolveCwd(arg);
@@ -35,7 +30,7 @@ export async function handler(arg: vscode.Uri | undefined): Promise<void> {
 }
 
 async function runBuiltinValidator(cwd: string): Promise<void> {
-  const channel = getChannel();
+  const channel = getOutputChannel();
   channel.show(true);
   channel.appendLine(`\n=== built-in commit lint @ ${new Date().toISOString()} ===`);
   channel.appendLine(`cwd: ${cwd}`);

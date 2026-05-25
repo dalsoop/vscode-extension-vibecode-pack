@@ -11,7 +11,8 @@
   },
   "config": {
     "checkLastCommit": {
-      "command": "'직전 커밋 메시지 검사' 가 워크스페이스 터미널에서 실행할 셸 명령. 기본값: `npx --yes commitlint --from HEAD~1 --to HEAD --verbose`."
+      "command": "'직전 커밋 메시지 검사' 가 preferExternal=true 이고 commitlint.config.* 가 있을 때 워크스페이스 터미널에서 실행할 셸 명령. 기본값: `npx --yes commitlint --from HEAD~1 --to HEAD --verbose`.",
+      "preferExternal": "true 이고 워크스페이스에 commitlint.config.* 가 있으면 내장 검증기 대신 외부 commitlint CLI 를 터미널에서 실행. 기본값: false (내장 검증기 사용 — npm install 불필요)."
     }
   },
   "commands": {
