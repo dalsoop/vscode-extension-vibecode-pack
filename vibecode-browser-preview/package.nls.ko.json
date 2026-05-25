@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "바이브코드 브라우저 프리뷰",
+  "ext.description": "HTML 파일을 워크스페이스 루트의 로컬 HTTP 서버 + iframe 으로 라이브 프리뷰. 워크스페이스 내 어떤 파일 저장에도 자동 리로드.",
+  "editor.displayName": "바이브코드 브라우저 프리뷰"
+}
