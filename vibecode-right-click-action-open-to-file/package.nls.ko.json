@@ -1,0 +1,10 @@
+{
+  "ext.displayName": "바이브코드 우클릭 액션",
+  "ext.description": "파일/폴더 우클릭 컨텍스트 메뉴 액션 — 기본 브라우저로 열기, 새 창에서 폴더 열기, Finder/탐색기에서 보기, 경로 복사, 터미널 열기.",
+  "ext.category": "바이브코드",
+  "cmd.copyAbsolutePath": "바이브코드 파일 -절대 경로 복사",
+  "cmd.openFolderInNewWindow": "바이브코드 파일 -새 VSCode 창에서 폴더 열기",
+  "cmd.openHtmlInBrowser": "바이브코드 파일 -기본 브라우저로 열기",
+  "cmd.openInTerminal": "바이브코드 파일 -여기에 터미널 열기",
+  "cmd.revealInOS": "바이브코드 파일 -Finder / 탐색기에서 보기"
+}

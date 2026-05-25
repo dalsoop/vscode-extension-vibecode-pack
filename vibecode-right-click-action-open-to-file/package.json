@@ -1,0 +1,131 @@
+{
+  "name": "vibecode-right-click-action-open-to-file",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "0.1.0",
+  "publisher": "dalsoop",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "npm run sync && tsc -p .",
+    "watch": "tsc -p . -w",
+    "sync": "node scripts/sync-contributions.mjs",
+    "sync:check": "node scripts/sync-contributions.mjs --check",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vscode:prepublish": "npm run build",
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "rcaActions.copyAbsolutePath",
+        "title": "%cmd.copyAbsolutePath%",
+        "category": "%ext.category%",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "rcaActions.openFolderInNewWindow",
+        "title": "%cmd.openFolderInNewWindow%",
+        "category": "%ext.category%",
+        "icon": "$(empty-window)"
+      },
+      {
+        "command": "rcaActions.openHtmlInBrowser",
+        "title": "%cmd.openHtmlInBrowser%",
+        "category": "%ext.category%",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "rcaActions.openInTerminal",
+        "title": "%cmd.openInTerminal%",
+        "category": "%ext.category%",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "rcaActions.revealInOS",
+        "title": "%cmd.revealInOS%",
+        "category": "%ext.category%",
+        "icon": "$(folder-opened)"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "rcaActions.copyAbsolutePath",
+          "group": "6_rca@40"
+        },
+        {
+          "command": "rcaActions.openFolderInNewWindow",
+          "when": "explorerResourceIsFolder",
+          "group": "6_rca@20"
+        },
+        {
+          "command": "rcaActions.openHtmlInBrowser",
+          "when": "resourceExtname =~ /\\.(html?|svg|pdf)$/",
+          "group": "6_rca@10"
+        },
+        {
+          "command": "rcaActions.openInTerminal",
+          "group": "6_rca@50"
+        },
+        {
+          "command": "rcaActions.revealInOS",
+          "group": "6_rca@30"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "rcaActions.copyAbsolutePath",
+          "group": "6_rca@40"
+        },
+        {
+          "command": "rcaActions.openHtmlInBrowser",
+          "when": "resourceExtname =~ /\\.(html?|svg|pdf)$/",
+          "group": "6_rca@10"
+        },
+        {
+          "command": "rcaActions.revealInOS",
+          "group": "6_rca@30"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "rcaActions.copyAbsolutePath"
+        },
+        {
+          "command": "rcaActions.openFolderInNewWindow"
+        },
+        {
+          "command": "rcaActions.openHtmlInBrowser"
+        },
+        {
+          "command": "rcaActions.openInTerminal"
+        },
+        {
+          "command": "rcaActions.revealInOS"
+        }
+      ]
+    }
+  }
+}

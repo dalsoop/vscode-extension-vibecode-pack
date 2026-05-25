@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode Right-Click Actions",
+  "ext.description": "Right-click context menu actions for files and folders — open in default browser, open folder in new window, reveal in OS, copy path, open terminal.",
+  "ext.category": "Vibecode"
+}

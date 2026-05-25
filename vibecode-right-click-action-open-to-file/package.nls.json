@@ -1,0 +1,10 @@
+{
+  "ext.displayName": "Vibecode Right-Click Actions",
+  "ext.description": "Right-click context menu actions for files and folders — open in default browser, open folder in new window, reveal in OS, copy path, open terminal.",
+  "ext.category": "Vibecode",
+  "cmd.copyAbsolutePath": "Vibecode Files - Copy Absolute Path",
+  "cmd.openFolderInNewWindow": "Vibecode Files - Open Folder in New VSCode Window",
+  "cmd.openHtmlInBrowser": "Vibecode Files - Open in Default Browser",
+  "cmd.openInTerminal": "Vibecode Files - Open Terminal Here",
+  "cmd.revealInOS": "Vibecode Files - Reveal in Finder / Explorer"
+}

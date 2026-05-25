@@ -1,0 +1,741 @@
+{
+  "name": "vibecode-skills-viewer",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "2.3.0",
+  "publisher": "dalsoop",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": [
+    "Other",
+    "AI",
+    "Chat"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:vibeskills.hub"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "node scripts/build-ext.mjs --production && tsc -p tsconfig.client.json && tsc -p tsconfig.preview-client.json && tsc -p tsconfig.settings-client.json && node scripts/copy-codicons.mjs",
+    "build:dev": "node scripts/build-ext.mjs && tsc -p tsconfig.client.json && tsc -p tsconfig.preview-client.json && tsc -p tsconfig.settings-client.json && node scripts/copy-codicons.mjs",
+    "build:ext": "node scripts/build-ext.mjs",
+    "build:client": "tsc -p tsconfig.client.json && tsc -p tsconfig.preview-client.json && tsc -p tsconfig.settings-client.json && node scripts/copy-codicons.mjs",
+    "watch": "node scripts/build-ext.mjs --watch",
+    "typecheck": "tsc -p . --noEmit && tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.preview-client.json --noEmit && tsc -p tsconfig.settings-client.json --noEmit",
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package --no-dependencies --allow-missing-repository --skip-license"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.4",
+    "@typescript-eslint/parser": "^8.59.4",
+    "@vscode/codicons": "^0.0.45",
+    "esbuild": "^0.28.0",
+    "eslint": "^9.39.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "mocha": "^11.7.5",
+    "prettier": "^3.8.3",
+    "tsx": "^4.22.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibeskills",
+          "title": "%view.container.title%",
+          "icon": "icons/tools/claude.svg"
+        }
+      ]
+    },
+    "views": {
+      "vibeskills": [
+        {
+          "id": "vibeskills.hub",
+          "name": "%view.hub%",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vibecodeSkills.refresh",
+        "title": "%cmd.refresh%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecodeSkills.search",
+        "title": "%cmd.search%",
+        "icon": "$(search)"
+      },
+      {
+        "command": "vibecodeSkills.clearFilter",
+        "title": "%cmd.clearFilter%",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "vibecodeSkills.previewSkill",
+        "title": "%cmd.previewSkill%"
+      },
+      {
+        "command": "vibecodeSkills.openSkillFile",
+        "title": "%cmd.openSkillFile%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "vibecodeSkills.revealInFinder",
+        "title": "%cmd.revealInFinder%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "vibecodeSkills.copyPath",
+        "title": "%cmd.copyPath%",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "vibecodeSkills.copyContent",
+        "title": "%cmd.copyContent%"
+      },
+      {
+        "command": "vibecodeSkills.openInTerminal",
+        "title": "%cmd.openInTerminal%",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "vibecodeSkills.openSourceFolder",
+        "title": "%cmd.openSourceFolder%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "vibecodeSkills.toggleFavorite",
+        "title": "%cmd.toggleFavorite%",
+        "icon": "$(star-empty)"
+      },
+      {
+        "command": "vibecodeSkills.createSkill",
+        "title": "%cmd.createSkill%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "vibecodeSkills.deleteSkill",
+        "title": "%cmd.deleteSkill%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "vibecodeSkills.installRemoteSkill",
+        "title": "%cmd.installRemoteSkill%",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "vibecodeSkills.searchGithub",
+        "title": "%cmd.searchGithub%",
+        "icon": "$(github)"
+      },
+      {
+        "command": "vibecodeSkills.refreshRemote",
+        "title": "%cmd.refreshRemote%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecodeSkills.syncInstructions",
+        "title": "%cmd.syncInstructions%",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "vibecodeSkills.syncInstructionsAll",
+        "title": "%cmd.syncInstructionsAll%"
+      },
+      {
+        "command": "vibecodeSkills.removeInstructionBlock",
+        "title": "%cmd.removeInstructionBlock%"
+      },
+      {
+        "command": "vibecodeSkills.reportBug",
+        "title": "%cmd.reportBug%",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "vibecodeSkills.openCatalog",
+        "title": "%cmd.openCatalog%"
+      },
+      {
+        "command": "vibecodeSkills.openInstructionFile",
+        "title": "%cmd.openInstructionFile%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "vibecodeSkills.syncToThisFile",
+        "title": "%cmd.syncToThisFile%",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "vibecodeSkills.removeBlockFromThisFile",
+        "title": "%cmd.removeBlockFromThisFile%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "vibecodeSkills.createInstructionFile",
+        "title": "%cmd.createInstructionFile%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "vibecodeSkills.openMemoryFile",
+        "title": "%cmd.openMemoryFile%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "vibecodeSkills.openMemoryFolder",
+        "title": "%cmd.openMemoryFolder%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "vibecodeSkills.openMemoryIndex",
+        "title": "%cmd.openMemoryIndex%",
+        "icon": "$(book)"
+      },
+      {
+        "command": "vibecodeSkills.openSettings",
+        "title": "%cmd.openSettings%",
+        "icon": "$(settings-gear)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "vibecodeSkills.createSkill",
+          "when": "view == vibeskills.installed",
+          "group": "navigation@0"
+        },
+        {
+          "command": "vibecodeSkills.search",
+          "when": "view =~ /vibeskills\\./",
+          "group": "navigation@1"
+        },
+        {
+          "command": "vibecodeSkills.clearFilter",
+          "when": "view =~ /vibeskills\\./",
+          "group": "navigation@2"
+        },
+        {
+          "command": "vibecodeSkills.refresh",
+          "when": "view =~ /vibeskills\\./ && view != vibeskills.browse",
+          "group": "navigation@3"
+        },
+        {
+          "command": "vibecodeSkills.openMemoryIndex",
+          "when": "view == vibeskills.memory",
+          "group": "navigation@0"
+        },
+        {
+          "command": "vibecodeSkills.refreshRemote",
+          "when": "view == vibeskills.browse",
+          "group": "navigation@3"
+        },
+        {
+          "command": "vibecodeSkills.searchGithub",
+          "when": "view == vibeskills.browse",
+          "group": "navigation@4"
+        },
+        {
+          "command": "vibecodeSkills.syncInstructions",
+          "when": "view == vibeskills.installed",
+          "group": "1_more@1"
+        },
+        {
+          "command": "vibecodeSkills.syncInstructionsAll",
+          "when": "view == vibeskills.rootmd",
+          "group": "navigation@2"
+        },
+        {
+          "command": "vibecodeSkills.openCatalog",
+          "when": "view == vibeskills.browse",
+          "group": "1_more@1"
+        },
+        {
+          "command": "vibecodeSkills.openSettings",
+          "when": "view == vibeskills.hub",
+          "group": "navigation@5"
+        },
+        {
+          "command": "vibecodeSkills.reportBug",
+          "when": "view =~ /vibeskills\\./",
+          "group": "9_about@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "vibecodeSkills.openSkillFile",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
+          "group": "inline@1"
+        },
+        {
+          "command": "vibecodeSkills.toggleFavorite",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
+          "group": "inline@2"
+        },
+        {
+          "command": "vibecodeSkills.previewSkill",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
+          "group": "1_open@1"
+        },
+        {
+          "command": "vibecodeSkills.revealInFinder",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
+          "group": "1_open@2"
+        },
+        {
+          "command": "vibecodeSkills.openInTerminal",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
+          "group": "1_open@3"
+        },
+        {
+          "command": "vibecodeSkills.copyPath",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
+          "group": "2_copy@1"
+        },
+        {
+          "command": "vibecodeSkills.copyContent",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /skill/",
+          "group": "2_copy@2"
+        },
+        {
+          "command": "vibecodeSkills.deleteSkill",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /writable/",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "vibecodeSkills.openSourceFolder",
+          "when": "view =~ /vibeskills\\./ && viewItem =~ /source/",
+          "group": "inline@1"
+        },
+        {
+          "command": "vibecodeSkills.installRemoteSkill",
+          "when": "view == vibeskills.browse && viewItem == remote-skill",
+          "group": "inline@1"
+        },
+        {
+          "command": "vibecodeSkills.refreshRemote",
+          "when": "view == vibeskills.browse && viewItem == remote-source",
+          "group": "inline@1"
+        },
+        {
+          "command": "vibecodeSkills.openInstructionFile",
+          "when": "view == vibeskills.rootmd && viewItem =~ /inst-file/ && viewItem =~ /exists/",
+          "group": "inline@1"
+        },
+        {
+          "command": "vibecodeSkills.syncToThisFile",
+          "when": "view == vibeskills.rootmd && viewItem =~ /inst-file/",
+          "group": "inline@2"
+        },
+        {
+          "command": "vibecodeSkills.createInstructionFile",
+          "when": "view == vibeskills.rootmd && viewItem =~ /missing/",
+          "group": "1_open@1"
+        },
+        {
+          "command": "vibecodeSkills.removeBlockFromThisFile",
+          "when": "view == vibeskills.rootmd && viewItem =~ /hasBlock/",
+          "group": "9_danger@1"
+        },
+        {
+          "command": "vibecodeSkills.openMemoryFile",
+          "when": "view == vibeskills.memory && viewItem =~ /mem-file/",
+          "group": "inline@1"
+        },
+        {
+          "command": "vibecodeSkills.openMemoryFolder",
+          "when": "view == vibeskills.memory && viewItem =~ /mem-project|mem-ws/",
+          "group": "inline@1"
+        }
+      ]
+    },
+    "chatParticipants": [
+      {
+        "id": "vibeskills.participant",
+        "name": "vibeskills",
+        "fullName": "Vibecode Skills",
+        "description": "%chat.description%",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "list",
+            "description": "List installed skills"
+          },
+          {
+            "name": "search",
+            "description": "Search skills by keyword"
+          },
+          {
+            "name": "preview",
+            "description": "Preview a skill by name"
+          },
+          {
+            "name": "recommend",
+            "description": "Recommend skills for a goal"
+          },
+          {
+            "name": "categories",
+            "description": "List categories"
+          },
+          {
+            "name": "help",
+            "description": "Show help"
+          }
+        ]
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "vibecodeSkills_list",
+        "displayName": "%tool.list.displayName%",
+        "modelDescription": "List all locally installed Claude/Codex/Copilot/etc. skills with name, source (global/workspace/extension), description, and path. Use to discover what skills the user has available.",
+        "userDescription": "%tool.list.userDescription%",
+        "tags": [
+          "skills",
+          "claude",
+          "codex",
+          "agent",
+          "list"
+        ],
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "listSkills",
+        "icon": "$(list-tree)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "scope": {
+              "type": "string",
+              "enum": [
+                "all",
+                "global",
+                "workspace",
+                "extension"
+              ],
+              "default": "all"
+            },
+            "tool": {
+              "type": "string",
+              "enum": [
+                "all",
+                "claude",
+                "codex",
+                "copilot",
+                "cursor",
+                "windsurf",
+                "cline",
+                "agents",
+                "extension",
+                "custom"
+              ],
+              "default": "all"
+            }
+          }
+        }
+      },
+      {
+        "name": "vibecodeSkills_search",
+        "displayName": "%tool.search.displayName%",
+        "modelDescription": "Search locally installed skills by keyword. Searches the skill name, description, when-to-use, and categories. Returns matches ranked by relevance.",
+        "userDescription": "%tool.search.userDescription%",
+        "tags": [
+          "skills",
+          "search"
+        ],
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "searchSkills",
+        "icon": "$(search)",
+        "inputSchema": {
+          "type": "object",
+          "required": [
+            "query"
+          ],
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          }
+        }
+      },
+      {
+        "name": "vibecodeSkills_read",
+        "displayName": "%tool.read.displayName%",
+        "modelDescription": "Read the full SKILL.md content of a specific locally installed skill by name.",
+        "userDescription": "%tool.read.userDescription%",
+        "tags": [
+          "skills",
+          "read"
+        ],
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "readSkill",
+        "icon": "$(book)",
+        "inputSchema": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "vibecodeSkills_recommend",
+        "displayName": "%tool.recommend.displayName%",
+        "modelDescription": "Given a user goal description, recommend the most relevant installed skills (top 5 by keyword overlap).",
+        "userDescription": "%tool.recommend.userDescription%",
+        "tags": [
+          "skills",
+          "recommend"
+        ],
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "recommendSkills",
+        "icon": "$(lightbulb)",
+        "inputSchema": {
+          "type": "object",
+          "required": [
+            "goal"
+          ],
+          "properties": {
+            "goal": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "vibecodeSkills_listCategories",
+        "displayName": "%tool.listCategories.displayName%",
+        "modelDescription": "List all categories present across installed skills, with counts.",
+        "userDescription": "%tool.listCategories.userDescription%",
+        "tags": [
+          "skills",
+          "categories"
+        ],
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "listSkillCategories",
+        "icon": "$(tag)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "vibecodeSkills_inCategory",
+        "displayName": "%tool.inCategory.displayName%",
+        "modelDescription": "List installed skills belonging to a specific category.",
+        "userDescription": "%tool.inCategory.userDescription%",
+        "tags": [
+          "skills",
+          "categories"
+        ],
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "skillsInCategory",
+        "icon": "$(symbol-class)",
+        "inputSchema": {
+          "type": "object",
+          "required": [
+            "category"
+          ],
+          "properties": {
+            "category": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "name": "vibecodeSkills_listSources",
+        "displayName": "%tool.listSources.displayName%",
+        "modelDescription": "List all skill sources (locations) being scanned with the count of skills in each.",
+        "userDescription": "%tool.listSources.userDescription%",
+        "tags": [
+          "skills",
+          "sources"
+        ],
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "listSkillSources",
+        "icon": "$(folder)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "vibecodeSkills_status",
+        "displayName": "%tool.status.displayName%",
+        "modelDescription": "Get aggregate counts of installed skills by scope and tool.",
+        "userDescription": "%tool.status.userDescription%",
+        "tags": [
+          "skills",
+          "status"
+        ],
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "skillsStatus",
+        "icon": "$(graph)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    ],
+    "configuration": {
+      "title": "%cfg.title%",
+      "properties": {
+        "vibecodeSkills.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "en",
+            "ko"
+          ],
+          "enumDescriptions": [
+            "%cfg.language.auto%",
+            "English",
+            "한국어"
+          ],
+          "default": "auto",
+          "description": "%cfg.language%"
+        },
+        "vibecodeSkills.includeWorkspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.includeWorkspace%"
+        },
+        "vibecodeSkills.includeGlobal": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.includeGlobal%"
+        },
+        "vibecodeSkills.includeExtensions": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.includeExtensions%"
+        },
+        "vibecodeSkills.tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label"],
+            "properties": {
+              "id": { "type": "string", "description": "Unique slug used internally to tag skills with this tool." },
+              "label": { "type": "string", "description": "Display name shown in the sidebar and settings." },
+              "enabled": { "type": "boolean", "default": true, "description": "Uncheck to hide this tool's skills and instruction files." },
+              "builtin": { "type": "boolean", "description": "True for default seed tools; ignored when set by hand." }
+            },
+            "additionalProperties": false
+          },
+          "default": [
+            { "id": "claude", "label": "Claude", "enabled": true, "builtin": true },
+            { "id": "codex", "label": "Codex", "enabled": true, "builtin": true },
+            { "id": "copilot", "label": "Copilot", "enabled": true, "builtin": true },
+            { "id": "cursor", "label": "Cursor", "enabled": true, "builtin": true },
+            { "id": "gemini", "label": "Gemini", "enabled": true, "builtin": true },
+            { "id": "windsurf", "label": "Windsurf", "enabled": true, "builtin": true },
+            { "id": "cline", "label": "Cline", "enabled": true, "builtin": true },
+            { "id": "agents", "label": "Agents", "enabled": true, "builtin": true }
+          ],
+          "description": "%cfg.tools%"
+        },
+        "vibecodeSkills.extraGlobalRoots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "%cfg.extraGlobalRoots%"
+        },
+        "vibecodeSkills.extraWorkspaceRoots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "%cfg.extraWorkspaceRoots%"
+        },
+        "vibecodeSkills.instructionFormat": {
+          "type": "string",
+          "enum": [
+            "ref",
+            "compact",
+            "full",
+            "legacy"
+          ],
+          "default": "ref",
+          "description": "%cfg.instructionFormat%"
+        },
+        "vibecodeSkills.githubToken": {
+          "type": "string",
+          "default": "",
+          "description": "%cfg.githubToken%"
+        },
+        "vibecodeSkills.showScoreBreakdown": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.showScoreBreakdown%"
+        },
+        "vibecodeSkills.mirrorGroups": {
+          "type": "array",
+          "default": [],
+          "description": "%cfg.mirrorGroups%",
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "paths"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "paths": { "type": "array", "items": { "type": "string" } },
+              "alwaysMirror": { "type": "boolean" }
+            }
+          }
+        },
+        "vibecodeSkills.mirrorSkillsByName": {
+          "type": "boolean",
+          "default": false,
+          "description": "%cfg.mirrorSkillsByName%"
+        },
+        "vibecodeSkills.mirrorSkillsByNameAlways": {
+          "type": "boolean",
+          "default": false,
+          "description": "%cfg.mirrorSkillsByNameAlways%"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.1",
+    "yaml": "^2.9.0"
+  }
+}

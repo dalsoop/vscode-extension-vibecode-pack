@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "none",
+    "lib": ["ES2020", "DOM"],
+    "outFile": "dist/webview/client/hub.js",
+    "strict": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/contracts/**/*.d.ts", "src/webview/client/**/*.ts"]
+}

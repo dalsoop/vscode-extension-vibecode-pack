@@ -1,0 +1,18 @@
+{
+  "No folder selected.": "선택된 폴더가 없습니다.",
+  "No template.json active.": "활성화된 template.json 이 없습니다.",
+  "New agent template name": "새 에이전트 템플릿 이름",
+  "Will be appended after the timestamp prefix (yymmddhhmmss-<name>).": "타임스탬프 프리픽스 뒤에 붙는다 (yymmddhhmmss-<name>).",
+  "Name is required.": "이름은 필수입니다.",
+  "Use only letters, digits, dot, underscore, or hyphen.": "영문/숫자/`.`/`_`/`-` 만 사용 가능합니다.",
+  "Template already exists: {0}": "이미 존재하는 템플릿입니다: {0}",
+  "Created: {0}": "생성됨: {0}",
+  "Cannot read template.json: {0}": "template.json 을 읽을 수 없습니다: {0}",
+  "No upstream_url set. Edit the JSON to add one.": "upstream_url 이 비어 있습니다. JSON 에서 설정하세요.",
+  "upstream (recommended pull)": "업스트림 (Pull 권장)",
+  "local (recommended push)": "로컬 (Push 권장)",
+  "Upstream: {0}\nDeclared SSOT: {1}\n\nSync direction:": "업스트림: {0}\n선언된 SSOT: {1}\n\n동기화 방향:",
+  "Pull (upstream → local)": "Pull (업스트림 → 로컬)",
+  "Push (local → upstream)": "Push (로컬 → 업스트림)",
+  "Stub: would {0}. Sync logic is not implemented in v0.1.": "Stub: \"{0}\" 을(를) 수행했을 것. v0.1 에서 동기화 로직은 미구현."
+}

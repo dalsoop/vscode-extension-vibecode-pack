@@ -8,11 +8,15 @@ VSCode 확장 모노레포 (dalsoop).
 
 ```
 vscode-extension-mono/
-├── claude-codex-skills-viewer/   # Claude/Codex/Copilot 등 스킬 통합 사이드바
-├── _seed/                         # 새 확장 시작용 placeholder
-├── tools/                         # 공용 스크립트 (pre-commit, secret-scan 등)
-├── .gitlab-ci.yml                 # 푸시 시 CI (typecheck/lint/test, allow_failure)
-└── .policy-ci.yml                 # MR/default branch CI (+ secret-scan hard-gate)
+├── vibecode-skills-viewer/           # Claude/Codex/Copilot 등 스킬 통합 사이드바
+├── vibecode-right-click-action-open-to-file/  # 파일/폴더 우클릭 컨텍스트 메뉴 액션 모음
+├── vibecode-right-click-sh-actions/           # .sh 우클릭 → 터미널 실행 + 에디터 상단 ▶ 버튼
+├── vibecode-agent-init-this-folder/           # 폴더 우클릭 → 에이전트 템플릿 엔트리 스캐폴드
+├── vibecode-env-import-only/                  # .env 를 paste-only 보안 뷰로 인터셉트 (값 비표시)
+├── _seed/                             # 새 확장 시작용 placeholder
+├── tools/                             # 공용 스크립트 (pre-commit, secret-scan 등)
+├── .gitlab-ci.yml                     # 푸시 시 CI (typecheck/lint/test, allow_failure)
+└── .policy-ci.yml                     # MR/default branch CI (+ secret-scan hard-gate)
 ```
 
 ## 새 확장 추가
@@ -45,4 +49,8 @@ npx @vscode/vsce package --allow-missing-repository --skip-license
 
 | 확장 | 버전 | 설명 |
 |---|---|---|
-| [claude-codex-skills-viewer](claude-codex-skills-viewer/) | 0.5.0 | Claude/Codex/Copilot/Cursor/Windsurf/Cline 스킬을 통합 사이드바로 표시. 프리뷰, 검색, 원격 카탈로그, AI 채팅 참가자, 인스트럭션 파일 동기화. |
+| [vibecode-skills-viewer](vibecode-skills-viewer/) | 2.3.0 | Claude/Codex/Copilot/Cursor/Windsurf/Cline 스킬을 통합 사이드바로 표시. 프리뷰, 검색, 원격 카탈로그, AI 채팅 참가자, 인스트럭션 파일 동기화. |
+| [vibecode-right-click-action-open-to-file](vibecode-right-click-action-open-to-file/) | 0.1.0 | 파일/폴더 우클릭 컨텍스트 메뉴 액션 (브라우저 열기, 새 창 열기, Finder 열기, 경로 복사, 터미널 열기). 각 액션이 `src/apps/<name>/` 모듈 묶음. |
+| [vibecode-right-click-sh-actions](vibecode-right-click-sh-actions/) | 0.1.0 | `.sh` 파일 우클릭 또는 에디터 상단 ▶ 플레이 버튼으로 통합 터미널에서 스크립트 실행. |
+| [vibecode-agent-init-this-folder](vibecode-agent-init-this-folder/) | 0.1.0 | 폴더 우클릭으로 `templates/{yymmddhhmmss}-{name}/template.json` 에이전트 템플릿 엔트리 생성 (title, content, prompts, upstream_url, ssot). 업스트림 동기화는 stub. |
+| [vibecode-env-import-only](vibecode-env-import-only/) | 0.1.0 | `.env` 파일을 paste-only 커스텀 에디터로 인터셉트. 키만 노출, 값은 화면에 표시되지 않음 (타이핑 차단, ⌘V 만 허용). 일반 텍스트 에디터는 "Open With…" 우회로만. |

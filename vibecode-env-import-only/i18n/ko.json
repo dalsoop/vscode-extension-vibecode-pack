@@ -1,0 +1,30 @@
+{
+  "nls": {
+    "ext.displayName": "바이브코드 .env 가져오기 전용",
+    "ext.description": ".env 파일을 붙여넣기 전용 보안 뷰로 연다 — 키는 보이지만 값은 절대 표시되지 않음.",
+    "editor.displayName": "바이브코드 .env (가져오기 전용)"
+  },
+  "runtime": {
+    ".env import (values hidden — paste only)": ".env 가져오기 (값 숨김 — 붙여넣기 전용)",
+    "Click an input and paste (⌘V). Typing is disabled for values. Pasted values are not displayed.": "값 입력 칸을 클릭하고 붙여넣기(⌘V). 값 타이핑은 비활성, 붙여넣은 값은 화면에 표시되지 않습니다. (키 이름은 일반 입력 가능)",
+    "··· (set)": "··· (설정됨)",
+    "(empty)": "(비어있음)",
+    "Paste value…": "값 붙여넣기…",
+    "Paste to overwrite…": "덮어쓰려면 붙여넣기…",
+    "Clear": "값 지우기",
+    "Rename": "이름 변경",
+    "Delete": "삭제",
+    "Save": "저장",
+    "Cancel": "취소",
+    "No keys yet. Add one below.": "아직 키가 없습니다. 위에서 추가하세요.",
+    "Add new key": "새 키 추가",
+    "Keys": "키 목록",
+    "KEY_NAME": "KEY_NAME",
+    "Add": "추가",
+    "Invalid key name. Use letters, digits, underscore; start with a letter or underscore.": "잘못된 키 이름입니다. 영문/숫자/`_` 만 사용, 첫 글자는 영문 또는 `_` 여야 합니다.",
+    "Key \"{0}\" already exists.": "키 \"{0}\" 는 이미 존재합니다.",
+    "Delete key \"{0}\"?": "키 \"{0}\" 를 삭제하시겠습니까?",
+    "This removes the key and its value from .env. This cannot be undone (other than via undo on the underlying text editor).": ".env 에서 키와 값을 모두 제거합니다. (원본 텍스트 에디터의 실행취소 외에는) 되돌릴 수 없습니다.",
+    "Changes are written to .env immediately. Save with ⌘S / Ctrl+S if you want to persist explicitly (auto-save respects your VSCode settings).": "변경 사항은 .env 에 즉시 반영됩니다. 명시적 저장은 ⌘S / Ctrl+S — 자동 저장은 VSCode 설정에 따릅니다."
+  }
+}

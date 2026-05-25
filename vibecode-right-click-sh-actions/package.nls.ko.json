@@ -1,0 +1,6 @@
+{
+  "ext.displayName": "바이브코드 우클릭 .sh 액션",
+  "ext.description": "우클릭 컨텍스트 메뉴 또는 에디터 상단 플레이 버튼으로 .sh 스크립트를 실행한다.",
+  "ext.category": "바이브코드",
+  "cmd.runShInTerminal": "바이브코드 Sh - 터미널에서 .sh 실행"
+}
