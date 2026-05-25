@@ -24,7 +24,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "vscode:prepublish": "npm run build",
-    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license"
+    "package": "npx --yes @vscode/vsce@latest package --allow-missing-repository --skip-license"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -35,6 +35,27 @@
     "typescript-eslint": "^8.59.4"
   },
   "contributes": {
+    "commands": [
+      {
+        "command": "vibecode-env-viewer-encryption.enableEncryption",
+        "title": "%command.enableEncryption.title%",
+        "category": "%command.category%"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "vibecode-env-viewer-encryption.enableEncryption",
+          "when": "resourceFilename =~ /^\\.env(\\..+)?$/ && !(resourceFilename == .env.keys)",
+          "group": "7_modification"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecode-env-viewer-encryption.enableEncryption"
+        }
+      ]
+    },
     "customEditors": [
       {
         "viewType": "vibecodeEnvViewerEncryptionImport.editor",
@@ -48,6 +69,25 @@
         ],
         "priority": "option"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "%config.title%",
+      "properties": {
+        "vibecodeEnvViewerEncryption.strategy": {
+          "type": "string",
+          "enum": ["none", "dotenvx", "infisical"],
+          "default": "none",
+          "enumDescriptions": [
+            "%config.strategy.none.description%",
+            "%config.strategy.dotenvx.description%",
+            "%config.strategy.infisical.description%"
+          ],
+          "description": "%config.strategy.description%"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "eciesjs": "^0.5.0"
   }
 }

@@ -19,36 +19,62 @@
 | 평문 마이그레이션 | 평문 값이 섞여 있으면 "Encrypt all" 명령으로 일괄 암호화 (TODO) |
 | 키 페어 생성 | "Enable Encryption" 명령 → `.env.keys` 생성 + `.gitignore` 자동 추가 (TODO) |
 
-## 스캐폴드 상태 (v0.1)
+## 구현 상태 (v0.1)
 
-현재 이 디렉토리는 **일반 변형의 클론**이며 암호화 로직은 아직 들어가지 않았다. 다음 결정사항 후에 구현 예정:
+- ✅ 모듈 폴더 구조 (`src/crypto/<strategy>/`) — 새 전략은 폴더 추가 + `REGISTRY` 한 줄로 plug-in
+- ✅ `none` 전략 — passthrough (default, 동작은 일반 변형과 동일)
+- ✅ `dotenvx` 전략 — secp256k1 ECIES + `encrypted:BASE64` 포맷, dotenvx 호환 (eciesjs 직접 사용)
+- ⏳ Bootstrap 명령 — v0.2. 현재는 사용자가 최초 1회 `npx dotenvx encrypt` 로 keypair 생성
+- ⏳ 추가 백엔드 — Infisical, AES-GCM 등은 폴더만 추가하면 됨
 
-- [ ] 암호화 알고리즘 (dotenvx ECIES vs. 자체 AES-256-GCM vs. age)
-- [ ] 키 저장 위치 (`.env.keys` 파일 vs. VSCode `SecretStorage` vs. OS keychain)
-- [ ] 평문/암호문 혼재 파일 처리 정책
+## 모듈 구조
 
-## 아키텍처
+```
+src/crypto/
+├── constants.ts          # STRATEGY_ID, SETTING_KEY, 포맷 마커
+├── types.ts              # CryptoStrategy 인터페이스
+├── index.ts              # REGISTRY + getActiveStrategy(uri)
+├── none/index.ts         # NoneStrategy — passthrough
+└── dotenvx/index.ts      # DotenvxStrategy — eciesjs 기반
+```
 
-일반 변형과 동일한 구조 — 향후 `src/crypto.ts` 추가 + `handlers.ts` 의 `setValue` 경로 분기 예정.
+전체 디렉토리:
 
 ```
 vibecode-env-viewer-encryption-import-only/
-├── package.json                  # priority: "option", viewType: vibecodeEnvViewerEncryptionImport.editor
-├── package.nls.json              # 자동 생성
-├── package.nls.ko.json           # 자동 생성
-├── i18n/ko.json                  # { nls, runtime }
+├── package.json                  # priority: "option" + contributes.configuration
+├── package.nls.{json,ko.json}    # 자동 생성
+├── i18n/ko.json                  # { nls, runtime } 원본
 ├── l10n/bundle.l10n.ko.json      # 자동 생성
-├── scripts/
-│   ├── sync-nls.mjs
-│   └── nls-defaults.json
+├── scripts/{sync-nls.mjs, nls-defaults.json}
 └── src/
     ├── extension.ts
-    ├── editor-provider.ts        # VIEW_TYPE = vibecodeEnvViewerEncryptionImport.editor
-    ├── env-parser.ts             # 공통 (일반 변형과 동일)
-    ├── handlers.ts               # TODO: setValue 에 암호화 훅
-    ├── crypto.ts                 # TODO: 신규 모듈
+    ├── editor-provider.ts        # getActiveStrategy() → HandlerContext.crypto
+    ├── env-parser.ts             # 공통
+    ├── handlers.ts               # setValue/addKey 가 ctx.crypto.encryptValue() 통과
+    ├── crypto/                   # ↑ 위 모듈 구조
     └── webview/                  # 공통 UI
 ```
+
+## 전략 선택
+
+VSCode 설정 `vibecodeEnvViewerEncryption.strategy` — default `none`, `dotenvx` 로 전환 시:
+
+1. 같은 폴더에 `.env.keys` 가 있어야 함 (private key 보관, gitignore 필수)
+2. `.env` 안에 `DOTENV_PUBLIC_KEY="0395..."` 라인이 있어야 함
+3. 위 두 조건이 안 맞으면 `getActiveStrategy()` 가 `none` 으로 자동 폴백 — 사용자 환경을 깨지 않음
+
+## 런타임 복호화
+
+암호값은 dotenvx 표준 포맷이므로 앱 실행 시:
+
+```bash
+npx dotenvx run -- node app.js
+# 또는
+require('@dotenvx/dotenvx').config()  # process.env 에 복호화된 값 주입
+```
+
+우리 익스텐션 없이도 dotenvx 생태계 그대로 작동.
 
 ## 개발
 

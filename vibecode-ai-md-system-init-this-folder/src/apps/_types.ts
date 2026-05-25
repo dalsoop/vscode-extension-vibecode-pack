@@ -15,7 +15,7 @@ export interface MenuContribution {
 }
 
 export interface AppManifest {
-  /** Stable id used inside the codebase. Becomes the command id namespaced under `vibecodeAgentInit.<id>`. */
+  /** Stable id used inside the codebase. Becomes the command id namespaced under `vibecodeAiMdSystem.<id>`. */
   id: string;
   /** Human-readable command title shown in palettes and menus. Default (English) — used in package.nls.json. Per-locale overrides live in `i18n/<locale>.json` keyed by the command id. */
   title: string;
@@ -36,7 +36,7 @@ export interface AppModule {
   handler: (arg: RightClickArg, allUris?: vscode.Uri[]) => unknown | Promise<unknown>;
 }
 
-export const COMMAND_PREFIX = 'vibecodeAgentInit';
+export const COMMAND_PREFIX = 'vibecodeAiMdSystem';
 
 export function fullCommandId(id: string): string {
   return `${COMMAND_PREFIX}.${id}`;

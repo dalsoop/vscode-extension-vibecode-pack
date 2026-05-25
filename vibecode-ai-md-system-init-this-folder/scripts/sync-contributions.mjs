@@ -24,7 +24,7 @@ const I18N_DIR = path.join(ROOT, 'i18n');
 const L10N_DIR = path.join(ROOT, 'l10n');
 const PKG_PATH = path.join(ROOT, 'package.json');
 const DEFAULTS_PATH = path.join(__dirname, 'nls-defaults.json');
-const COMMAND_PREFIX = 'vibecodeAgentInit';
+const COMMAND_PREFIX = 'vibecodeAiMdSystem';
 
 const CHECK_MODE = process.argv.includes('--check');
 

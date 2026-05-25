@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-const EXTENSION_ID = 'dalsoop.vibecode-agent-init-this-folder';
+const EXTENSION_ID = 'dalsoop.vibecode-ai-md-system-init-this-folder';
 const TEMPLATES_SUBDIR = 'templates';
 
 /**

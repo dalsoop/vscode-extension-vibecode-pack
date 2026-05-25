@@ -8,7 +8,7 @@ export const manifest: AppManifest = {
   menus: [
     {
       where: 'view/title',
-      when: 'view == vibecodeAgentInit.templates',
+      when: 'view == vibecodeAiMdSystem.templates',
       group: 'navigation'
     }
   ]

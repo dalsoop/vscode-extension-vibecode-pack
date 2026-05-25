@@ -2,11 +2,12 @@ import * as vscode from 'vscode';
 import { apps } from './apps';
 import { fullCommandId } from './apps/_types';
 import { registerSidebar } from './sidebar';
+import { applyHandler } from './apps/apply-template/handler';
 
 export function activate(context: vscode.ExtensionContext): void {
   // Temporary activation log — helps verify the extension loaded after install/reload.
   // Remove or guard behind a setting once the sidebar UX is confirmed stable.
-  const out = vscode.window.createOutputChannel('Vibecode Agent Init');
+  const out = vscode.window.createOutputChannel('Vibecode AI MD System Init');
   out.appendLine(`[${new Date().toISOString()}] activated`);
   context.subscriptions.push(out);
 
@@ -18,6 +19,19 @@ export function activate(context: vscode.ExtensionContext): void {
       // refreshTemplates is a sidebar-owned command — delegate to provider.
       context.subscriptions.push(
         vscode.commands.registerCommand(id, () => sidebar.refresh())
+      );
+      continue;
+    }
+    if (app.manifest.id === 'applyTemplate') {
+      // applyTemplate reads checked items from the sidebar provider.
+      context.subscriptions.push(
+        vscode.commands.registerCommand(
+          id,
+          applyHandler(
+            () => sidebar.getSelections(),
+            () => sidebar.clearSelection()
+          )
+        )
       );
       continue;
     }

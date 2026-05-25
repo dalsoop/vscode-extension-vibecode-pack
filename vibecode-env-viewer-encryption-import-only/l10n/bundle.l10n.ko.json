@@ -26,5 +26,12 @@
   "Extra in this file (not in schema):": "이 파일에만 있음 (스키마에 없음):",
   "Add all missing keys (empty values)": "누락된 키 일괄 추가 (값은 빈 상태)",
   "In sync with schema.": "스키마와 동기화됨.",
-  "Changes are written immediately. Save with ⌘S / Ctrl+S if you want to persist explicitly (auto-save respects your VSCode settings).": "변경 사항은 파일에 즉시 반영됩니다. 명시적 저장은 ⌘S / Ctrl+S — 자동 저장은 VSCode 설정에 따릅니다."
+  "Changes are written immediately. Save with ⌘S / Ctrl+S if you want to persist explicitly (auto-save respects your VSCode settings).": "변경 사항은 파일에 즉시 반영됩니다. 명시적 저장은 ⌘S / Ctrl+S — 자동 저장은 VSCode 설정에 따릅니다.",
+  "No .env file selected. Right-click a .env file in the Explorer or open one before running this command.": ".env 파일이 선택되지 않았습니다. Explorer 에서 .env 파일을 우클릭하거나 먼저 연 다음 실행하세요.",
+  "Failed to enable encryption: {0}": "암호화 활성화 실패: {0}",
+  "Encryption enabled for {0}.": "{0} 에 암호화가 활성화되었습니다.",
+  "Private key: {0}": "개인키 파일: {0}",
+  ".gitignore was updated.": ".gitignore 가 업데이트되었습니다.",
+  ".gitignore already excludes the key file.": ".gitignore 가 이미 키 파일을 제외하고 있습니다.",
+  "Run `npx dotenvx run -- <your command>` to decrypt at runtime.": "런타임 복호화는 `npx dotenvx run -- <명령어>` 로 실행하세요."
 }

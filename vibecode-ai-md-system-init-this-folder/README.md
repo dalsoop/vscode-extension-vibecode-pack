@@ -1,4 +1,4 @@
-# vibecode-agent-init-this-folder
+# vibecode-ai-md-system-init-this-folder
 
 좌측 사이드바에서 **템플릿** 고르고 → **도구**(claude/codex/gemini/cursor) 고르고 → **새 폴더에 즉시 설치**. 기본 도구는 설정에서.
 
@@ -19,7 +19,7 @@ Activity bar 📋  →  "바이브코드 에이전트"  →  Templates
 4. 재귀 복사 + Explorer reveal + 알림
 
 **Settings** (Preferences → Settings → "vibecode agent" 검색):
-- `vibecodeAgentInit.defaultTool` — `claude` / `codex` / `cursor` / `gemini`. QuickPick 기본 선택.
+- `vibecodeAiMdSystem.defaultTool` — `claude` / `codex` / `cursor` / `gemini`. QuickPick 기본 선택.
 
 **SSOT**:
 - `<extension>/templates/` 가 단일 진실 출처
@@ -38,7 +38,7 @@ Activity bar 📋  →  "바이브코드 에이전트"  →  Templates
 ## 디렉토리 구조
 
 ```
-vibecode-agent-init-this-folder/
+vibecode-ai-md-system-init-this-folder/
 ├── templates/                         # SSOT — 설치 가능한 템플릿 카탈로그
 │   ├── minimal/
 │   │   ├── claude/   └─ .claude/CLAUDE.md, settings.json, skills/example-skill/
@@ -134,7 +134,7 @@ npm run package            # .vsix
 
 ## 알려진 한계 / v2 로드맵
 
-- `Open templates folder` 가 설치된 .vsix 의 read-only 위치를 열어줌 → 끝-유저가 편집해도 ext update 시 사라짐. v2 에서 user-area 오버라이드(`vibecodeAgentInit.userTemplatesDir`) 추가 예정.
+- `Open templates folder` 가 설치된 .vsix 의 read-only 위치를 열어줌 → 끝-유저가 편집해도 ext update 시 사라짐. v2 에서 user-area 오버라이드(`vibecodeAiMdSystem.userTemplatesDir`) 추가 예정.
 - "All tools at once" 모드 (한 번에 모든 변형 설치) 없음. 필요 시 v2.
 - `checkUpstream` 의 실제 동기화 로직 stub.
 - agent-definitions render → `templates/with-vibecode-agents/claude/` 자동 동기화 stub. 지금은 수동 cp.

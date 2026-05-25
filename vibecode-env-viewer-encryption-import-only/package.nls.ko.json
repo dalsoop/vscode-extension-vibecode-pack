@@ -1,5 +1,12 @@
 {
   "ext.displayName": "바이브코드 .env 가져오기 전용 (암호화)",
   "ext.description": ".env 파일용 붙여넣기 전용 + 디스크 암호화 에디터. 같은 폴더에 .env.keys 가 있을 때 'Reopen Editor With…' 로 활성화. 값은 저장 시 자동 암호화되고 뷰에서는 복호화되어 일반 변형처럼 보임 — 키는 평문 노출.",
-  "editor.displayName": "바이브코드 .env (가져오기 전용, 암호화)"
+  "editor.displayName": "바이브코드 .env (가져오기 전용, 암호화)",
+  "config.title": "바이브코드 .env 암호화",
+  "config.strategy.description": "값을 쓸 때 사용할 암호화 백엔드. `none` 은 평문 저장 (일반 변형과 동일). `dotenvx` 는 DOTENV_PUBLIC_KEY 로 값을 암호화하며, 같은 폴더의 .env.keys 파일이 필요 — 최초 1회 `npx dotenvx encrypt` 로 부트스트랩.",
+  "config.strategy.none.description": "암호화 없음 — 값을 평문으로 저장.",
+  "config.strategy.dotenvx.description": "secp256k1 ECIES 암호화, dotenvx 호환. .env 의 DOTENV_PUBLIC_KEY 와 형제 파일 .env.keys 가 필요.",
+  "config.strategy.infisical.description": "(스텁 — 미구현) 원격 secret 저장소. 값은 참조 토큰으로 대체될 예정. SDK 연결 전까진 `none` 으로 폴백.",
+  "command.category": "바이브코드 - .env 암호화",
+  "command.enableEncryption.title": "바이브코드 - 암호화 활성화 (.env.keys 생성)"
 }

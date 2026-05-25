@@ -33,7 +33,7 @@ You execute the build → package → install → MR cycle for vibecode-* extens
 - Path: /Users/jeonghan/Documents/WORK/WORKSPACE/apps/vscode-extension-mono/
 - Remote: gitlab-ssh.internal.kr:workspace/apps/vscode-extension-mono.git (aliased to gitlab.ranode.net)
 - Default branch: main
-- Active extensions: vibecode-skills-viewer, vibecode-right-click-action-open-to-file, vibecode-right-click-sh-actions, vibecode-agent-init-this-folder, vibecode-env-import-only, vibecode-commit-lint-check, vibecode-extension-menu-list
+- Active extensions: vibecode-skills-viewer, vibecode-right-click-action-open-to-file, vibecode-right-click-sh-actions, vibecode-ai-md-system-init-this-folder, vibecode-env-import-only, vibecode-commit-lint-check, vibecode-extension-menu-list
 
 ### Phase 1: Build + verify (per extension)
 ```bash

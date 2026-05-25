@@ -10,10 +10,12 @@ import { STRATEGY_ID, SETTING_KEY, type StrategyId } from './constants';
 import type { CryptoStrategy } from './types';
 import { NoneStrategy } from './none';
 import { DotenvxStrategy } from './dotenvx';
+import { InfisicalStrategy } from './infisical';
 
 const REGISTRY: Record<StrategyId, CryptoStrategy> = {
   [STRATEGY_ID.NONE]: NoneStrategy,
-  [STRATEGY_ID.DOTENVX]: DotenvxStrategy
+  [STRATEGY_ID.DOTENVX]: DotenvxStrategy,
+  [STRATEGY_ID.INFISICAL]: InfisicalStrategy
 };
 
 /**

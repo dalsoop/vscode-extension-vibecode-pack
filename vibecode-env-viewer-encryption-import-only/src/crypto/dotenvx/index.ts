@@ -23,6 +23,10 @@ import {
   DOTENV_PUBLIC_KEY_VAR
 } from '../constants';
 import type { CryptoStrategy } from '../types';
+import { bootstrapDotenvxKeys } from './bootstrap';
+
+export { bootstrapDotenvxKeys } from './bootstrap';
+export type { BootstrapResult } from './bootstrap';
 
 export const DotenvxStrategy: CryptoStrategy = {
   id: STRATEGY_ID.DOTENVX,
@@ -53,13 +57,8 @@ export const DotenvxStrategy: CryptoStrategy = {
 
   isEncrypted: isEncryptedValue,
 
-  async initialize() {
-    // Deliberate v0.1 punt: keypair generation, .env.keys writing, and
-    // .gitignore updating still go through `npx dotenvx encrypt`. Surfacing
-    // those as an extension command is tracked for v0.2.
-    throw new Error(
-      'Bootstrap is not implemented yet — run `npx dotenvx encrypt` in the .env folder.'
-    );
+  async initialize(envUri) {
+    await bootstrapDotenvxKeys(envUri.fsPath);
   }
 };
 
