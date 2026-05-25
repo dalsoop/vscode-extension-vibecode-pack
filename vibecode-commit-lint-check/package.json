@@ -2,7 +2,7 @@
   "name": "vibecode-commit-lint-check",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "dalsoop",
   "engines": {
     "vscode": "^1.95.0"
@@ -18,11 +18,13 @@
   ],
   "main": "./dist/extension.js",
   "scripts": {
-    "build": "npm run sync && tsc -p .",
-    "watch": "tsc -p . -w",
+    "build": "npm run sync && node scripts/build-ext.mjs --production",
+    "build:dev": "npm run sync && node scripts/build-ext.mjs",
+    "watch": "node scripts/build-ext.mjs --watch",
     "sync": "node scripts/sync-contributions.mjs",
     "sync:check": "node scripts/sync-contributions.mjs --check",
     "typecheck": "tsc -p . --noEmit",
+    "test": "node --test tests/*.test.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -33,6 +35,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.95.0",
+    "esbuild": "^0.28.0",
     "eslint": "^9.39.4",
     "prettier": "^3.8.3",
     "typescript": "^5.6.0",
