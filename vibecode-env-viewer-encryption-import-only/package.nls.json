@@ -1,5 +1,12 @@
 {
   "ext.displayName": "Vibecode .env Import-Only (Encrypted)",
   "ext.description": "Paste-only secure editor for .env files with at-rest encryption. Activate via 'Reopen Editor With…' when a sibling .env.keys exists. Values are encrypted on write, decrypted on view; keys remain visible.",
-  "editor.displayName": "Vibecode .env (Encrypted Import Only)"
+  "editor.displayName": "Vibecode .env (Encrypted Import Only)",
+  "config.title": "Vibecode .env Encryption",
+  "config.strategy.description": "Encryption backend used when writing values. `none` stores values as plaintext (same as the non-encrypted variant). `dotenvx` encrypts values using DOTENV_PUBLIC_KEY and requires a sibling .env.keys file — bootstrap once with `npx dotenvx encrypt`.",
+  "config.strategy.none.description": "No encryption — values stored as plaintext.",
+  "config.strategy.dotenvx.description": "secp256k1 ECIES encryption, dotenvx-compatible. Requires DOTENV_PUBLIC_KEY in .env and a sibling .env.keys file.",
+  "config.strategy.infisical.description": "(stub — not implemented yet) Remote secret store; values would be replaced with reference tokens. Falls back to `none` until SDK wiring lands.",
+  "command.category": "Vibecode - .env Encryption",
+  "command.enableEncryption.title": "Vibecode - Enable Encryption (generate .env.keys)"
 }

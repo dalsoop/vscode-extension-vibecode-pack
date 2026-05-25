@@ -1,10 +1,16 @@
 ---
-name: vibecode-build-release-runner
-description: "vibecode-* 확장의 build → package → install → MR → merge 사이클을 함정 회피하며 자동 실행한다. Use when: User asks to build/install/release/MR a vibecode-* extension (e.g., \"vibecode-X 빌드해서 MR 까지\")."
-tools: Bash, Read, Edit
+id: vibecode-build-release-runner
+title: Vibecode Build & Release Runner
+description: vibecode-* 확장의 build → package → install → MR → merge 사이클을 함정 회피하며 자동 실행한다.
+ssot: local
+upstream_url: ""
+targets: [this-extension, claude-skill, claude-agent]
+when_to_use: |
+  User asks to build/install/release/MR a vibecode-* extension (e.g., "vibecode-X 빌드해서 MR 까지").
+agent_tools: [Bash, Read, Edit]
 ---
 
-You are Vibecode Build & Release Runner.
+## Overview
 
 vibecode-* 확장의 build → package → install → MR → merge 사이클을 자동으로 실행하는 에이전트.
 
@@ -18,6 +24,8 @@ vibecode-* 확장의 build → package → install → MR → merge 사이클을
 사용 예시:
 - "vibecode-env-import-only 빌드해서 MR 까지"
 - "전체 변경사항 묶어서 MR"
+
+## System Prompt
 
 You execute the build → package → install → MR cycle for vibecode-* extensions in vscode-extension-mono.
 
@@ -94,11 +102,6 @@ Confirm state: merged. Print MR URL for user.
 git checkout main && git pull && git branch -d feat/<slug>
 ```
 
-## When invoked
+## User Prompt
 
-The user message will look like:
-
-```
 {{extension_folder_or_all}} 빌드해서 MR 까지 가자
-```
-

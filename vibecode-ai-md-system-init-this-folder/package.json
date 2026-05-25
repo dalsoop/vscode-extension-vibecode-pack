@@ -1,0 +1,165 @@
+{
+  "name": "vibecode-ai-md-system-init-this-folder",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "0.1.0",
+  "publisher": "dalsoop",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "npm run sync && npm run render && tsc -p .",
+    "watch": "tsc -p . -w",
+    "sync": "node scripts/sync-contributions.mjs",
+    "sync:check": "node scripts/sync-contributions.mjs --check",
+    "render": "node scripts/render-templates.mjs",
+    "render:check": "node scripts/render-templates.mjs --check",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vscode:prepublish": "npm run build",
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "configuration": {
+      "title": "%ext.displayName%",
+      "properties": {
+        "vibecodeAiMdSystem.defaultTool": {
+          "type": "string",
+          "enum": [
+            "claude",
+            "codex",
+            "cursor",
+            "gemini"
+          ],
+          "default": "claude",
+          "description": "%cfg.defaultTool%"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibecodeAiMdSystem",
+          "title": "%ext.viewContainerTitle%",
+          "icon": "icons/agent.svg"
+        }
+      ]
+    },
+    "views": {
+      "vibecodeAiMdSystem": [
+        {
+          "id": "vibecodeAiMdSystem.templates",
+          "name": "%ext.viewTemplates%"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vibecodeAiMdSystem.applyTemplate",
+        "title": "%cmd.applyTemplate%",
+        "category": "%ext.category%",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "vibecodeAiMdSystem.checkUpstream",
+        "title": "%cmd.checkUpstream%",
+        "category": "%ext.category%",
+        "icon": "$(cloud)"
+      },
+      {
+        "command": "vibecodeAiMdSystem.initTemplateHere",
+        "title": "%cmd.initTemplateHere%",
+        "category": "%ext.category%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "vibecodeAiMdSystem.openTemplatesFolder",
+        "title": "%cmd.openTemplatesFolder%",
+        "category": "%ext.category%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "vibecodeAiMdSystem.refreshTemplates",
+        "title": "%cmd.refreshTemplates%",
+        "category": "%ext.category%",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "vibecodeAiMdSystem.applyTemplate",
+          "when": "view == vibecodeAiMdSystem.templates",
+          "group": "navigation@10"
+        },
+        {
+          "command": "vibecodeAiMdSystem.openTemplatesFolder",
+          "when": "view == vibecodeAiMdSystem.templates",
+          "group": "navigation@5"
+        },
+        {
+          "command": "vibecodeAiMdSystem.refreshTemplates",
+          "when": "view == vibecodeAiMdSystem.templates",
+          "group": "navigation"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "vibecodeAiMdSystem.checkUpstream",
+          "when": "resourceFilename == 'template.json'",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "vibecodeAiMdSystem.checkUpstream",
+          "when": "resourceFilename == 'template.json'",
+          "group": "6_rca"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "vibecodeAiMdSystem.initTemplateHere",
+          "when": "explorerResourceIsFolder",
+          "group": "6_rca"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecodeAiMdSystem.applyTemplate"
+        },
+        {
+          "command": "vibecodeAiMdSystem.checkUpstream"
+        },
+        {
+          "command": "vibecodeAiMdSystem.initTemplateHere"
+        },
+        {
+          "command": "vibecodeAiMdSystem.openTemplatesFolder"
+        },
+        {
+          "command": "vibecodeAiMdSystem.refreshTemplates"
+        }
+      ]
+    }
+  }
+}

@@ -10,8 +10,9 @@ export const STRATEGY_ID = {
   NONE: 'none',
   /** dotenvx-compatible secp256k1 ECIES encryption. Requires sibling `.env.keys`. */
   DOTENVX: 'dotenvx',
+  /** Stub for remote secret store (Infisical). Throws on encrypt — placeholder for future SDK wiring. */
+  INFISICAL: 'infisical',
   // Future entries land here. Examples (not yet implemented):
-  //   INFISICAL: 'infisical',
   //   AES_GCM:   'aes-gcm',
 } as const;
 

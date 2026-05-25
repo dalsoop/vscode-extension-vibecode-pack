@@ -2,7 +2,14 @@
   "nls": {
     "ext.displayName": "바이브코드 .env 가져오기 전용 (암호화)",
     "ext.description": ".env 파일용 붙여넣기 전용 + 디스크 암호화 에디터. 같은 폴더에 .env.keys 가 있을 때 'Reopen Editor With…' 로 활성화. 값은 저장 시 자동 암호화되고 뷰에서는 복호화되어 일반 변형처럼 보임 — 키는 평문 노출.",
-    "editor.displayName": "바이브코드 .env (가져오기 전용, 암호화)"
+    "editor.displayName": "바이브코드 .env (가져오기 전용, 암호화)",
+    "config.title": "바이브코드 .env 암호화",
+    "config.strategy.description": "값을 쓸 때 사용할 암호화 백엔드. `none` 은 평문 저장 (일반 변형과 동일). `dotenvx` 는 DOTENV_PUBLIC_KEY 로 값을 암호화하며, 같은 폴더의 .env.keys 파일이 필요 — 최초 1회 `npx dotenvx encrypt` 로 부트스트랩.",
+    "config.strategy.none.description": "암호화 없음 — 값을 평문으로 저장.",
+    "config.strategy.dotenvx.description": "secp256k1 ECIES 암호화, dotenvx 호환. .env 의 DOTENV_PUBLIC_KEY 와 형제 파일 .env.keys 가 필요.",
+    "config.strategy.infisical.description": "(스텁 — 미구현) 원격 secret 저장소. 값은 참조 토큰으로 대체될 예정. SDK 연결 전까진 `none` 으로 폴백.",
+    "command.category": "바이브코드 - .env 암호화",
+    "command.enableEncryption.title": "바이브코드 - 암호화 활성화 (.env.keys 생성)"
   },
   "runtime": {
     ".env import (values hidden — paste only)": ".env 가져오기 (값 숨김 — 붙여넣기 전용)",
@@ -32,6 +39,13 @@
     "Extra in this file (not in schema):": "이 파일에만 있음 (스키마에 없음):",
     "Add all missing keys (empty values)": "누락된 키 일괄 추가 (값은 빈 상태)",
     "In sync with schema.": "스키마와 동기화됨.",
-    "Changes are written immediately. Save with ⌘S / Ctrl+S if you want to persist explicitly (auto-save respects your VSCode settings).": "변경 사항은 파일에 즉시 반영됩니다. 명시적 저장은 ⌘S / Ctrl+S — 자동 저장은 VSCode 설정에 따릅니다."
+    "Changes are written immediately. Save with ⌘S / Ctrl+S if you want to persist explicitly (auto-save respects your VSCode settings).": "변경 사항은 파일에 즉시 반영됩니다. 명시적 저장은 ⌘S / Ctrl+S — 자동 저장은 VSCode 설정에 따릅니다.",
+    "No .env file selected. Right-click a .env file in the Explorer or open one before running this command.": ".env 파일이 선택되지 않았습니다. Explorer 에서 .env 파일을 우클릭하거나 먼저 연 다음 실행하세요.",
+    "Failed to enable encryption: {0}": "암호화 활성화 실패: {0}",
+    "Encryption enabled for {0}.": "{0} 에 암호화가 활성화되었습니다.",
+    "Private key: {0}": "개인키 파일: {0}",
+    ".gitignore was updated.": ".gitignore 가 업데이트되었습니다.",
+    ".gitignore already excludes the key file.": ".gitignore 가 이미 키 파일을 제외하고 있습니다.",
+    "Run `npx dotenvx run -- <your command>` to decrypt at runtime.": "런타임 복호화는 `npx dotenvx run -- <명령어>` 로 실행하세요."
   }
 }
