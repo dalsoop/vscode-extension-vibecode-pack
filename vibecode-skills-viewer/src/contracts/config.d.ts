@@ -33,10 +33,10 @@ declare namespace Contracts {
     includeGlobal: boolean;
     includeExtensions: boolean;
     tools: ToolDef[];
+    showToolChips: boolean;
     extraGlobalRoots: string[];
     extraWorkspaceRoots: string[];
     instructionFormat: InstructionFormat;
-    githubToken: string;
     showScoreBreakdown: boolean;
     mirrorGroups: MirrorGroup[];
     mirrorSkillsByName: boolean;

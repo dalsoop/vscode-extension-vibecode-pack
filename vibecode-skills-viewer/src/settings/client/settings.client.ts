@@ -1,6 +1,24 @@
 // Settings webview orchestrator. Each top-level menu tab lives in its own
 // section file under sections/; this file just wires tab navigation and
 // dispatches render/bind to the active section.
+//
+// The reference directives below force TypeScript's outFile emit order so
+// that all section namespaces are *defined* before this orchestrator runs.
+// Without them, glob ordering puts this file ahead of sections/, and the
+// SECTIONS array below is built from `undefined` values (var hoisting only,
+// the IIFEs haven't run yet) — which then crashes the panel silently.
+
+/// <reference path="./_shared.ts" />
+/// <reference path="./sections/about.ts" />
+/// <reference path="./sections/extra-roots.ts" />
+/// <reference path="./sections/favorites.ts" />
+/// <reference path="./sections/language.ts" />
+/// <reference path="./sections/mirrors.ts" />
+/// <reference path="./sections/preview.ts" />
+/// <reference path="./sections/sources.ts" />
+/// <reference path="./sections/sync.ts" />
+/// <reference path="./sections/tools.ts" />
+
 
 interface SectionModule {
   id: string;
@@ -17,7 +35,6 @@ const SECTIONS: SectionModule[] = [
   SyncSection,
   PreviewSection,
   MirrorsSection,
-  RemoteSection,
   FavoritesSection,
   AboutSection
 ];

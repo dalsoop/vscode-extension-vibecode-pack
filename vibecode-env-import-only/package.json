@@ -2,7 +2,7 @@
   "name": "vibecode-env-import-only",
   "displayName": "%ext.displayName%",
   "description": "%ext.description%",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "dalsoop",
   "engines": {
     "vscode": "^1.95.0"
@@ -40,7 +40,11 @@
         "viewType": "vibecodeEnvImport.editor",
         "displayName": "%editor.displayName%",
         "selector": [
-          { "filenamePattern": ".env" }
+          { "filenamePattern": ".env" },
+          { "filenamePattern": ".env.local" },
+          { "filenamePattern": ".env.development" },
+          { "filenamePattern": ".env.production" },
+          { "filenamePattern": ".env.staging" }
         ],
         "priority": "default"
       }

@@ -31,6 +31,15 @@ export interface L10nBundle {
   invalidKeyName: string;
   keyExists: string;
 
+  // Example/schema sync section
+  exampleSectionTitle: string;
+  exampleFoundAt: string;
+  exampleNotFound: string;
+  missingKeysTitle: string;
+  extraKeysTitle: string;
+  importMissing: string;
+  noDiff: string;
+
   // Footer
   saveHint: string;
 }
@@ -59,6 +68,14 @@ export function getL10nBundle(): L10nBundle {
     invalidKeyName: vscode.l10n.t('Invalid key name. Use letters, digits, underscore; start with a letter or underscore.'),
     keyExists: vscode.l10n.t('Key "{0}" already exists.'),
 
-    saveHint: vscode.l10n.t('Changes are written to .env immediately. Save with ⌘S / Ctrl+S if you want to persist explicitly (auto-save respects your VSCode settings).')
+    exampleSectionTitle: vscode.l10n.t('Schema (.env.example)'),
+    exampleFoundAt: vscode.l10n.t('Schema: {0}'),
+    exampleNotFound: vscode.l10n.t('No .env.example / .env.template found in this folder.'),
+    missingKeysTitle: vscode.l10n.t('Missing in this file (declared in schema):'),
+    extraKeysTitle: vscode.l10n.t('Extra in this file (not in schema):'),
+    importMissing: vscode.l10n.t('Add all missing keys (empty values)'),
+    noDiff: vscode.l10n.t('In sync with schema.'),
+
+    saveHint: vscode.l10n.t('Changes are written immediately. Save with ⌘S / Ctrl+S if you want to persist explicitly (auto-save respects your VSCode settings).')
   };
 }

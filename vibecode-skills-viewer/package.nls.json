@@ -1,6 +1,6 @@
 {
   "ext.displayName": "Vibecode Skills Viewer",
-  "ext.description": "Multi-tool sidebar for installed Claude/Codex/Copilot/Cursor/Windsurf/Cline skills with preview, search, remote browse, AI chat, and instruction-file sync",
+  "ext.description": "Multi-tool sidebar for installed Claude/Codex/Copilot/Cursor/Windsurf/Cline skills with preview, search, AI chat, and instruction-file sync",
   "view.container.title": "Vibecode Skills",
   "view.hub": "Skills · Memory · MD",
   "cmd.refresh": "Refresh",
@@ -16,14 +16,10 @@
   "cmd.toggleFavorite": "Toggle Favorite",
   "cmd.createSkill": "Create New Skill…",
   "cmd.deleteSkill": "Delete Skill",
-  "cmd.installRemoteSkill": "Install",
-  "cmd.searchGithub": "Search GitHub",
-  "cmd.refreshRemote": "Refresh Remote",
   "cmd.syncInstructions": "Sync to Instruction Files…",
   "cmd.syncInstructionsAll": "Sync to All Instruction Files",
   "cmd.removeInstructionBlock": "Remove Vibecode Skills Block From…",
   "cmd.reportBug": "Report Bug",
-  "cmd.openCatalog": "Open Catalog JSON",
   "cmd.openInstructionFile": "Open Instruction File",
   "cmd.syncToThisFile": "Sync Skills Block Here",
   "cmd.removeBlockFromThisFile": "Remove Skills Block",
@@ -63,5 +59,6 @@
   "cfg.instructionFormat": "Output format when syncing skills into instruction files",
   "cfg.githubToken": "Optional GitHub token for higher rate limits when browsing/installing remote skills (also reads GITHUB_TOKEN env)",
   "cfg.language": "Display language for extension UI. \"Auto\" follows the VSCode locale.",
-  "cfg.language.auto": "Auto (follow VSCode)"
+  "cfg.language.auto": "Auto (follow VSCode)",
+  "cfg.showToolChips": "Show the AI tool filter chip row (All / Claude / Codex / …) at the top of the sidebar. Click a chip to temporarily narrow the visible items to one tool."
 }

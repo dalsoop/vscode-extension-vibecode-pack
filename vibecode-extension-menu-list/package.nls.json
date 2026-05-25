@@ -1,0 +1,9 @@
+{
+  "ext.displayName": "Vibecode Extension Menu List",
+  "ext.description": "Hosts shared `Vibecode` submenus (explorer/context, editor/context, editor/title) that all vibecode-* extensions can contribute into, plus a palette command listing every installed vibecode-* command.",
+  "ext.category": "Vibecode",
+  "submenu.vibecodeMenu.explorerContext": "Vibecode",
+  "submenu.vibecodeMenu.editorContext": "Vibecode",
+  "submenu.vibecodeMenu.editorTitle": "Vibecode",
+  "cmd.showCatalog": "Vibecode - Show Extension Menu Catalog"
+}

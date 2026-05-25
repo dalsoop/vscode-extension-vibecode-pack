@@ -10,8 +10,15 @@ const vscode = acquireVsCodeApi();
 let l10n = {};
 let keyNameRe = /^[A-Za-z_][A-Za-z0-9_]*$/;
 let currentEntries = [];
+let currentExample = { examplePath: null, missingKeys: [], extraKeys: [] };
 
 const el = id => document.getElementById(id);
+
+function basename(p) {
+  if (!p) return '';
+  const i = Math.max(p.lastIndexOf('/'), p.lastIndexOf('\\\\'));
+  return i >= 0 ? p.slice(i + 1) : p;
+}
 
 function showError(msg) {
   const e = el('error');
@@ -35,6 +42,19 @@ function makeButton(label, onClick, opts) {
   return b;
 }
 
+function makeChipRow(keys, opts) {
+  opts = opts || {};
+  const wrap = document.createElement('div');
+  wrap.className = 'chip-row';
+  for (const k of keys) {
+    const chip = document.createElement('span');
+    chip.className = 'chip' + (opts.warn ? ' warn' : '');
+    chip.textContent = k;
+    wrap.appendChild(chip);
+  }
+  return wrap;
+}
+
 function makeValueInput(entry) {
   const input = document.createElement('input');
   input.type = 'password';
@@ -50,6 +70,67 @@ function makeValueInput(entry) {
     if (e.inputType !== 'insertFromPaste') e.preventDefault();
   });
   return input;
+}
+
+function renderExampleSection(example) {
+  currentExample = example || { examplePath: null, missingKeys: [], extraKeys: [] };
+  el('example-section-title').style.display = 'block';
+  el('example-section-title').textContent = l10n.exampleSectionTitle;
+
+  const section = el('example-section');
+  section.innerHTML = '';
+
+  if (!currentExample.examplePath) {
+    const note = document.createElement('div');
+    note.className = 'example-meta';
+    note.textContent = l10n.exampleNotFound;
+    section.appendChild(note);
+    return;
+  }
+
+  const meta = document.createElement('div');
+  meta.className = 'example-meta';
+  meta.textContent = (l10n.exampleFoundAt || 'Schema: {0}').replace('{0}', basename(currentExample.examplePath));
+  section.appendChild(meta);
+
+  const noMissing = currentExample.missingKeys.length === 0;
+  const noExtra = currentExample.extraKeys.length === 0;
+
+  if (noMissing && noExtra) {
+    const ok = document.createElement('div');
+    ok.className = 'in-sync';
+    ok.textContent = l10n.noDiff;
+    section.appendChild(ok);
+    return;
+  }
+
+  if (!noMissing) {
+    const block = document.createElement('div');
+    block.className = 'example-block';
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = l10n.missingKeysTitle;
+    block.appendChild(label);
+    block.appendChild(makeChipRow(currentExample.missingKeys));
+    const actions = document.createElement('div');
+    actions.className = 'example-actions';
+    actions.appendChild(makeButton(l10n.importMissing, () => {
+      vscode.postMessage({ type: 'importFromExample' });
+    }, { primary: true }));
+    block.appendChild(actions);
+    section.appendChild(block);
+  }
+
+  if (!noExtra) {
+    const block = document.createElement('div');
+    block.className = 'example-block';
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = l10n.extraKeysTitle;
+    block.appendChild(label);
+    block.appendChild(makeChipRow(currentExample.extraKeys, { warn: true }));
+    section.appendChild(block);
+  }
 }
 
 function renderAddRow() {
@@ -204,6 +285,7 @@ function render(state) {
   el('hint').textContent = l10n.hint || '';
   el('save-hint').textContent = l10n.saveHint || '';
 
+  renderExampleSection(state.example);
   renderAddRow();
 
   const rows = el('rows');
@@ -233,9 +315,9 @@ window.addEventListener('message', e => {
   if (msg.type === 'init') {
     l10n = msg.l10n || {};
     keyNameRe = new RegExp(msg.keyNamePattern || '^[A-Za-z_][A-Za-z0-9_]*$');
-    render({ filename: msg.filename, entries: msg.entries });
+    render({ filename: msg.filename, entries: msg.entries, example: msg.example });
   } else if (msg.type === 'update') {
-    render({ entries: msg.entries });
+    render({ entries: msg.entries, example: msg.example });
   } else if (msg.type === 'error') {
     showError(msg.message);
   }

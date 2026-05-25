@@ -1,0 +1,8 @@
+{
+  "ext.displayName": "Vibecode Commit Lint Check",
+  "ext.description": "Lint commit messages against bundled commitlint templates (Conventional, PHP/Laravel, Node, Python). Right-click a folder to scaffold a config, or run the CLI check on the last commit from the palette.",
+  "ext.category": "Vibecode",
+  "cmd.addTemplate": "Vibecode Commit Lint - Add Custom Template",
+  "cmd.checkLastCommit": "Vibecode Commit Lint - Check Last Commit",
+  "cmd.initFromTemplate": "Vibecode Commit Lint - Init From Template"
+}

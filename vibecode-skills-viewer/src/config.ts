@@ -23,10 +23,10 @@ export interface CcSkillsConfig {
   includeGlobal: boolean;
   includeExtensions: boolean;
   tools: ToolDef[];
+  showToolChips: boolean;
   extraGlobalRoots: string[];
   extraWorkspaceRoots: string[];
   instructionFormat: InstructionFormat;
-  githubToken: string;
   showScoreBreakdown: boolean;
   mirrorGroups: MirrorGroup[];
   mirrorSkillsByName: boolean;
@@ -65,10 +65,10 @@ export function readConfig(): CcSkillsConfig {
     includeGlobal: c.get<boolean>('includeGlobal', true),
     includeExtensions: c.get<boolean>('includeExtensions', true),
     tools: readTools(c),
+    showToolChips: c.get<boolean>('showToolChips', true),
     extraGlobalRoots: c.get<string[]>('extraGlobalRoots', []),
     extraWorkspaceRoots: c.get<string[]>('extraWorkspaceRoots', []),
     instructionFormat: c.get<InstructionFormat>('instructionFormat', 'ref'),
-    githubToken: c.get<string>('githubToken', '') || process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '',
     showScoreBreakdown: c.get<boolean>('showScoreBreakdown', true),
     mirrorGroups: c.get<MirrorGroup[]>('mirrorGroups', []),
     mirrorSkillsByName: c.get<boolean>('mirrorSkillsByName', false),

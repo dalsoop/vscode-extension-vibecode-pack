@@ -65,6 +65,8 @@
 
   "settings.section.tools": "Tools",
   "settings.tools.intro": "AI tools whose skills and instruction files the sidebar surfaces. Uncheck to hide a tool's items everywhere. Add a custom entry for tools that aren't built in.",
+  "settings.tools.showChips.label": "Show tool filter chips in sidebar",
+  "settings.tools.showChips.hint": "Quick-filter row at the top of the hub (All / Claude / Codex / …). Click a chip to narrow visible items to that tool.",
   "settings.tools.add": "Add tool",
   "settings.tools.delete": "Delete",
   "settings.tools.deleteConfirm": "Remove tool \"{0}\"? Existing skills tagged with this id will be hidden until you re-add it.",

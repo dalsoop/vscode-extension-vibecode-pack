@@ -1,0 +1,17 @@
+{
+  "title": "PHP / Laravel",
+  "description": "Conventional commits + scope-enum hinting common Laravel areas (app, config, database, routes, resources, tests). Hook wiring is left to captainhook or a manual .git/hooks/commit-msg script.",
+  "files": [
+    {
+      "path": "commitlint.config.js",
+      "content": "module.exports = {\n  extends: ['@commitlint/config-conventional'],\n  rules: {\n    'subject-case': [0],\n    'scope-enum': [\n      1,\n      'always',\n      [\n        'app',\n        'artisan',\n        'composer',\n        'config',\n        'database',\n        'docker',\n        'docs',\n        'public',\n        'resources',\n        'routes',\n        'storage',\n        'tests'\n      ]\n    ]\n  }\n};\n"
+    },
+    {
+      "path": "COMMITLINT.md",
+      "content": "# Commit lint (PHP / Laravel)\n\n## Install dev deps\n\n```\nnpm install --save-dev @commitlint/cli @commitlint/config-conventional\n```\n\n## Wire a commit-msg hook\n\nPick ONE:\n\n### A) Manual git hook\n\n```\ncat > .git/hooks/commit-msg <<'SH'\n#!/bin/sh\nnpx --no -- commitlint --edit \"$1\"\nSH\nchmod +x .git/hooks/commit-msg\n```\n\n### B) CaptainHook (PHP-native)\n\n```\ncomposer require --dev captainhook/captainhook captainhook/plugin-composer\nvendor/bin/captainhook install\n```\n\nThen edit `captainhook.json`:\n\n```json\n{\n  \"commit-msg\": {\n    \"enabled\": true,\n    \"actions\": [\n      { \"action\": \"npx --no -- commitlint --edit {$ARG}\" }\n    ]\n  }\n}\n```\n"
+    }
+  ],
+  "postInstall": [
+    "npm install --save-dev @commitlint/cli @commitlint/config-conventional"
+  ]
+}

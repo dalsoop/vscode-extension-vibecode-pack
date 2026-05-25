@@ -28,6 +28,7 @@ namespace ToolsSection {
       <h2>${S.ico('tools')} ${S.esc(S.t('settings.section.tools'))}</h2>
       <div class="body">
         <p class="row-hint" style="margin-bottom: 12px;">${S.esc(S.t('settings.tools.intro'))}</p>
+        ${S.switchEl('showToolChips', S.t('settings.tools.showChips.label'), S.t('settings.tools.showChips.hint'))}
         <div class="tool-card-list">${cards || `<div class="cs-empty">${S.esc(S.t('hub.empty.noItems'))}</div>`}</div>
         <div class="actions" style="margin-top: 12px; flex-wrap: wrap;">
           <button class="btn primary" data-tool-add>${S.ico('add')} ${S.esc(S.t('settings.tools.add'))}</button>
