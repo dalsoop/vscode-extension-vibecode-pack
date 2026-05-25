@@ -48,6 +48,14 @@ export const STYLE = `
   .act:hover { background: var(--vscode-toolbar-hoverBackground); }
   .empty { padding: 20px 12px; text-align: center; color: var(--vscode-descriptionForeground); font-style: italic; font-size: 11px; }
   .desc { padding: 4px 10px 6px; color: var(--vscode-descriptionForeground); font-size: 11px; font-style: italic; opacity: 0.8; }
+  /* Folder-depth tree wrapping */
+  .tree-row { display: flex; align-items: stretch; }
+  .tree-row > .item { flex: 1; min-width: 0; }
+  .tree-indent { flex-shrink: 0; align-self: stretch; }
+  .tree-chevron, .tree-chevron-spacer { width: 16px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--vscode-icon-foreground); cursor: pointer; font-size: 12px; opacity: 0.7; align-self: flex-start; padding-top: 7px; }
+  .tree-chevron:hover { opacity: 1; background: var(--vscode-toolbar-hoverBackground); }
+  /* Prominent (N) badge — right-aligned dim, matches native TreeItem.description */
+  .item-metric { margin-left: auto; padding-left: 8px; color: var(--vscode-descriptionForeground); font-size: 11px; font-weight: 400; opacity: 0.75; }
 `;
 
 export function buildHtml(webview: vscode.Webview, extensionPath: string): string {

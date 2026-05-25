@@ -1,7 +1,6 @@
 {
   "statusBar.tooltip": "Vibecode Skills: {0}개 설치됨{1} — 클릭해서 필터",
   "statusBar.workspaceSuffix": " (워크스페이스 {0}개)",
-
   "chat.help.title": "## @vibeskills 명령어",
   "chat.help.list": "- `/list` — 설치된 스킬 목록",
   "chat.help.search": "- `/search <검색어>` — 키워드 검색",
@@ -20,7 +19,6 @@
   "chat.recommend.header": "### \"{0}\"에 대한 추천",
   "chat.recommend.noMatches": "_일치하는 스킬 없음_",
   "chat.recommend.matchLabel": "일치 {0}",
-
   "scaffold.prompt.name": "스킬 이름",
   "scaffold.placeholder.name": "my-cool-skill",
   "scaffold.prompt.description": "짧은 설명 (한 문장)",
@@ -43,7 +41,6 @@
   "commands.memory.noMemory": "메모리가 아직 없습니다.\n{0}",
   "commands.gate.needsWorkspace": "\"{0}\" 명령은 워크스페이스가 열려있어야 합니다.",
   "commands.gate.needsEditor": "\"{0}\" 명령은 활성 에디터가 필요합니다.",
-
   "settings.title": "설정",
   "settings.subtitle": "Vibecode 스킬 뷰어 · {0}",
   "settings.loading": "불러오는 중…",
@@ -53,7 +50,6 @@
   "settings.notice.presetEmpty": "프리셋 \"{0}\"에 해당하는 파일이 이 머신에 없습니다.",
   "settings.notice.presetDuplicate": "같은 경로 묶음을 가진 그룹이 이미 있습니다.",
   "settings.notice.presetAdded": "프리셋 추가됨: {0} (파일 {1}개)",
-
   "settings.versionLabel": "v{0}",
   "settings.section.sources": "스킬 소스",
   "settings.sources.workspace.label": "워크스페이스 스캔",
@@ -62,7 +58,6 @@
   "settings.sources.global.hint": "~/.claude /.codex /.copilot /.gemini /.agents 에서 스킬을 찾습니다.",
   "settings.sources.extensions.label": "확장 번들 스캔",
   "settings.sources.extensions.hint": "다른 VSCode 확장이 같이 배포한 스킬도 포함합니다.",
-
   "settings.section.tools": "도구",
   "settings.tools.intro": "사이드바에 노출할 AI 도구 목록. 해제하면 해당 도구의 스킬·인스트럭션 파일이 모두 숨겨집니다. 빌트인이 아닌 도구는 직접 추가하세요.",
   "settings.tools.showChips.label": "사이드바에 도구 칩 행 표시",
@@ -87,10 +82,8 @@
   "settings.tabnav.sync": "동기화",
   "settings.tabnav.preview": "미리보기",
   "settings.tabnav.mirrors": "미러",
-  "settings.tabnav.remote": "원격",
   "settings.tabnav.favorites": "즐겨찾기",
   "settings.tabnav.about": "정보",
-
   "settings.section.extraRoots": "추가 스킬 루트",
   "settings.extraRoots.global.label": "전역 루트",
   "settings.extraRoots.global.hint": "기본 위치 외에 스캔할 절대경로 목록",
@@ -99,7 +92,6 @@
   "settings.extraRoots.noEntries": "항목 없음",
   "settings.extraRoots.addPath": "경로 추가",
   "settings.extraRoots.addPrompt": "추가할 경로 (절대경로):",
-
   "settings.section.instructionSync": "인스트럭션 파일 동기화",
   "settings.instructionSync.format.label": "블록 형식",
   "settings.instructionSync.format.hint": "AGENTS.md / CLAUDE.md / .cursor/rules 등에 기록되는 레이아웃입니다.",
@@ -107,11 +99,9 @@
   "settings.format.compact": "압축 불릿",
   "settings.format.full": "상세 (설명 + when-to-use)",
   "settings.format.legacy": "단순 불릿",
-
   "settings.section.preview": "미리보기",
   "settings.preview.scoreBreakdown.label": "기본으로 점수 세부 표시",
   "settings.preview.scoreBreakdown.hint": "스킬 미리보기를 열 때 섹션별 \"감점 / 획득\" 규칙 목록을 펼칩니다. 툴바에서 개별 토글도 가능합니다.",
-
   "settings.mirrors.intro": "같은 그룹의 파일들은 내용을 공유합니다 — 하나를 저장하면 나머지에도 동일한 전체 내용이 기록됩니다. CLAUDE.md / AGENTS.md / GEMINI.md 가 같은 내용을 담을 때 유용합니다.",
   "settings.mirrors.byName.label": "이름으로 스킬 자동 미러",
   "settings.mirrors.byName.hint": "같은 이름의 스킬 디렉토리가 여러 AI 도구 루트에 있으면 (예: ~/.claude/skills/foo, ~/.codex/skills/foo) 두 SKILL.md를 하나의 그룹으로 묶습니다. 기본 꺼짐 — 옵트인.",
@@ -124,25 +114,16 @@
   "settings.mirrors.addPathToGroup": "이 그룹에 경로 추가",
   "settings.mirrors.addPathPrompt": "추가할 경로 (절대경로 또는 ~/...):",
   "settings.mirrors.removeGroupConfirm": "그룹 \"{0}\" 을(를) 삭제할까요? 대상 파일은 그대로 둡니다.",
-
-  "settings.section.remote": "원격 카탈로그",
-  "settings.remote.githubToken.label": "GitHub 토큰",
-  "settings.remote.githubToken.hint": "API rate limit 완화용 개인 액세스 토큰 (5000/시간 vs 60/시간). GITHUB_TOKEN / GH_TOKEN 환경변수도 인식.",
-  "settings.remote.githubToken.placeholder": "ghp_xxxxxxxxxxxxxx",
-
   "settings.section.favorites": "즐겨찾기",
   "settings.favorites.pinned": "고정된 스킬",
   "settings.favorites.clear": "즐겨찾기 지우기",
-
   "settings.section.aboutInfo": "정보",
   "settings.about.version.label": "버전",
   "settings.about.storage.label": "설정 저장 위치",
   "settings.about.storage.value": "VSCode 전역 설정 (Settings Sync 로 동기화됨)",
   "settings.about.openVscodeSettings.label": "VSCode 설정에서 열기",
   "settings.about.reloadWindow.label": "창 새로고침",
-
   "settings.error.alertPrefix": "설정 오류: {0}",
-
   "preview.copy.skillMd": "SKILL.md 복사됨",
   "preview.copy.dir": "복사됨: {0}",
   "preview.save.aborted": "저장 취소됨: {0}",
@@ -155,7 +136,6 @@
   "preview.mirror.noPeers": "이 파일에 미러 대상이 설정되어 있지 않습니다.",
   "preview.sync.done": "동기화 완료",
   "preview.sync.warnings": "동기화 경고:\n{0}",
-
   "hub.shell.filter": "필터…",
   "hub.shell.refresh": "새로고침",
   "hub.shell.newSkill": "새 스킬",
@@ -173,13 +153,10 @@
   "hub.tabs.agent.desc": "에이전트 매니페스트",
   "hub.tabs.memory.label": "메모리",
   "hub.tabs.memory.desc": "프로젝트별 메모리 항목",
-  "hub.tabs.browse.label": "탐색",
-  "hub.tabs.browse.desc": "원격 카탈로그",
   "hub.scopes.all": "전체",
   "hub.scopes.global": "전역",
   "hub.scopes.workspace": "워크스페이스",
   "hub.scopes.this": "이 폴더",
-  "hub.groups.remoteSources": "원격 소스 ({0})",
   "hub.groups.thisFolder": "이 폴더 · {0}",
   "hub.groups.currentWorkspace": "현재 워크스페이스",
   "hub.groups.allProjects": "모든 프로젝트 ({0})",
@@ -187,15 +164,12 @@
   "hub.groups.global": "전역",
   "hub.item.linesChars": "{0}줄 · {1}KB",
   "hub.item.missing": "✕ 없음",
-  "hub.item.subtitleRepoBranch": "{0}@{1}",
   "hub.item.actionTitle.open": "열기",
   "hub.item.actionTitle.preview": "미리보기",
   "hub.item.actionTitle.finder": "Finder에서 보기",
   "hub.item.actionTitle.fav": "즐겨찾기 토글",
   "hub.item.actionTitle.sync": "동기화",
-  "hub.item.actionTitle.github": "GitHub에서 열기",
   "hub.item.actionTitle.create": "생성",
-
   "preview.shell.loading": "불러오는 중…",
   "preview.badge.readOnly.tooltip": "확장에 번들된 파일 — 편집 불가",
   "preview.badge.readOnly.label": "읽기 전용",
@@ -275,7 +249,6 @@
   "preview.yaml.commonFix": "흔한 해결: 콜론·따옴표·특수문자가 들어간 값은 큰따옴표로 감싸세요.",
   "preview.yaml.autofix": "자동 보정 시도",
   "preview.copyCode": "코드 복사",
-
   "settings.section.language": "표시 언어",
   "settings.language.label": "언어",
   "settings.language.hint": "변경 후 창을 새로고침하면 모든 곳에 적용됩니다.",
@@ -284,7 +257,6 @@
   "settings.language.ko": "한국어",
   "settings.language.reloadNeeded": "변경한 언어를 적용하려면 창을 새로고침할까요?",
   "settings.language.reload": "창 새로고침",
-
   "settings.section.mirrors": "미러 그룹",
   "settings.mirrors.empty": "항목 없음",
   "settings.mirrors.addFromPreset": "프리셋에서 추가",
@@ -297,25 +269,18 @@
   "settings.mirrors.removeGroup": "그룹 삭제",
   "settings.mirrors.groupLabelPrompt": "그룹 이름 (예: \"전역 에이전트 인스트럭션\"):",
   "settings.mirrors.addGroup": "그룹 추가",
-
   "settings.section.filters": "필터·표시",
   "settings.filters.singleTool": "하나의 도구만 표시",
   "settings.filters.includeWorkspace": "워크스페이스 스킬 포함",
   "settings.filters.includeGlobal": "전역 스킬 포함",
   "settings.filters.includeExtensions": "확장 스킬 포함",
   "settings.filters.showScoreBreakdown": "점수 세부 표시",
-
   "settings.section.sync": "인스트럭션 동기화",
   "settings.sync.blockFormat": "블록 형식",
   "settings.sync.format.ref": "참조 테이블",
   "settings.sync.format.compact": "압축 목록",
   "settings.sync.format.full": "상세",
   "settings.sync.format.legacy": "레거시",
-
-  "settings.section.remote": "원격 카탈로그",
-  "settings.remote.githubToken": "GitHub 토큰",
-  "settings.remote.githubTokenHint": "원격 스킬 탐색/설치 시 rate limit 완화에 사용. GITHUB_TOKEN 환경변수도 인식합니다.",
-
   "settings.section.about": "정보",
   "settings.about.pinned": "고정된 스킬",
   "settings.about.version": "버전",

@@ -32,6 +32,15 @@ declare namespace Contracts {
     issues?: string[];
   }
 
+  // Prominent right-aligned count badge, rendered as "({count})". Free-form
+  // unit so data sources can express semantics ('lines' for files, 'items'
+  // for folders, 'entries' for collections) — UI ignores the unit string
+  // today, but it stays addressable for tooltips / future formatting.
+  interface ItemMetric {
+    count: number;
+    unit: string;
+  }
+
   interface ItemPayload {
     id: string;
     title: string;
@@ -47,6 +56,11 @@ declare namespace Contracts {
     readOnly?: boolean;
     score?: ItemPayloadScore;
     actions?: ActionName[];
+    // Optional folder-depth children. When non-empty, the hub renders this
+    // node with an expand/collapse chevron and indents the children.
+    children?: ItemPayload[];
+    // Optional prominent count badge ("(152)").
+    metric?: ItemMetric;
   }
 
   interface Group {

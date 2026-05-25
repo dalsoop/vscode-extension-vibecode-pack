@@ -1,0 +1,15 @@
+{
+  "ext": {
+    "displayName": "바이브코드 우클릭 VSIX 패키지 & 설치",
+    "description": "VSCode 익스텐션 폴더를 우클릭해서 .vsix 패키지 생성과 설치를 한 번에 실행한다.",
+    "category": "바이브코드"
+  },
+  "commands": {
+    "packageAndInstall": "바이브코드 - VSCode 익스텐션 패키지 & 설치"
+  },
+  "runtime": {
+    "No folder selected.": "선택된 폴더가 없습니다.",
+    "No package.json found in {0}.": "{0} 에 package.json 이 없습니다.",
+    "{0} is not a VSCode extension (no engines.vscode in package.json).": "{0} 는 VSCode 익스텐션이 아닙니다 (package.json 에 engines.vscode 없음)."
+  }
+}

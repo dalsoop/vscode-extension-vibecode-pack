@@ -14,5 +14,14 @@
   "Upstream: {0}\nDeclared SSOT: {1}\n\nSync direction:": "업스트림: {0}\n선언된 SSOT: {1}\n\n동기화 방향:",
   "Pull (upstream → local)": "Pull (업스트림 → 로컬)",
   "Push (local → upstream)": "Push (로컬 → 업스트림)",
-  "Stub: would {0}. Sync logic is not implemented in v0.1.": "Stub: \"{0}\" 을(를) 수행했을 것. v0.1 에서 동기화 로직은 미구현."
+  "Stub: would {0}. Sync logic is not implemented in v0.1.": "Stub: \"{0}\" 을(를) 수행했을 것. v0.1 에서 동기화 로직은 미구현.",
+  "No starters available.": "사용 가능한 스타터가 없습니다.",
+  "Extension not found.": "확장을 찾을 수 없습니다.",
+  "Pick a starter to install": "설치할 스타터 선택",
+  "Install here": "여기에 설치",
+  "Pick the target folder": "대상 폴더 선택",
+  "{0} file(s) already exist in the target folder. Overwrite?": "대상 폴더에 이미 {0}개 파일이 있습니다. 덮어쓸까요?",
+  "Overwrite": "덮어쓰기",
+  "Skip existing": "기존 파일은 건너뛰기",
+  "Installed \"{0}\" → {1}": "설치 완료: \"{0}\" → {1}"
 }

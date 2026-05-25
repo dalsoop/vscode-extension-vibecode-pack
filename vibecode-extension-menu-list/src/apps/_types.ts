@@ -1,21 +1,10 @@
 import type * as vscode from 'vscode';
 
-/**
- * Menu locations this extension can target.
- *
- * Native VSCode locations (explorer/context, editor/context, editor/title) plus the
- * three shared `vibecodeMenu.*` submenu ids declared by this extension. Other
- * vibecode-* extensions reference the submenu ids from their own contributes.menus
- * to slot their items under the unified "Vibecode" submenu.
- */
 export type MenuLocation =
   | 'explorer/context'
   | 'editor/context'
   | 'editor/title'
-  | 'editor/title/context'
-  | 'vibecodeMenu.explorerContext'
-  | 'vibecodeMenu.editorContext'
-  | 'vibecodeMenu.editorTitle';
+  | 'editor/title/context';
 
 export interface MenuContribution {
   where: MenuLocation;
@@ -51,12 +40,22 @@ export function fullCommandId(id: string): string {
   return `${COMMAND_PREFIX}.${id}`;
 }
 
-/** Submenu ids this extension declares — re-export for documentation and lookup. */
-export const SUBMENU_IDS = {
-  explorerContext: 'vibecodeMenu.explorerContext',
-  editorContext: 'vibecodeMenu.editorContext',
-  editorTitle: 'vibecodeMenu.editorTitle'
-} as const;
+/**
+ * Name-part prefix used to identify sibling extensions. VSCode extension ids are
+ * `<publisher>.<name>` — we match on the `<name>` part so any publisher works
+ * (dalsoop.vibecode-foo, otheruser.vibecode-bar, ...).
+ */
+export const VIBECODE_NAME_PREFIX = 'vibecode-';
 
-/** Prefix used to identify sibling extensions in the catalog. */
-export const VIBECODE_EXTENSION_PREFIX = 'dalsoop.vibecode-';
+/**
+ * Return the `<name>` part of `<publisher>.<name>`, or '' if malformed.
+ */
+export function extensionNamePart(extensionId: string): string {
+  const dot = extensionId.indexOf('.');
+  return dot === -1 ? '' : extensionId.slice(dot + 1);
+}
+
+/** True if this extension id matches the vibecode-* naming convention (any publisher). */
+export function isVibecodeExtensionId(extensionId: string): boolean {
+  return extensionNamePart(extensionId).startsWith(VIBECODE_NAME_PREFIX);
+}

@@ -1,0 +1,5 @@
+{
+  "No folder selected.": "선택된 폴더가 없습니다.",
+  "No package.json found in {0}.": "{0} 에 package.json 이 없습니다.",
+  "{0} is not a VSCode extension (no engines.vscode in package.json).": "{0} 는 VSCode 익스텐션이 아닙니다 (package.json 에 engines.vscode 없음)."
+}

@@ -1,0 +1,9 @@
+{
+  "Scanning {0} / {1} files...": "스캔 중 {0} / {1} ...",
+  "Scan complete: {0} files indexed.": "스캔 완료: {0} 개 파일 인덱싱.",
+  "View mode: {0}": "뷰 모드: {0}",
+  "Flat ranking": "플랫 랭킹",
+  "Grouped by extension": "확장자별 그룹",
+  "No files indexed yet.": "아직 인덱싱된 파일이 없습니다.",
+  "{0} files, {1} lines": "{0} 파일, {1} 라인"
+}

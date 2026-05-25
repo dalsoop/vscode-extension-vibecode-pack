@@ -37,20 +37,25 @@
     "typescript-eslint": "^8.59.4"
   },
   "contributes": {
-    "submenus": [
-      {
-        "id": "vibecodeMenu.explorerContext",
-        "label": "%submenu.vibecodeMenu.explorerContext%"
-      },
-      {
-        "id": "vibecodeMenu.editorContext",
-        "label": "%submenu.vibecodeMenu.editorContext%"
-      },
-      {
-        "id": "vibecodeMenu.editorTitle",
-        "label": "%submenu.vibecodeMenu.editorTitle%"
-      }
-    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibecode",
+          "title": "%viewContainer.vibecode%",
+          "icon": "resources/vibecode.svg"
+        }
+      ]
+    },
+    "views": {
+      "vibecode": [
+        {
+          "id": "vibecodeMenuList.sidebar",
+          "name": "%view.vibecodeMenuList.sidebar%",
+          "type": "webview",
+          "contextualTitle": "%viewContainer.vibecode%"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "vibecodeMenuList.showCatalog",
@@ -60,36 +65,6 @@
       }
     ],
     "menus": {
-      "explorer/context": [
-        {
-          "submenu": "vibecodeMenu.explorerContext",
-          "group": "6_rca@5"
-        }
-      ],
-      "editor/context": [
-        {
-          "submenu": "vibecodeMenu.editorContext",
-          "group": "6_rca@5"
-        }
-      ],
-      "editor/title": [
-        {
-          "submenu": "vibecodeMenu.editorTitle",
-          "group": "navigation@99"
-        }
-      ],
-      "vibecodeMenu.explorerContext": [
-        {
-          "command": "vibecodeMenuList.showCatalog",
-          "group": "9_meta@99"
-        }
-      ],
-      "vibecodeMenu.editorContext": [
-        {
-          "command": "vibecodeMenuList.showCatalog",
-          "group": "9_meta@99"
-        }
-      ],
       "commandPalette": [
         {
           "command": "vibecodeMenuList.showCatalog"

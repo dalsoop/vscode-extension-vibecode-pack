@@ -1,7 +1,6 @@
 {
   "statusBar.tooltip": "Vibecode Skills: {0} installed{1} — click to filter",
   "statusBar.workspaceSuffix": " ({0} in workspace)",
-
   "chat.help.title": "## @vibeskills commands",
   "chat.help.list": "- `/list` — list installed skills",
   "chat.help.search": "- `/search <query>` — search by keyword",
@@ -20,7 +19,6 @@
   "chat.recommend.header": "### For \"{0}\"",
   "chat.recommend.noMatches": "_No matches_",
   "chat.recommend.matchLabel": "match {0}",
-
   "scaffold.prompt.name": "Skill name",
   "scaffold.placeholder.name": "my-cool-skill",
   "scaffold.prompt.description": "Short description (1 sentence)",
@@ -43,7 +41,6 @@
   "commands.memory.noMemory": "No memory yet.\n{0}",
   "commands.gate.needsWorkspace": "Command \"{0}\" requires an open workspace.",
   "commands.gate.needsEditor": "Command \"{0}\" requires an active editor.",
-
   "settings.title": "Settings",
   "settings.subtitle": "Vibecode Skills Viewer · {0}",
   "settings.loading": "Loading…",
@@ -53,7 +50,6 @@
   "settings.notice.presetEmpty": "Preset \"{0}\" has no existing files on this machine.",
   "settings.notice.presetDuplicate": "A group with the same paths already exists.",
   "settings.notice.presetAdded": "Added preset: {0} ({1} files)",
-
   "settings.versionLabel": "v{0}",
   "settings.section.sources": "Sources",
   "settings.sources.workspace.label": "Scan workspace",
@@ -62,7 +58,6 @@
   "settings.sources.global.hint": "Look for skills under ~/.claude /.codex /.copilot /.gemini /.agents",
   "settings.sources.extensions.label": "Scan extension-bundled",
   "settings.sources.extensions.hint": "Include skills shipped by other VSCode extensions",
-
   "settings.section.tools": "Tools",
   "settings.tools.intro": "AI tools whose skills and instruction files the sidebar surfaces. Uncheck to hide a tool's items everywhere. Add a custom entry for tools that aren't built in.",
   "settings.tools.showChips.label": "Show tool filter chips in sidebar",
@@ -87,10 +82,8 @@
   "settings.tabnav.sync": "Sync",
   "settings.tabnav.preview": "Preview",
   "settings.tabnav.mirrors": "Mirrors",
-  "settings.tabnav.remote": "Remote",
   "settings.tabnav.favorites": "Favorites",
   "settings.tabnav.about": "About",
-
   "settings.section.extraRoots": "Extra Skill Roots",
   "settings.extraRoots.global.label": "Global roots",
   "settings.extraRoots.global.hint": "Absolute paths to scan in addition to standard locations",
@@ -99,7 +92,6 @@
   "settings.extraRoots.noEntries": "No entries",
   "settings.extraRoots.addPath": "Add path",
   "settings.extraRoots.addPrompt": "Path to add (absolute):",
-
   "settings.section.instructionSync": "Instruction File Sync",
   "settings.instructionSync.format.label": "Block format",
   "settings.instructionSync.format.hint": "Layout written into AGENTS.md / CLAUDE.md / .cursor/rules / etc.",
@@ -107,11 +99,9 @@
   "settings.format.compact": "Compact bullet list",
   "settings.format.full": "Full detail (description + when-to-use)",
   "settings.format.legacy": "Plain bullets",
-
   "settings.section.preview": "Preview",
   "settings.preview.scoreBreakdown.label": "Show score breakdown by default",
   "settings.preview.scoreBreakdown.hint": "When opening a skill preview, expand the per-section \"Lost points / Earned\" rule lists. You can also toggle per-preview from the toolbar.",
-
   "settings.mirrors.intro": "Files in the same group share content — saving any one writes the same full content to the others. Useful when CLAUDE.md / AGENTS.md / GEMINI.md hold the same instructions.",
   "settings.mirrors.byName.label": "Auto-mirror skills by name",
   "settings.mirrors.byName.hint": "If a skill directory of the same name exists under multiple AI tool roots (e.g. ~/.claude/skills/foo and ~/.codex/skills/foo), treat their SKILL.md files as one group. Off by default — opt-in.",
@@ -124,25 +114,16 @@
   "settings.mirrors.addPathToGroup": "Add path to this group",
   "settings.mirrors.addPathPrompt": "Path to add (absolute or ~/...):",
   "settings.mirrors.removeGroupConfirm": "Remove group \"{0}\"? Target files stay untouched.",
-
-  "settings.section.remote": "Remote Catalog",
-  "settings.remote.githubToken.label": "GitHub token",
-  "settings.remote.githubToken.hint": "Personal access token for higher API rate limits (5000/hr vs 60/hr). Also reads GITHUB_TOKEN / GH_TOKEN env.",
-  "settings.remote.githubToken.placeholder": "ghp_xxxxxxxxxxxxxx",
-
   "settings.section.favorites": "Favorites",
   "settings.favorites.pinned": "Pinned skills",
   "settings.favorites.clear": "Clear favorites",
-
   "settings.section.aboutInfo": "About",
   "settings.about.version.label": "Version",
   "settings.about.storage.label": "Settings storage",
   "settings.about.storage.value": "VSCode global settings (synced via Settings Sync)",
   "settings.about.openVscodeSettings.label": "Open in VSCode settings",
   "settings.about.reloadWindow.label": "Reload window",
-
   "settings.error.alertPrefix": "Settings error: {0}",
-
   "preview.copy.skillMd": "Copied SKILL.md",
   "preview.copy.dir": "Copied: {0}",
   "preview.save.aborted": "Save aborted: {0}",
@@ -155,7 +136,6 @@
   "preview.mirror.noPeers": "No mirror peers configured for this file.",
   "preview.sync.done": "Sync done",
   "preview.sync.warnings": "Sync warnings:\n{0}",
-
   "hub.shell.filter": "Filter…",
   "hub.shell.refresh": "Refresh",
   "hub.shell.newSkill": "New Skill",
@@ -173,13 +153,10 @@
   "hub.tabs.agent.desc": "Agent manifests",
   "hub.tabs.memory.label": "Memory",
   "hub.tabs.memory.desc": "Per-project memory entries",
-  "hub.tabs.browse.label": "Browse",
-  "hub.tabs.browse.desc": "Remote catalog",
   "hub.scopes.all": "All",
   "hub.scopes.global": "Global",
   "hub.scopes.workspace": "Workspace",
   "hub.scopes.this": "This Folder",
-  "hub.groups.remoteSources": "Remote Sources ({0})",
   "hub.groups.thisFolder": "This Folder · {0}",
   "hub.groups.currentWorkspace": "Current Workspace",
   "hub.groups.allProjects": "All Projects ({0})",
@@ -187,15 +164,12 @@
   "hub.groups.global": "Global",
   "hub.item.linesChars": "{0} lines · {1}KB",
   "hub.item.missing": "✕ missing",
-  "hub.item.subtitleRepoBranch": "{0}@{1}",
   "hub.item.actionTitle.open": "Open",
   "hub.item.actionTitle.preview": "Preview",
   "hub.item.actionTitle.finder": "Reveal in Finder",
   "hub.item.actionTitle.fav": "Toggle favorite",
   "hub.item.actionTitle.sync": "Sync",
-  "hub.item.actionTitle.github": "Open on GitHub",
   "hub.item.actionTitle.create": "Create",
-
   "preview.shell.loading": "Loading…",
   "preview.badge.readOnly.tooltip": "Bundled by extension — cannot edit",
   "preview.badge.readOnly.label": "read-only",
@@ -275,7 +249,6 @@
   "preview.yaml.commonFix": "Common fix: wrap values containing :, \", or special chars in double quotes.",
   "preview.yaml.autofix": "Try auto-fix",
   "preview.copyCode": "Copy code",
-
   "settings.section.language": "Display Language",
   "settings.language.label": "Language",
   "settings.language.hint": "Reload the window after changing for full effect.",
@@ -284,7 +257,6 @@
   "settings.language.ko": "한국어",
   "settings.language.reloadNeeded": "Reload window to apply the new language?",
   "settings.language.reload": "Reload Window",
-
   "settings.section.mirrors": "Mirror Groups",
   "settings.mirrors.empty": "No entries",
   "settings.mirrors.addFromPreset": "Add from preset",
@@ -297,25 +269,18 @@
   "settings.mirrors.removeGroup": "Remove group",
   "settings.mirrors.groupLabelPrompt": "Group label (e.g. \"Global agent instructions\"):",
   "settings.mirrors.addGroup": "Add group",
-
   "settings.section.filters": "Filters & Display",
   "settings.filters.singleTool": "Show only one tool",
   "settings.filters.includeWorkspace": "Include workspace skills",
   "settings.filters.includeGlobal": "Include global skills",
   "settings.filters.includeExtensions": "Include extension skills",
   "settings.filters.showScoreBreakdown": "Show score breakdown",
-
   "settings.section.sync": "Instruction Sync",
   "settings.sync.blockFormat": "Block format",
   "settings.sync.format.ref": "Reference table",
   "settings.sync.format.compact": "Compact list",
   "settings.sync.format.full": "Full detail",
   "settings.sync.format.legacy": "Legacy",
-
-  "settings.section.remote": "Remote Catalog",
-  "settings.remote.githubToken": "GitHub token",
-  "settings.remote.githubTokenHint": "Used for higher rate limits when browsing/installing remote skills. Also reads GITHUB_TOKEN env var.",
-
   "settings.section.about": "About",
   "settings.about.pinned": "Pinned skills",
   "settings.about.version": "Version",

@@ -61,13 +61,16 @@ export async function handler(arg: vscode.Uri | undefined): Promise<void> {
 }
 
 async function resolveFolder(arg: vscode.Uri | undefined): Promise<string | undefined> {
-  if (!arg) return undefined;
-  try {
-    const stat = await fs.promises.stat(arg.fsPath);
-    return stat.isDirectory() ? arg.fsPath : path.dirname(arg.fsPath);
-  } catch {
-    return undefined;
+  if (arg) {
+    try {
+      const stat = await fs.promises.stat(arg.fsPath);
+      return stat.isDirectory() ? arg.fsPath : path.dirname(arg.fsPath);
+    } catch {
+      // fall through to workspace folder
+    }
   }
+  const ws = vscode.workspace.workspaceFolders?.[0];
+  return ws?.uri.fsPath;
 }
 
 function timestamp(): string {

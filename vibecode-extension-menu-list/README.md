@@ -1,85 +1,76 @@
 # vibecode-extension-menu-list
 
-모든 vibecode-* 확장의 우클릭/에디터 메뉴를 한 군데에 묶어주는 **공용 `Vibecode` 서브메뉴 호스트**.
-보조로 설치된 vibecode-* 확장의 모든 명령을 한 번에 조회/실행하는 **카탈로그 팔레트 명령**도 제공.
+상태바의 **`V` 버튼 클릭 → 에디터 옆에 Walkthrough 스타일 webview 패널이 슬라이드인**. 설치된 모든 vibecode-* 확장과 각 command 를 카드로 표시. 카드 클릭 → 즉시 실행.
 
 ```
-우클릭 메뉴
-└─ Vibecode ▶
-     ├─ (이 확장의 Show Catalog)
-     ├─ (vibecode-commit-lint-check 의 Init From Template)
-     ├─ (vibecode-right-click-sh-actions 의 Run in Terminal)
-     └─ ...
+┌─────────────────────────────────────────────────────────┐
+│  [Editor]                  │  VIBECODE 확장              │
+│                            │                             │
+│                            │  🔍 명령 필터…              │
+│                            │                             │
+│                            │  ── COMMIT LINT ──────────  │
+│                            │  ┃ 템플릿으로 초기화        │
+│                            │     vibecodeCommitLint…     │
+│                            │  ┃ 직전 커밋 검사           │
+│                            │     vibecodeCommitLint…     │
+│                            │                             │
+│                            │  ── AGENT INIT ───────────  │
+│                            │  ┃ 여기에 에이전트 템플릿…  │
+│                            │     vibecodeAgentInit…      │
+│                            │                             │
+├────────────────────────────┴─────────────────────────────┤
+│  🏠 main  ✕ 0  ⚠ 0                       🚀 Vibecode    │  ← 상태바 우측
+└──────────────────────────────────────────────────────────┘
 ```
 
-## 노출되는 서브메뉴
+## 트리거 (3가지 동등)
 
-| 서브메뉴 id | 노출 위치 | 그룹 |
-|---|---|---|
-| `vibecodeMenu.explorerContext` | `explorer/context` | `6_rca@5` |
-| `vibecodeMenu.editorContext` | `editor/context` | `6_rca@5` |
-| `vibecodeMenu.editorTitle` | `editor/title` | `navigation@99` |
+| Trigger | 동작 |
+|---|---|
+| 상태바 우측 **`🚀 Vibecode`** 버튼 클릭 | Webview 패널을 `ViewColumn.Beside` 로 오픈 (이미 열려있으면 포커스) |
+| 팔레트 → `Vibecode - Open Side Panel` | 동일 |
+| 팔레트 → `Vibecode - Show Extension Menu Catalog (QuickPick)` | 동일 데이터를 QuickPick 으로 — 타이핑 필터링, 키보드 워크플로우 |
 
-서브메뉴 라벨은 i18n 으로 관리. 한국어 환경에서도 `Vibecode` 로 유지.
+## Webview 패널 UX
 
-## 다른 vibecode-* 확장이 슬롯하는 방법
+- **카드 그리드**: 확장별 섹션 → 각 카드 = command (제목 + 실제 commandId)
+- **상단 필터**: 입력 즉시 매칭 (제목/카테고리/commandId/확장명 검색). 매칭 없는 섹션 자동 숨김
+- **새로고침 버튼**: 우상단 — 카탈로그 재스캔
+- **자동 새로고침**: `vscode.extensions.onDidChange` 구독 → 다른 확장 설치/제거 시 패널 즉시 갱신
+- **`retainContextWhenHidden`**: 다른 탭 갔다 와도 스크롤/필터 상태 유지
+- **VSCode 테마 변수 사용**: 다크/라이트/하이콘트라스트 모두 자동 대응
 
-기존에 `explorer/context` 같은 네이티브 위치에 직접 contribute 하던 항목을 위 서브메뉴 id 로 옮기면 된다. 두 가지 경로:
+## 어떻게 동작하나
 
-### A) 수동 (package.json 편집)
+- `vscode.extensions.all` 에서 **이름 부분이 `vibecode-` 로 시작**하는 확장만 골라냄. publisher 무관 (`dalsoop.vibecode-foo`, `<anyone>.vibecode-bar` 둘 다 잡힘). 자기 자신은 제외.
+- 각 확장의 `package.json` 에서 `contributes.commands` 를 읽음
+- 라벨이 `%nls.key%` 형태면 그 확장의 `package.nls.<locale>.json` / `package.nls.json` 을 디스크에서 읽어 해석
+- 카드 클릭 → webview 가 `postMessage({type:'run', commandId})` → extension 이 `vscode.commands.executeCommand(commandId)` 로 실행
 
-```json
-"contributes": {
-  "menus": {
-    "vibecodeMenu.explorerContext": [
-      {
-        "command": "myExt.doThing",
-        "when": "explorerResourceIsFolder",
-        "group": "6_rca@10"
-      }
-    ]
-  }
-}
-```
+## 다른 publisher 의 vibecode-* 확장도 잡으려면
 
-### B) 모노레포의 sync-contributions 패턴
-
-이 모노레포의 다른 확장처럼 `src/apps/*/manifest.ts` 의 `menus[].where` 값을 다음으로 바꾸면 됨:
-
-```ts
-menus: [
-  { where: 'vibecodeMenu.explorerContext', when: 'explorerResourceIsFolder', group: '6_rca@10' }
-]
-```
-
-각 확장의 `_types.ts` 의 `MenuLocation` 타입에 위 3개 서브메뉴 id 를 추가하고 `npm run sync` 한 번. 이 확장의 [src/apps/_types.ts](src/apps/_types.ts) 가 참고용.
-
-> **소프트 의존성**: 슬롯하는 확장이 vibecode-extension-menu-list 를 `extensionDependencies` 로 선언하지 **않는다**. 이 확장이 미설치면 해당 항목들은 그냥 노출되지 않을 뿐 — 다른 동작에 영향 없음.
-
-## 액션
-
-| Trigger | 위치 | 동작 |
-|---|---|---|
-| `카탈로그 열기` | 팔레트 + 서브메뉴 안 (`9_meta` 그룹 끝) | 설치된 모든 vibecode-* 확장의 commands 를 한 QuickPick 으로 모아 보여줌. 선택하면 즉시 실행. |
+조건은 **확장 id (`<publisher>.<name>`) 의 `<name>` 부분이 `vibecode-` 로 시작**하는 것 하나. 별도 등록/manifest/협의 일절 불필요 — 설치만 되어 있으면 패널에 자동으로 노출됨.
 
 ## 아키텍처
 
 ```
 vibecode-extension-menu-list/
-├── package.json                          # contributes.{submenus,commands,menus} 자동 생성
+├── package.json                          # contributes.{commands,menus} 자동 생성
 ├── package.nls.json / package.nls.ko.json
-├── i18n/ko.json                          # ext + submenus + commands + runtime
+├── i18n/ko.json                          # ext + commands + runtime
 ├── l10n/bundle.l10n.ko.json
-├── scripts/
-│   ├── sync-contributions.mjs            # 표준 sync + submenu 호스팅
-│   ├── nls-defaults.json                 # 기본(영문) NLS
-│   └── submenu-surfaces.json             # 서브메뉴 선언 + 네이티브 위치 surface
+├── resources/vibecode.svg                # webview 패널 탭 아이콘
+├── scripts/{sync-contributions.mjs, nls-defaults.json}
 └── src/
-    ├── extension.ts
+    ├── extension.ts                      # 상태바 등록 + SidePanel 초기화 + app 명령 등록
+    ├── catalog.ts                        # loadCatalog() — vibecode-* 확장 + NLS 해석
+    ├── side-panel.ts                     # SidePanel 클래스 — webview lifecycle + HTML 렌더
     └── apps/
-        ├── _types.ts                     # MenuLocation 에 vibecodeMenu.* 포함, SUBMENU_IDS 노출
+        ├── _types.ts                     # AppManifest, AppContext, VIBECODE_NAME_PREFIX
         ├── index.ts
-        └── show-catalog/{manifest,handler,index}.ts
+        ├── open-side-panel/{manifest,handler,index}.ts  # 패널 열기 (상태바 + 팔레트)
+        ├── show-catalog/{manifest,handler,index}.ts     # QuickPick 카탈로그 (팔레트만)
+        └── run-command/{manifest,handler,index}.ts      # (palette: false, 현재 미사용)
 ```
 
 ## 개발

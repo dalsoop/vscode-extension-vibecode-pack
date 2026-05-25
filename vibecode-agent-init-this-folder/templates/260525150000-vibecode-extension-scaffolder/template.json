@@ -1,0 +1,16 @@
+{
+  "title": "Vibecode Extension Scaffolder",
+  "content": "vscode-extension-mono 모노레포에 새 `vibecode-*` 확장을 스캐폴드하는 에이전트.\n\n`.claude/skills/scaffold-vibecode-extension/SKILL.md` 와 동일 컨벤션을 따른다 — 두 variant (command-based / custom-editor) 지원, 함정 카탈로그 내장, gitlab.ranode.net MR 흐름까지.\n\n사용 예시:\n- \"vibecode-foo 만들자, 파일 우클릭 → bar 동작\"\n- \"커스텀 에디터 확장 만들자, .yaml 파일을 위한\"",
+  "prompts": [
+    {
+      "name": "system",
+      "body": "You are scaffolding a new vibecode-* VSCode extension in the vscode-extension-mono monorepo at /Users/jeonghan/Documents/WORK/WORKSPACE/apps/vscode-extension-mono/.\n\n### Conventions (must follow)\n- Folder/package: vibecode-<kebab>\n- Publisher: dalsoop. Version: 0.1.0. VSCode engine: ^1.95.0\n- Menu label prefix: `Vibecode <ShortName> - <Action>` / `바이브코드 <짧은이름> - <행동>`\n  - Korean short-names already in use: 파일, Sh, 에이전트, 우클릭\n- Two variants:\n  - **Command-based** (default): apps/-pattern. Reference: vibecode-right-click-sh-actions/ (simplest, 1 app)\n  - **Custom editor**: split modules. Reference: vibecode-env-import-only/\n\n### Structure (command-based)\n```\nvibecode-X/\n├── package.json                   # contributes auto-generated\n├── package.nls.json / package.nls.ko.json  # auto-generated\n├── i18n/ko.json                   # SOURCE (ext + commands + runtime blocks)\n├── l10n/bundle.l10n.ko.json       # auto-generated\n├── scripts/{sync-contributions.mjs, nls-defaults.json}\n└── src/\n    ├── extension.ts\n    └── apps/\n        ├── _types.ts              # COMMAND_PREFIX, AppManifest, AppModule\n        ├── index.ts               # apps registry\n        └── <app>/{manifest, handler, index}.ts\n```\n\n### Process\n1. Ask user for: folder name, English description, command namespace (camelCase), Korean short-name, first app details (id, EN/KO title, menus, when, icon).\n2. Copy from the reference extension verbatim.\n3. Replace: folder name in paths, COMMAND_PREFIX in _types.ts + sync script, app id, all strings.\n4. Run: npm install → npm run build → npm run typecheck → npm run lint → npm run sync:check.\n5. Package: `find . -maxdepth 1 -name '*.vsix' -delete && npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license --baseContentUrl https://dalsoop.com`\n6. Install: `code --install-extension <name>-0.1.0.vsix --force`\n7. Tell user to ⌘R (Reload Window).\n8. Update root README (structure tree + extension table).\n\n### Pitfalls\n- `rm -f *.vsix` fails in zsh when no .vsix. Use `find . -delete`.\n- `vsce package` rejects relative README links. Always pass `--baseContentUrl https://dalsoop.com`.\n- For custom editors, NEVER manually declare `onCustomEditor:*` in activationEvents.\n- Post-commit hook rewrites commit messages to 'chore: auto-commit session artifacts' — context goes in MR title/description instead.\n- Old extension lingers post-uninstall while VSCode runs → cleanup ~/.vscode/extensions/<pkg> + .obsolete.\n\n### Reference\n`.claude/skills/scaffold-vibecode-extension/SKILL.md` — full pitfall catalog and step-by-step process."
+    },
+    {
+      "name": "user",
+      "body": "vibecode-{{name}} 확장 만들자. {{description}}"
+    }
+  ],
+  "upstream_url": "",
+  "ssot": "local"
+}

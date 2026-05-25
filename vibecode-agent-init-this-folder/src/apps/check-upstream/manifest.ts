@@ -2,19 +2,19 @@ import type { AppManifest } from '../_types';
 
 export const manifest: AppManifest = {
   id: 'checkUpstream',
-  title: 'Vibecode Agent - Check Template Upstream',
+  title: 'Vibecode - Check Agent Template Upstream',
   description: 'Fetch upstream_url, diff against local template.json, and prompt to Pull or Push (sync logic stubbed).',
   icon: 'cloud',
   menus: [
     {
       where: 'editor/title',
       when: "resourceFilename == 'template.json'",
-      group: 'navigation@10'
+      group: 'navigation'
     },
     {
       where: 'editor/context',
       when: "resourceFilename == 'template.json'",
-      group: '6_rca@10'
+      group: '6_rca'
     }
   ]
 };

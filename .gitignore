@@ -1,0 +1,26 @@
+# Build artifacts
+dist/
+out/
+node_modules/
+*.vsix
+
+# Secrets / env (commit .env.example only)
+.env
+.env.local
+.env.*.local
+
+# Editor / OS noise
+.DS_Store
+*.log
+.vscode-test/
+
+# Per-session scratch (test playgrounds, worktrees, transient state)
+.scratch-*/
+.claude/worktrees/
+
+# Empty/test artifacts that shouldn't ship
+index.html
+
+# macOS Finder noise — "무제 폴더" = "Untitled Folder"
+무제 폴더/
+Untitled Folder/

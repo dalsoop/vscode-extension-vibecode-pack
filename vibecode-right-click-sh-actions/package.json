@@ -50,21 +50,21 @@
         {
           "command": "rcaShActions.runShInTerminal",
           "when": "resourceExtname == '.sh'",
-          "group": "6_rca@10"
+          "group": "6_rca"
         }
       ],
       "editor/title": [
         {
           "command": "rcaShActions.runShInTerminal",
           "when": "resourceExtname == '.sh'",
-          "group": "navigation@10"
+          "group": "navigation"
         }
       ],
       "editor/context": [
         {
           "command": "rcaShActions.runShInTerminal",
           "when": "resourceExtname == '.sh'",
-          "group": "6_rca@10"
+          "group": "6_rca"
         }
       ],
       "commandPalette": [

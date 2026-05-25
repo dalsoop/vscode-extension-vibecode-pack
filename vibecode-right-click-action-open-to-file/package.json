@@ -73,40 +73,40 @@
       "explorer/context": [
         {
           "command": "rcaActions.copyAbsolutePath",
-          "group": "6_rca@40"
+          "group": "6_rca"
         },
         {
           "command": "rcaActions.openFolderInNewWindow",
           "when": "explorerResourceIsFolder",
-          "group": "6_rca@20"
+          "group": "6_rca"
         },
         {
           "command": "rcaActions.openHtmlInBrowser",
           "when": "resourceExtname =~ /\\.(html?|svg|pdf)$/",
-          "group": "6_rca@10"
+          "group": "6_rca"
         },
         {
           "command": "rcaActions.openInTerminal",
-          "group": "6_rca@50"
+          "group": "6_rca"
         },
         {
           "command": "rcaActions.revealInOS",
-          "group": "6_rca@30"
+          "group": "6_rca"
         }
       ],
       "editor/title/context": [
         {
           "command": "rcaActions.copyAbsolutePath",
-          "group": "6_rca@40"
+          "group": "6_rca"
         },
         {
           "command": "rcaActions.openHtmlInBrowser",
           "when": "resourceExtname =~ /\\.(html?|svg|pdf)$/",
-          "group": "6_rca@10"
+          "group": "6_rca"
         },
         {
           "command": "rcaActions.revealInOS",
-          "group": "6_rca@30"
+          "group": "6_rca"
         }
       ],
       "commandPalette": [

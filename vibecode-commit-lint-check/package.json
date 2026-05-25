@@ -39,12 +39,35 @@
     "typescript-eslint": "^8.59.4"
   },
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibecodeCommitLint",
+          "title": "%view.container.title%",
+          "icon": "$(law)"
+        }
+      ]
+    },
+    "views": {
+      "vibecodeCommitLint": [
+        {
+          "id": "vibecodeCommitLint.templates",
+          "name": "%view.templates.name%",
+          "type": "tree"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "vibecodeCommitLint.addTemplate",
         "title": "%cmd.addTemplate%",
         "category": "%ext.category%",
         "icon": "$(add)"
+      },
+      {
+        "command": "vibecodeCommitLint.applyTemplate",
+        "title": "%cmd.applyTemplate%",
+        "category": "%ext.category%"
       },
       {
         "command": "vibecodeCommitLint.checkLastCommit",
@@ -57,6 +80,12 @@
         "title": "%cmd.initFromTemplate%",
         "category": "%ext.category%",
         "icon": "$(rocket)"
+      },
+      {
+        "command": "vibecodeCommitLint.refreshTree",
+        "title": "%cmd.refreshTree%",
+        "category": "%ext.category%",
+        "icon": "$(refresh)"
       }
     ],
     "menus": {
@@ -64,19 +93,36 @@
         {
           "command": "vibecodeCommitLint.addTemplate",
           "when": "explorerResourceIsFolder",
-          "group": "6_rca@11"
+          "group": "6_rca"
         },
         {
           "command": "vibecodeCommitLint.initFromTemplate",
           "when": "explorerResourceIsFolder",
-          "group": "6_rca@10"
+          "group": "6_rca"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "vibecodeCommitLint.addTemplate",
+          "when": "view == vibecodeCommitLint.templates",
+          "group": "navigation"
+        },
+        {
+          "command": "vibecodeCommitLint.checkLastCommit",
+          "when": "view == vibecodeCommitLint.templates",
+          "group": "navigation"
+        },
+        {
+          "command": "vibecodeCommitLint.refreshTree",
+          "when": "view == vibecodeCommitLint.templates",
+          "group": "navigation"
         }
       ],
       "editor/title": [
         {
           "command": "vibecodeCommitLint.checkLastCommit",
           "when": "resourceFilename == 'COMMIT_EDITMSG'",
-          "group": "navigation@10"
+          "group": "navigation"
         }
       ],
       "commandPalette": [
@@ -88,6 +134,9 @@
         },
         {
           "command": "vibecodeCommitLint.initFromTemplate"
+        },
+        {
+          "command": "vibecodeCommitLint.refreshTree"
         }
       ]
     }

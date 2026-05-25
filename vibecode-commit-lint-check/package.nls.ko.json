@@ -1,8 +1,12 @@
 {
   "ext.displayName": "바이브코드 커밋 린트 검사",
-  "ext.description": "번들된 commitlint 템플릿(Conventional, PHP/Laravel, Node, Python)으로 커밋 메시지를 검사한다. 폴더 우클릭으로 설정을 스캐폴드하거나, 팔레트에서 직전 커밋을 CLI 로 검사.",
+  "ext.description": "번들된 commitlint 템플릿(Conventional, PHP/Laravel, Node, Python)으로 커밋 메시지를 검사한다. 폴더 우클릭 또는 사이드바 트리뷰에서 설정을 스캐폴드하고, 팔레트나 사이드바에서 직전 커밋을 CLI 로 검사.",
   "ext.category": "바이브코드",
-  "cmd.addTemplate": "바이브코드 커밋 린트 -사용자 템플릿 추가",
-  "cmd.checkLastCommit": "바이브코드 커밋 린트 -직전 커밋 검사",
-  "cmd.initFromTemplate": "바이브코드 커밋 린트 -템플릿으로 초기화"
+  "view.container.title": "커밋 린트",
+  "view.templates.name": "템플릿",
+  "cmd.addTemplate": "바이브코드 - 커밋 린트 사용자 템플릿 추가",
+  "cmd.applyTemplate": "Vibecode - Apply Commit Lint Template (internal)",
+  "cmd.checkLastCommit": "바이브코드 - 직전 커밋 메시지 검사",
+  "cmd.initFromTemplate": "바이브코드 - 커밋 린트 템플릿으로 초기화",
+  "cmd.refreshTree": "바이브코드 - 커밋 린트 템플릿 새로고침"
 }

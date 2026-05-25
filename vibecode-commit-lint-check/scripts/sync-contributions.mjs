@@ -99,13 +99,25 @@ function buildLocaleNls(localeData, defaults, manifests) {
   // Start from English defaults so VSCode can fall back per-key if a translation is missing.
   const out = { ...defaults };
   for (const m of manifests) out[nlsKeyForCommand(m.id)] = m.title;
-  if (localeData.ext) {
-    for (const [k, v] of Object.entries(localeData.ext)) out[`ext.${k}`] = v;
-  }
   if (localeData.commands) {
     for (const [id, v] of Object.entries(localeData.commands)) out[nlsKeyForCommand(id)] = v;
   }
+  // Flatten every other non-special top-level block into dotted nls keys
+  // (`view.container.title`, `ext.displayName`, `config.someKey`, etc.) so the
+  // sync script doesn't need to know about each section by name.
+  for (const [section, value] of Object.entries(localeData)) {
+    if (section === 'commands' || section === 'runtime') continue;
+    flattenInto(out, value, section);
+  }
   return out;
+}
+
+function flattenInto(out, value, prefix) {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    for (const [k, v] of Object.entries(value)) flattenInto(out, v, `${prefix}.${k}`);
+  } else if (typeof value === 'string') {
+    out[prefix] = value;
+  }
 }
 
 async function readJson(file) {

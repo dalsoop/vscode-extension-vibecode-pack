@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 // Walks src/apps/* and i18n/*.json, synthesizes:
-//   1. package.json `contributes.submenus` (from scripts/submenu-surfaces.json)
-//   2. package.json `contributes.commands` + `contributes.menus`
-//      - native menus surface the shared submenus
-//      - submenu locations themselves hold this extension's own command entries
-//   3. package.nls.json + package.nls.<locale>.json
-//   4. l10n/bundle.l10n.<locale>.json
+//   1. package.json `contributes.commands` + `contributes.menus`
+//      (other contributes sections — viewsContainers, views, etc. — are preserved as-is)
+//   2. package.nls.json + package.nls.<locale>.json
+//   3. l10n/bundle.l10n.<locale>.json
 //
 // Sources of truth:
 //   - English: each app's `manifest.title` + scripts/nls-defaults.json
-//   - Other locales: i18n/<locale>.json — sections { ext, commands, runtime, submenus? }
+//   - Other locales: i18n/<locale>.json — sections { ext, commands, runtime }
 //
 // Usage:
 //   node scripts/sync-contributions.mjs          # write all generated files
@@ -26,7 +24,6 @@ const I18N_DIR = path.join(ROOT, 'i18n');
 const L10N_DIR = path.join(ROOT, 'l10n');
 const PKG_PATH = path.join(ROOT, 'package.json');
 const DEFAULTS_PATH = path.join(__dirname, 'nls-defaults.json');
-const SUBMENUS_PATH = path.join(__dirname, 'submenu-surfaces.json');
 const COMMAND_PREFIX = 'vibecodeMenuList';
 
 const CHECK_MODE = process.argv.includes('--check');
@@ -64,11 +61,7 @@ function nlsKeyForCommand(id) {
   return `cmd.${id}`;
 }
 
-function nlsKeyForSubmenu(id) {
-  return `submenu.${id}`;
-}
-
-function buildContributes(manifests, surfaceConfig) {
+function buildCommandsMenus(manifests) {
   const commands = manifests.map(m => ({
     command: `${COMMAND_PREFIX}.${m.id}`,
     title: `%${nlsKeyForCommand(m.id)}%`,
@@ -77,20 +70,6 @@ function buildContributes(manifests, surfaceConfig) {
   }));
 
   const menus = {};
-
-  // 1) Surface points — native menus that contain the shared submenus.
-  for (const [where, entries] of Object.entries(surfaceConfig.surfaces ?? {})) {
-    const bucket = (menus[where] ??= []);
-    for (const entry of entries) {
-      bucket.push({
-        submenu: entry.submenu,
-        ...(entry.when ? { when: entry.when } : {}),
-        ...(entry.group ? { group: entry.group } : {})
-      });
-    }
-  }
-
-  // 2) App commands — both into the shared submenus and into their declared menus.
   for (const m of manifests) {
     for (const entry of m.menus ?? []) {
       const bucket = (menus[entry.where] ??= []);
@@ -106,11 +85,7 @@ function buildContributes(manifests, surfaceConfig) {
     .filter(m => m.palette !== false)
     .map(m => ({ command: `${COMMAND_PREFIX}.${m.id}` }));
 
-  return {
-    commands,
-    menus,
-    submenus: surfaceConfig.submenus ?? []
-  };
+  return { commands, menus };
 }
 
 function buildDefaultNls(manifests, defaults) {
@@ -128,8 +103,11 @@ function buildLocaleNls(localeData, defaults, manifests) {
   if (localeData.commands) {
     for (const [id, v] of Object.entries(localeData.commands)) out[nlsKeyForCommand(id)] = v;
   }
-  if (localeData.submenus) {
-    for (const [id, v] of Object.entries(localeData.submenus)) out[nlsKeyForSubmenu(id)] = v;
+  if (localeData.views) {
+    for (const [k, v] of Object.entries(localeData.views)) out[`view.${k}`] = v;
+  }
+  if (localeData.viewContainers) {
+    for (const [k, v] of Object.entries(localeData.viewContainers)) out[`viewContainer.${k}`] = v;
   }
   return out;
 }
@@ -164,13 +142,15 @@ async function writeOrCheck(file, next, changes) {
 async function main() {
   const appDirs = await listAppDirs();
   const manifests = await Promise.all(appDirs.map(readManifest));
-  const surfaceConfig = await readJson(SUBMENUS_PATH);
-  const { commands, menus, submenus } = buildContributes(manifests, surfaceConfig);
+  const { commands, menus } = buildCommandsMenus(manifests);
   const defaults = await readJson(DEFAULTS_PATH);
 
   const pkgRaw = await fs.readFile(PKG_PATH, 'utf8');
   const pkg = JSON.parse(pkgRaw);
-  pkg.contributes = { ...(pkg.contributes ?? {}), submenus, commands, menus };
+  const existingContributes = { ...(pkg.contributes ?? {}) };
+  // Drop any legacy submenu wiring — this extension no longer hosts submenus.
+  delete existingContributes.submenus;
+  pkg.contributes = { ...existingContributes, commands, menus };
   const nextPkg = JSON.stringify(pkg, null, 2) + '\n';
 
   const defaultNls = buildDefaultNls(manifests, defaults);
@@ -208,7 +188,7 @@ async function main() {
   }
 
   console.log(
-    `Synced ${manifests.length} apps -> ${commands.length} commands, ${submenus.length} submenus, ${Object.keys(menus).length} menu locations, ${locales.length} locales (${locales.join(', ') || 'default only'}).`
+    `Synced ${manifests.length} apps -> ${commands.length} commands, ${Object.keys(menus).length} menu locations, ${locales.length} locales (${locales.join(', ') || 'default only'}).`
   );
 }
 

@@ -2,7 +2,7 @@ import type { AppManifest } from '../_types';
 
 export const manifest: AppManifest = {
   id: 'addTemplate',
-  title: 'Vibecode Commit Lint - Add Custom Template',
+  title: 'Vibecode - Add Custom Commit Lint Template',
   description:
     'Right-click a folder to scaffold a new user template entry at `<folder>/commit-lint-templates/<timestamp>-<name>/template.json`. Will appear next to bundled templates in the Init picker.',
   icon: 'add',
@@ -10,7 +10,12 @@ export const manifest: AppManifest = {
     {
       where: 'explorer/context',
       when: 'explorerResourceIsFolder',
-      group: '6_rca@11'
+      group: '6_rca'
+    },
+    {
+      where: 'view/title',
+      when: 'view == vibecodeCommitLint.templates',
+      group: 'navigation'
     }
   ]
 };

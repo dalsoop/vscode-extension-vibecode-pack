@@ -166,6 +166,15 @@ vibecode-X/
 - `sync-check` (필수 통과 — `npm run sync:check`)
 - `build` (필수 통과 — `vsce package` 를 `--baseContentUrl` 와 실행)
 
+### Optional: Activity bar 사이드바
+명령/우클릭 메뉴 외에 좌측 activity bar 진입점이 필요하면 추가:
+- `package.json` 에 `contributes.viewsContainers.activitybar` + `contributes.views` 수동 선언 (sync 가 자동 생성하지 않음)
+- `icons/<name>.svg` — monochrome SVG, `currentColor` 사용 (24x24)
+- `src/sidebar.ts` — `TreeDataProvider` 구현 + `vscode.window.createTreeView()` 등록
+- 액션은 `apps/-패턴` 그대로 — `manifest.menus[]` 에 `where: 'view/title'`, `when: 'view == <viewId>'`, `group: 'navigation@N'` 으로 추가 (`MenuLocation` 타입에 `view/title` 포함되어 있어야 함)
+- 예시: `vibecode-agent-init-this-folder/` ([sidebar.ts](../../../vibecode-agent-init-this-folder/src/sidebar.ts), [add-template/](../../../vibecode-agent-init-this-folder/src/apps/add-template/))
+- i18n: `ext.viewContainerTitle`, `ext.viewTemplates` 같은 키를 `i18n/<locale>.json` 의 `ext` 블록에 추가하면 sync 가 처리
+
 ---
 
 ## 함정 (직접 겪고 배운 것들)

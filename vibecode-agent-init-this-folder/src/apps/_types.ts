@@ -4,7 +4,9 @@ export type MenuLocation =
   | 'explorer/context'
   | 'editor/context'
   | 'editor/title'
-  | 'editor/title/context';
+  | 'editor/title/context'
+  | 'view/title'
+  | 'view/item/context';
 
 export interface MenuContribution {
   where: MenuLocation;
