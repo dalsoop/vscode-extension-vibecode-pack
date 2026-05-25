@@ -33,7 +33,7 @@ export interface MatchedRule {
 export interface PickOverrides {
   classToggles: { name: string; enabled: boolean }[];
   inlineStyle: string;
-  forceState: 'hover' | 'focus' | 'active' | null;
+  forceStates: ('hover' | 'focus' | 'focus-visible' | 'active')[];
   notes: string;
 }
 
@@ -57,7 +57,7 @@ export interface AssetData {
 export interface Delta {
   classes: { added: string[]; removed: string[] };
   inlineStyle: { before: string; after: string; changed: boolean };
-  forceState: { before: 'hover' | 'focus' | 'active' | null; after: 'hover' | 'focus' | 'active' | null; changed: boolean };
+  forceStates: { before: ('hover' | 'focus' | 'focus-visible' | 'active')[]; after: ('hover' | 'focus' | 'focus-visible' | 'active')[]; changed: boolean };
   notes: { before: string; after: string; changed: boolean };
   computed: Record<string, { before: string; after: string }>;
 }
@@ -76,6 +76,7 @@ export interface SnapshotPayload {
   changes: ChangeData[];
   viewport: { width: number; height: number };
   userAgent: string;
+  forceRules: string[];
 }
 
 export interface SnapshotResult {

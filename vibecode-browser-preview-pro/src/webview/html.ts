@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { STYLES } from './styles';
 import { CLIENT_SCRIPT } from './client-script';
+import { DIFF_TAB_SCRIPT } from './sections/diff-tab';
 import type { L10nBundle } from '../l10n-bundle';
 
 function randomNonce(): string {
@@ -33,11 +34,21 @@ export function buildHtml(webview: vscode.Webview, l10n: L10nBundle): string {
     <button id="btn-open" title="${esc(l10n.openExternal)}">↗ ${esc(l10n.openExternal)}</button>
     <button id="btn-inspector" title="${esc(l10n.inspector)}">🎯 ${esc(l10n.inspector)}</button>
     <button id="btn-save" title="${esc(l10n.saveSnapshot)}">💾 ${esc(l10n.saveSnapshot)}</button>
+    <label class="device-label" title="${esc(l10n.device)}">${esc(l10n.device)}:
+      <select id="sel-device">
+        <option value="auto">${esc(l10n.deviceAuto)}</option>
+        <option value="desktop">${esc(l10n.deviceDesktop)} 1280</option>
+        <option value="tablet">${esc(l10n.deviceTablet)} 768</option>
+        <option value="mobile">${esc(l10n.deviceMobile)} 375</option>
+      </select>
+    </label>
     <span class="url" id="url-label"></span>
   </div>
   <div class="main">
     <div class="frame-wrap">
-      <iframe id="preview-frame" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-modals"></iframe>
+      <div class="device-frame" id="device-frame" data-mode="auto">
+        <iframe id="preview-frame" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-modals"></iframe>
+      </div>
       <div class="overlay" id="overlay">
         <h2 id="overlay-title">${esc(l10n.starting)}</h2>
         <p id="overlay-body"></p>
@@ -49,10 +60,25 @@ export function buildHtml(webview: vscode.Webview, l10n: L10nBundle): string {
       </div>
     </div>
     <aside class="panel" id="panel">
-      <div class="panel-section">
-        <h3 id="panel-pins-title">${esc(l10n.pins)}</h3>
+      <div class="panel-tabs">
+        <button class="panel-tab active" data-tab="pins" id="tab-pins">
+          <span class="tab-label">${esc(l10n.pins)}</span>
+          <span class="tab-count" id="tab-pins-count">0</span>
+        </button>
+        <button class="panel-tab" data-tab="changes" id="tab-changes">
+          <span class="tab-label">${esc(l10n.tabChanges)}</span>
+          <span class="tab-count zero" id="tab-changes-count">▲0</span>
+        </button>
+      </div>
+      <div class="panel-warning" id="panel-warning" hidden></div>
+      <div class="tab-panel" id="tabpanel-pins" data-tab="pins">
         <div id="pins-list">
           <div class="panel-empty" id="pins-empty">${esc(l10n.noPins)}</div>
+        </div>
+      </div>
+      <div class="tab-panel" id="tabpanel-changes" data-tab="changes" hidden>
+        <div id="changes-list">
+          <div class="panel-empty" id="changes-empty">${esc(l10n.changesEmpty)}</div>
         </div>
       </div>
       <div class="panel-section">
@@ -64,7 +90,7 @@ export function buildHtml(webview: vscode.Webview, l10n: L10nBundle): string {
       </div>
     </aside>
   </div>
-  <script nonce="${nonce}">${CLIENT_SCRIPT}</script>
+  <script nonce="${nonce}">${CLIENT_SCRIPT}\n${DIFF_TAB_SCRIPT}</script>
 </body>
 </html>`;
 }
