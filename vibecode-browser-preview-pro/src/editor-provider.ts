@@ -4,12 +4,15 @@ import { PreviewServerRegistry } from './preview-server';
 import { ReloadWatcher } from './reload-watcher';
 import { buildHtml } from './webview/html';
 import { getL10nBundle, type L10nBundle } from './l10n-bundle';
+import { SnapshotWriter } from './snapshot-writer';
+import type { SnapshotPayload } from './snapshot-types';
 
 export const VIEW_TYPE = 'vibecodeBrowserPreviewPro.editor';
 
 export class BrowserPreviewEditorProvider implements vscode.CustomTextEditorProvider {
   private readonly registry = new PreviewServerRegistry();
   private readonly watcher = new ReloadWatcher();
+  private readonly snapshotWriter = new SnapshotWriter();
   private readonly panelReloadCallbacks = new Set<() => void>();
   private readonly watcherSub: vscode.Disposable;
 
@@ -101,7 +104,24 @@ export class BrowserPreviewEditorProvider implements vscode.CustomTextEditorProv
       }
     };
 
-    panel.webview.onDidReceiveMessage(async (msg: { type?: string }) => {
+    const saveSnapshot = async (payload: SnapshotPayload): Promise<void> => {
+      try {
+        const result = await this.snapshotWriter.write(rootDir, document.uri.fsPath, payload);
+        panel.webview.postMessage({
+          type: 'snapshotSaved',
+          text: l10n.snapshotSaved.replace('{0}', result.folderRelPath),
+          path: result.folderAbsPath,
+          actionLabel: l10n.openSnapshotFolder
+        });
+      } catch (err) {
+        panel.webview.postMessage({
+          type: 'snapshotError',
+          text: l10n.snapshotFailed.replace('{0}', (err as Error).message)
+        });
+      }
+    };
+
+    panel.webview.onDidReceiveMessage(async (msg: { type?: string; [k: string]: any }) => {
       if (!msg || typeof msg.type !== 'string') return;
       switch (msg.type) {
         case 'ready':
@@ -125,6 +145,17 @@ export class BrowserPreviewEditorProvider implements vscode.CustomTextEditorProv
           break;
         case 'retry':
           await start();
+          break;
+        case 'toggleInspector':
+          // Currently no host-side state; accepted for future-proofing.
+          break;
+        case 'snapshotData':
+          if (msg.payload) await saveSnapshot(msg.payload as SnapshotPayload);
+          break;
+        case 'openSnapshotFolder':
+          if (typeof msg.path === 'string') {
+            await this.snapshotWriter.revealInFinder(msg.path);
+          }
           break;
       }
     });
