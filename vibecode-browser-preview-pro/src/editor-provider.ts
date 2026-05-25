@@ -15,15 +15,17 @@ export class BrowserPreviewEditorProvider implements vscode.CustomTextEditorProv
   private readonly snapshotWriter = new SnapshotWriter();
   private readonly panelReloadCallbacks = new Set<() => void>();
   private readonly watcherSub: vscode.Disposable;
+  private readonly extensionUri: vscode.Uri;
 
-  constructor() {
+  constructor(extensionUri: vscode.Uri) {
+    this.extensionUri = extensionUri;
     this.watcherSub = this.watcher.onReload(() => {
       for (const cb of this.panelReloadCallbacks) cb();
     });
   }
 
-  static register(_context: vscode.ExtensionContext): vscode.Disposable {
-    const provider = new BrowserPreviewEditorProvider();
+  static register(context: vscode.ExtensionContext): vscode.Disposable {
+    const provider = new BrowserPreviewEditorProvider(context.extensionUri);
     const registration = vscode.window.registerCustomEditorProvider(
       VIEW_TYPE,
       provider,
@@ -48,8 +50,14 @@ export class BrowserPreviewEditorProvider implements vscode.CustomTextEditorProv
     panel: vscode.WebviewPanel
   ): Promise<void> {
     const l10n = getL10nBundle();
-    panel.webview.options = { enableScripts: true };
-    panel.webview.html = buildHtml(panel.webview, l10n);
+    panel.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'dist')]
+    };
+    const codiconCssUri = panel.webview.asWebviewUri(
+      vscode.Uri.joinPath(this.extensionUri, 'dist', 'codicons', 'codicon.css')
+    );
+    panel.webview.html = buildHtml(panel.webview, l10n, codiconCssUri);
 
     const rootDir = this.pickRootDir(document.uri);
 

@@ -22,7 +22,10 @@ export const CLIENT_SCRIPT = `
     const tabPanels = document.querySelectorAll('.tab-panel');
     const tabPinsCount = document.getElementById('tab-pins-count');
     const tabChangesCount = document.getElementById('tab-changes-count');
+    const tabAssetsCount = document.getElementById('tab-assets-count');
     const panelWarning = document.getElementById('panel-warning');
+    const panelWarningText = document.getElementById('panel-warning-text');
+    const panelWarningClose = document.getElementById('panel-warning-close');
     const changesList = document.getElementById('changes-list');
     const changesEmpty = document.getElementById('changes-empty');
     const toast = document.getElementById('toast');
@@ -102,6 +105,13 @@ export const CLIENT_SCRIPT = `
     }
     tabBtns.forEach(b => b.addEventListener('click', () => activateTab(b.dataset.tab)));
 
+    if (panelWarningClose) {
+      panelWarningClose.addEventListener('click', () => {
+        panelWarning.hidden = true;
+        try { sessionStorage.setItem('bp:warning-dismissed', '1'); } catch (_) {}
+      });
+    }
+
     function selectPinTab(pickId) {
       activateTab('pins');
       const card = document.querySelector('.pin-card[data-pick-id="' + pickId + '"]');
@@ -126,16 +136,19 @@ export const CLIENT_SCRIPT = `
       const pinsTotal = pins.size;
       let changesTotal = 0;
       for (const entry of pins.values()) changesTotal += currentOverrideCount(entry);
+      const assetsTotal = seenAssetUrls.size;
       tabPinsCount.textContent = String(pinsTotal);
       tabPinsCount.classList.toggle('zero', pinsTotal === 0);
-      tabChangesCount.textContent = '▲' + changesTotal;
+      tabChangesCount.textContent = String(changesTotal);
       tabChangesCount.classList.toggle('zero', changesTotal === 0);
+      tabAssetsCount.textContent = String(assetsTotal);
+      tabAssetsCount.classList.toggle('zero', assetsTotal === 0);
     }
     function recomputeBadge(pickId) {
       const entry = pins.get(pickId);
       if (!entry) return;
       const count = currentOverrideCount(entry);
-      entry.badgeEl.textContent = '▲' + count;
+      entry.badgeEl.textContent = String(count);
       entry.badgeEl.classList.toggle('zero', count === 0);
       entry.badgeEl.title = (l10n.changesLabel || 'Changes ({0})').replace('{0}', String(count));
       updateTabCounts();
@@ -177,18 +190,18 @@ export const CLIENT_SCRIPT = `
       header.className = 'pin-header';
       const badge = document.createElement('span');
       badge.className = 'pin-badge zero';
-      badge.textContent = '▲0';
+      badge.textContent = '0';
       const sel = document.createElement('div');
       sel.className = 'pin-selector';
       sel.textContent = pick.selector;
       const actions = document.createElement('div');
       actions.className = 'pin-actions';
       const copyBtn = document.createElement('button');
-      copyBtn.textContent = '📋';
+      copyBtn.innerHTML = '<span class="codicon codicon-copy"></span>';
       copyBtn.title = l10n.copySelector || 'Copy';
       copyBtn.onclick = () => navigator.clipboard && navigator.clipboard.writeText(pick.selector);
       const unpinBtn = document.createElement('button');
-      unpinBtn.textContent = '🗑';
+      unpinBtn.innerHTML = '<span class="codicon codicon-trash"></span>';
       unpinBtn.title = l10n.unpin || 'Unpin';
       unpinBtn.onclick = () => unpinLocal(pick.id);
       actions.appendChild(copyBtn);
@@ -274,26 +287,27 @@ export const CLIENT_SCRIPT = `
       forceLabel.textContent = l10n.forceState || 'Force state';
       ov.appendChild(forceLabel);
       const forceWrap = document.createElement('div');
-      forceWrap.className = 'force-toggles';
+      forceWrap.className = 'force-chips';
       const FORCE_STATES = ['hover', 'focus', 'focus-visible', 'active'];
-      const forceCheckboxes = {};
+      const FORCE_LABELS = { 'hover': ':hover', 'focus': ':focus', 'focus-visible': ':focus-vis', 'active': ':active' };
+      const forceChips = {};
       for (const st of FORCE_STATES) {
-        const lab = document.createElement('label');
-        lab.className = 'force-toggle';
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.dataset.state = st;
-        cb.onchange = () => {
-          const states = FORCE_STATES.filter(s => forceCheckboxes[s].checked);
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'force-chip';
+        chip.dataset.state = st;
+        chip.setAttribute('aria-pressed', 'false');
+        chip.title = ':' + st;
+        chip.textContent = FORCE_LABELS[st];
+        chip.onclick = () => {
+          const next = chip.getAttribute('aria-pressed') !== 'true';
+          chip.setAttribute('aria-pressed', String(next));
+          const states = FORCE_STATES.filter(s => forceChips[s].getAttribute('aria-pressed') === 'true');
           updateForceStateStates(pick.id, states);
           postToIframe({ type: 'bp:setForceStates', pickId: pick.id, states });
         };
-        forceCheckboxes[st] = cb;
-        lab.appendChild(cb);
-        const txt = document.createElement('span');
-        txt.textContent = ':' + st;
-        lab.appendChild(txt);
-        forceWrap.appendChild(lab);
+        forceChips[st] = chip;
+        forceWrap.appendChild(chip);
       }
       ov.appendChild(forceWrap);
 
@@ -369,6 +383,7 @@ export const CLIENT_SCRIPT = `
       row.title = asset.url;
       row.appendChild(t); row.appendChild(p);
       assetsList.appendChild(row);
+      updateTabCounts();
     }
 
     btnReload && btnReload.addEventListener('click', () => vscode.postMessage({ type: 'manualReload' }));
@@ -400,8 +415,11 @@ export const CLIENT_SCRIPT = `
           case 'bp:force-state-scan': {
             const r = msg.result || {};
             if (r.skippedSheets > 0) {
+              try {
+                if (sessionStorage.getItem('bp:warning-dismissed') === '1') break;
+              } catch (_) {}
+              if (panelWarningText) panelWarningText.textContent = l10n.forceStateWarning || 'Some hover/focus rules in external stylesheets are not simulatable (cross-origin).';
               panelWarning.hidden = false;
-              panelWarning.textContent = l10n.forceStateWarning || 'Some hover/focus rules in external stylesheets are not simulatable (cross-origin).';
             } else {
               panelWarning.hidden = true;
             }

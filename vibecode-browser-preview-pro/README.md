@@ -17,7 +17,7 @@
 - **📝 Edit Source** — 같은 `.html` 을 옆에 텍스트 편집기로 열기
 - **↗ Open in External Browser** — 같은 URL 을 기본 브라우저로 열기
 
-## Pro 전용 (v0.4 shipped)
+## Pro 전용 (v0.5 shipped)
 
 - 🎯 **Inspector toggle** — 호버 시 요소 outline + selector tooltip, 클릭 시 우측 패널에 핀
 - 핀 카드: matched CSS (heuristic) / computed style (화이트리스트 24 properties) / class toggle / 인라인 스타일 / force state 체크박스 / **Notes textarea (퍼블리셔용 자유 메모)**
@@ -29,9 +29,14 @@
 - Toast 알림 + "스냅샷 폴더 열기" 액션
 - 📱 **디바이스 프리셋** — 툴바에서 Auto / Desktop 1280 / Tablet 768 / Mobile 375 즉시 전환
 - 📊 **Changes 탭** — 인스펙터 패널에 Pins/Changes 탭. 현재 적용된 override 들이 `changes.md` 와 동일 구조로 실시간 렌더, 셀렉터 클릭으로 Pins 탭 점프
-- 🎨 **Force state 실제 시뮬레이션** — `:hover` / `:focus` / `:focus-visible` / `:active` 체크박스로 토글. 동일 origin stylesheet 의 룰을 자동 복제·적용. 스냅샷 `state.html` 에도 `<style id="vibecode-force-rules">` 로 보존되어 단독 렌더 가능.
+- 🎨 **Force state 실제 시뮬레이션** — `:hover` / `:focus` / `:focus-visible` / `:active` chip 토글. 동일 origin stylesheet 의 룰을 자동 복제·적용. 스냅샷 `state.html` 에도 `<style id="vibecode-force-rules">` 로 보존되어 단독 렌더 가능.
+- 🎨 **VSCode Codicons UI** — 이모지/유니코드 글리프 모두 VSCode 네이티브 아이콘 폰트로 교체, 다크/라이트 테마 자동 적응
+- 📊 **3-tab 패널** — Pins / Changes / Assets 탭 구조. snapshot hint 는 footer 로
+- 🔘 **Force-state chip** — 4 체크박스 → 1줄 button chip 토글 (aria-pressed)
+- ❌ **Cross-origin 경고 닫기** — × 버튼 (sessionStorage 로 reload 까지 dismiss 유지)
+- 📐 **Device select 우측 고정** — URL 라벨 길어도 device 선택은 툴바 우측 끝
 
-## 알려진 한계 (v0.4)
+## 알려진 한계 (v0.5)
 
 - Cross-origin stylesheet 의 `:hover`/`:focus` 룰은 시뮬레이션 불가 (패널 상단에 경고 표시)
 - 페이지 리로드 시 핀/override/force state 는 초기화됨 (Inspector toggle 만 유지)
