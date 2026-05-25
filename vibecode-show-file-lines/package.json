@@ -48,7 +48,7 @@
         {
           "id": "vibecodeShowFileLines",
           "title": "%view.container.title%",
-          "icon": "$(list-ordered)"
+          "icon": "icons/lines.svg"
         }
       ]
     },

@@ -44,7 +44,7 @@
         {
           "id": "vibecodeCommitLint",
           "title": "%view.container.title%",
-          "icon": "$(law)"
+          "icon": "icons/lint.svg"
         }
       ]
     },
