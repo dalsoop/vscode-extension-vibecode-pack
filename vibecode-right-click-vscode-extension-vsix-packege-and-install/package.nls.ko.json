@@ -1,0 +1,6 @@
+{
+  "ext.displayName": "바이브코드 우클릭 VSIX 패키지 & 설치",
+  "ext.description": "VSCode 익스텐션 폴더를 우클릭해서 .vsix 패키지 생성과 설치를 한 번에 실행한다.",
+  "ext.category": "바이브코드",
+  "cmd.packageAndInstall": "바이브코드 - VSCode 익스텐션 패키지 & 설치"
+}
