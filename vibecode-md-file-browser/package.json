@@ -133,12 +133,12 @@
         {
           "command": "vibecodeMdFileBrowser.openPreview",
           "when": "view == vibecodeMdFileBrowser.files && viewItem == markdownFile",
-          "group": "inline@1"
+          "group": "navigation@1"
         },
         {
           "command": "vibecodeMdFileBrowser.openSource",
           "when": "view == vibecodeMdFileBrowser.files && viewItem == markdownFile",
-          "group": "inline@2"
+          "group": "navigation@2"
         },
         {
           "command": "vibecodeMdFileBrowser.revealInExplorer",

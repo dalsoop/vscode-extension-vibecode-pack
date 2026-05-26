@@ -28,6 +28,7 @@
     "Scanning Markdown files...": "Scanning Markdown files...",
     "Found {0} Markdown files.": "Found {0} Markdown files.",
     "Markdown path copied.": "Markdown path copied.",
-    "Select a Markdown file first.": "Select a Markdown file first."
+    "Select a Markdown file first.": "Select a Markdown file first.",
+    "Could not open: {0}": "Could not open: {0}"
   }
 }

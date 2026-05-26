@@ -9,7 +9,7 @@ export const manifest: AppManifest = {
     {
       where: 'view/item/context',
       when: 'view == vibecodeMdFileBrowser.files && viewItem == markdownFile',
-      group: 'inline@2'
+      group: 'navigation@2'
     }
   ]
 };
