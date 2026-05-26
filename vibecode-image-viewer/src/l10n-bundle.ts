@@ -58,6 +58,22 @@ export interface L10nBundle {
   segJfif: string;
   segIhdr: string;
 
+  tabOverview: string;
+  tabExif: string;
+  tabPngText: string;
+  tabRaw: string;
+  openSettings: string;
+
+  noPngText: string;
+  compressed: string;
+  compressedTooltip: string;
+  parseError: string;
+  itxtTooltip: string;
+  textTooltip: string;
+  ztxtTooltip: string;
+  copy: string;
+  copied: string;
+
   coordsCopied: string;
   jsonCopied: string;
   pathCopied: string;
@@ -126,6 +142,22 @@ export function getL10nBundle(): L10nBundle {
     segIcc: vscode.l10n.t('ICC Profile'),
     segJfif: vscode.l10n.t('JFIF'),
     segIhdr: vscode.l10n.t('PNG / IHDR'),
+
+    tabOverview: vscode.l10n.t('Overview'),
+    tabExif: vscode.l10n.t('EXIF / Segments'),
+    tabPngText: vscode.l10n.t('PNG Text'),
+    tabRaw: vscode.l10n.t('Raw JSON'),
+    openSettings: vscode.l10n.t('Settings'),
+
+    noPngText: vscode.l10n.t('No PNG text chunks (tEXt / zTXt / iTXt) in this file.'),
+    compressed: vscode.l10n.t('compressed'),
+    compressedTooltip: vscode.l10n.t('Text was zlib-compressed inside the chunk.'),
+    parseError: vscode.l10n.t('parse error'),
+    itxtTooltip: vscode.l10n.t('iTXt — UTF-8 text chunk. Supports any language (Korean, emoji, full Unicode).'),
+    textTooltip: vscode.l10n.t('tEXt — ASCII / Latin-1 only. Non-ASCII characters may be garbled.'),
+    ztxtTooltip: vscode.l10n.t('zTXt — zlib-compressed tEXt. ASCII / Latin-1 only.'),
+    copy: vscode.l10n.t('Copy'),
+    copied: vscode.l10n.t('Copied.'),
 
     coordsCopied: vscode.l10n.t('Coordinates copied.'),
     jsonCopied: vscode.l10n.t('Metadata copied as JSON.'),

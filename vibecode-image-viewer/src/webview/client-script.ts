@@ -4,16 +4,13 @@ export const CLIENT_SCRIPT = String.raw`
   const vscode = acquireVsCodeApi();
 
   let state = null;
+  let currentTab = 'overview';
 
   const $ = (id) => document.getElementById(id);
 
   function setText(id, text) {
     const el = $(id);
     if (el) el.textContent = text == null ? '' : String(text);
-  }
-
-  function setButtonText(selector, text) {
-    document.querySelectorAll(selector).forEach(el => { el.textContent = text; });
   }
 
   function formatBytes(n) {
@@ -44,96 +41,37 @@ export const CLIENT_SCRIPT = String.raw`
     $('action-copy-path').textContent = l10n.copyPath;
     $('action-open-os').textContent = l10n.openOsDefault;
     $('action-reopen-text').textContent = l10n.reopenAsText;
+    $('open-settings').textContent = l10n.openSettings;
+    $('open-settings').title = l10n.openSettings;
   }
 
-  function renderCards(s) {
+  function renderTabBar(s) {
     const l = s.l10n;
-    const cards = [];
+    const exifCount = countExifEntries(s);
+    const pngCount = (s.pngText || []).length;
+    $('tab-overview').innerHTML = l.tabOverview;
+    $('tab-exif').innerHTML = l.tabExif + (exifCount ? ' <span class="count">' + exifCount + '</span>' : '');
+    $('tab-png-text').innerHTML = l.tabPngText + (pngCount ? ' <span class="count">' + pngCount + '</span>' : '');
+    $('tab-raw').innerHTML = l.tabRaw;
+  }
 
-    const fileRows = [
-      [l.pathLabel, s.file.path],
-      [l.sizeLabel, formatBytes(s.file.sizeBytes)],
-      s.file.width !== null && s.file.height !== null
-        ? [l.dimensionsLabel, s.file.width + ' × ' + s.file.height + ' px']
-        : null,
-      [l.formatLabel, s.file.format],
-      [l.modifiedLabel, formatDate(s.file.mtimeMs)],
-      s.camera.colorSpace ? [l.colorSpaceLabel, s.camera.colorSpace] : null,
-      s.camera.bitDepth !== null ? [l.bitDepthLabel, String(s.camera.bitDepth)] : null,
-    ].filter(Boolean);
-    cards.push(card(l.fileTitle, fileRows));
-
-    const c = s.camera;
-    const cameraName = [c.make, c.model].filter(Boolean).join(' ').trim();
-    const cameraRows = [
-      cameraName ? [l.cameraLabel, cameraName] : null,
-      c.lens ? [l.lensLabel, c.lens] : null,
-      c.exposureTime ? [l.exposureLabel, c.exposureTime] : null,
-      c.fNumber ? [l.apertureLabel, c.fNumber] : null,
-      c.iso !== null ? [l.isoLabel, String(c.iso)] : null,
-      c.focalLength ? [l.focalLengthLabel, c.focalLength] : null,
-      c.dateTaken ? [l.dateTakenLabel, c.dateTaken] : null,
-      c.software ? [l.softwareLabel, c.software] : null,
-      c.orientation ? [l.orientationLabel, c.orientation] : null,
-    ].filter(Boolean);
-    if (cameraRows.length) cards.push(card(l.cameraTitle, cameraRows));
-
-    if (s.gps) {
-      const lat = s.gps.latitude.toFixed(6);
-      const lon = s.gps.longitude.toFixed(6);
-      const coord = lat + ', ' + lon;
-      const rows = [[l.gpsTitle, coord]];
-      if (s.gps.altitude !== null) rows.push(['Alt', s.gps.altitude.toFixed(1) + ' m']);
-      const c = card(l.gpsTitle, rows);
-      const actions = document.createElement('div');
-      actions.className = 'row-actions';
-
-      const mapsBtn = document.createElement('button');
-      mapsBtn.textContent = l.openInGoogleMaps;
-      mapsBtn.addEventListener('click', () => {
-        vscode.postMessage({
-          type: 'openUrl',
-          url: 'https://www.google.com/maps?q=' + lat + ',' + lon,
-        });
-      });
-      actions.appendChild(mapsBtn);
-
-      const copyBtn = document.createElement('button');
-      copyBtn.textContent = l.copyCoordinates;
-      copyBtn.addEventListener('click', () => {
-        vscode.postMessage({ type: 'copyText', text: coord, toast: l.coordsCopied });
-        toast(l.coordsCopied);
-      });
-      actions.appendChild(copyBtn);
-
-      c.appendChild(actions);
-      cards.push(c);
+  function countExifEntries(s) {
+    if (!s.metaSegments) return 0;
+    let count = 0;
+    for (const v of Object.values(s.metaSegments)) {
+      if (v && typeof v === 'object') count += Object.keys(v).length;
     }
+    return count;
+  }
 
-    if (s.metaSegments) {
-      const segOrder = ['ifd0', 'ifd1', 'exif', 'gps', 'interop', 'thumbnail', 'iptc', 'xmp', 'icc', 'jfif', 'ihdr'];
-      const seen = new Set();
-      const renderSegment = (key) => {
-        seen.add(key);
-        const obj = s.metaSegments[key];
-        if (!obj || typeof obj !== 'object') return;
-        const rows = [];
-        for (const [k, v] of Object.entries(obj)) {
-          rows.push([k, formatValue(v)]);
-        }
-        if (rows.length) cards.push(card(segmentLabel(key, l), rows));
-      };
-      for (const key of segOrder) {
-        if (key in s.metaSegments) renderSegment(key);
-      }
-      for (const key of Object.keys(s.metaSegments)) {
-        if (!seen.has(key)) renderSegment(key);
-      }
-    }
-
-    const host = $('cards');
-    host.innerHTML = '';
-    cards.forEach(el => host.appendChild(el));
+  function setActiveTab(name) {
+    currentTab = name;
+    document.querySelectorAll('.tabbar .tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === name);
+    });
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === 'panel-' + name);
+    });
   }
 
   function segmentLabel(key, l) {
@@ -188,10 +126,198 @@ export const CLIENT_SCRIPT = String.raw`
     return wrapper;
   }
 
+  function renderOverview(s) {
+    const l = s.l10n;
+    const host = $('cards-overview');
+    host.innerHTML = '';
+
+    const fileRows = [
+      [l.pathLabel, s.file.path],
+      [l.sizeLabel, formatBytes(s.file.sizeBytes)],
+      s.file.width !== null && s.file.height !== null
+        ? [l.dimensionsLabel, s.file.width + ' × ' + s.file.height + ' px']
+        : null,
+      [l.formatLabel, s.file.format],
+      [l.modifiedLabel, formatDate(s.file.mtimeMs)],
+      s.camera.colorSpace ? [l.colorSpaceLabel, s.camera.colorSpace] : null,
+      s.camera.bitDepth !== null ? [l.bitDepthLabel, String(s.camera.bitDepth)] : null,
+    ].filter(Boolean);
+    host.appendChild(card(l.fileTitle, fileRows));
+
+    const c = s.camera;
+    const cameraName = [c.make, c.model].filter(Boolean).join(' ').trim();
+    const cameraRows = [
+      cameraName ? [l.cameraLabel, cameraName] : null,
+      c.lens ? [l.lensLabel, c.lens] : null,
+      c.exposureTime ? [l.exposureLabel, c.exposureTime] : null,
+      c.fNumber ? [l.apertureLabel, c.fNumber] : null,
+      c.iso !== null ? [l.isoLabel, String(c.iso)] : null,
+      c.focalLength ? [l.focalLengthLabel, c.focalLength] : null,
+      c.dateTaken ? [l.dateTakenLabel, c.dateTaken] : null,
+      c.software ? [l.softwareLabel, c.software] : null,
+      c.orientation ? [l.orientationLabel, c.orientation] : null,
+    ].filter(Boolean);
+    if (cameraRows.length) host.appendChild(card(l.cameraTitle, cameraRows));
+
+    if (s.gps) {
+      const lat = s.gps.latitude.toFixed(6);
+      const lon = s.gps.longitude.toFixed(6);
+      const coord = lat + ', ' + lon;
+      const rows = [[l.gpsTitle, coord]];
+      if (s.gps.altitude !== null) rows.push(['Alt', s.gps.altitude.toFixed(1) + ' m']);
+      const gpsCard = card(l.gpsTitle, rows);
+      const actions = document.createElement('div');
+      actions.className = 'row-actions';
+
+      const mapsBtn = document.createElement('button');
+      mapsBtn.textContent = l.openInGoogleMaps;
+      mapsBtn.addEventListener('click', () => {
+        vscode.postMessage({ type: 'openUrl', url: 'https://www.google.com/maps?q=' + lat + ',' + lon });
+      });
+      actions.appendChild(mapsBtn);
+
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = l.copyCoordinates;
+      copyBtn.addEventListener('click', () => {
+        vscode.postMessage({ type: 'copyText', text: coord, toast: l.coordsCopied });
+        toast(l.coordsCopied);
+      });
+      actions.appendChild(copyBtn);
+
+      gpsCard.appendChild(actions);
+      host.appendChild(gpsCard);
+    }
+  }
+
+  function renderExif(s) {
+    const l = s.l10n;
+    const host = $('cards-exif');
+    host.innerHTML = '';
+    if (!s.metaSegments || Object.keys(s.metaSegments).length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'raw-empty';
+      empty.textContent = l.noExif;
+      host.appendChild(empty);
+      return;
+    }
+    const segOrder = ['ifd0', 'ifd1', 'exif', 'gps', 'interop', 'thumbnail', 'iptc', 'xmp', 'icc', 'jfif', 'ihdr'];
+    const seen = new Set();
+    const renderSegment = (key) => {
+      seen.add(key);
+      const obj = s.metaSegments[key];
+      if (!obj || typeof obj !== 'object') return;
+      const rows = [];
+      for (const [k, v] of Object.entries(obj)) {
+        rows.push([k, formatValue(v)]);
+      }
+      if (rows.length) host.appendChild(card(segmentLabel(key, l), rows));
+    };
+    for (const key of segOrder) if (key in s.metaSegments) renderSegment(key);
+    for (const key of Object.keys(s.metaSegments)) if (!seen.has(key)) renderSegment(key);
+  }
+
+  function aiPromptKeyword(keyword) {
+    if (!keyword) return false;
+    const k = keyword.toLowerCase();
+    return k === 'parameters' || k === 'prompt' || k === 'negative_prompt' || k === 'workflow' || k === 'comment';
+  }
+
+  function renderPngText(s) {
+    const l = s.l10n;
+    const host = $('png-text-list');
+    const empty = $('png-text-empty');
+    const chunks = s.pngText || [];
+    host.innerHTML = '';
+    if (chunks.length === 0) {
+      host.style.display = 'none';
+      empty.style.display = 'block';
+      empty.textContent = l.noPngText;
+      return;
+    }
+    host.style.display = '';
+    empty.style.display = 'none';
+
+    chunks.forEach((chunk, idx) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'png-text-chunk';
+      if (chunk.parseError) wrap.classList.add('has-error');
+
+      const header = document.createElement('header');
+
+      const chip = document.createElement('span');
+      const type = chunk.type;
+      chip.className = 'chip ' + (type === 'iTXt' ? 'chip-itxt' : type === 'zTXt' ? 'chip-ztxt' : 'chip-text');
+      chip.textContent = type;
+      chip.title = type === 'iTXt' ? l.itxtTooltip : type === 'zTXt' ? l.ztxtTooltip : l.textTooltip;
+      header.appendChild(chip);
+
+      const kw = document.createElement('span');
+      kw.className = 'keyword';
+      kw.textContent = chunk.keyword || '(unnamed)';
+      header.appendChild(kw);
+
+      if (chunk.translatedKeyword) {
+        const tk = document.createElement('span');
+        tk.className = 'keyword-translated';
+        tk.textContent = '— ' + chunk.translatedKeyword;
+        header.appendChild(tk);
+      }
+
+      if (chunk.languageTag) {
+        const lang = document.createElement('span');
+        lang.className = 'lang';
+        lang.textContent = '[' + chunk.languageTag + ']';
+        header.appendChild(lang);
+      }
+
+      if (chunk.compressed) {
+        const cmp = document.createElement('span');
+        cmp.className = 'chip chip-compressed';
+        cmp.textContent = l.compressed;
+        cmp.title = l.compressedTooltip;
+        header.appendChild(cmp);
+      }
+
+      if (chunk.parseError) {
+        const warn = document.createElement('span');
+        warn.className = 'chip chip-warn';
+        warn.textContent = l.parseError;
+        warn.title = chunk.parseError;
+        header.appendChild(warn);
+      }
+
+      const spacer = document.createElement('span');
+      spacer.className = 'header-spacer';
+      header.appendChild(spacer);
+
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = l.copy;
+      copyBtn.addEventListener('click', () => {
+        vscode.postMessage({ type: 'copyText', text: chunk.text, toast: l.copied });
+        toast(l.copied);
+      });
+      actions.appendChild(copyBtn);
+      header.appendChild(actions);
+
+      wrap.appendChild(header);
+
+      const body = document.createElement('div');
+      body.className = 'body';
+      const formatted = aiPromptKeyword(chunk.keyword) && s.settings && s.settings.pngTextShowAiPromptFormatted;
+      body.textContent = formatted ? chunk.text : chunk.text;
+      if (formatted) body.style.whiteSpace = 'pre-wrap';
+      wrap.appendChild(body);
+
+      host.appendChild(wrap);
+    });
+  }
+
   function renderRaw(s) {
     const body = $('raw-body');
     const empty = $('raw-empty');
-    if (!s.hasExif) {
+    if (!s.hasExif && (!s.pngText || s.pngText.length === 0)) {
       body.style.display = 'none';
       empty.style.display = 'block';
       empty.textContent = s.l10n.noExif;
@@ -202,9 +328,12 @@ export const CLIENT_SCRIPT = String.raw`
     $('raw-toggle').style.display = '';
     $('raw-copy').style.display = '';
     empty.style.display = 'none';
-    body.style.display = 'block';
-    $('raw-toggle').textContent = s.l10n.hide;
-    body.textContent = JSON.stringify(s.rawExif, null, 2);
+    const expanded = s.settings && s.settings.rawJsonExpanded !== false;
+    body.style.display = expanded ? 'block' : 'none';
+    $('raw-toggle').textContent = expanded ? s.l10n.hide : s.l10n.showAll;
+    const fullDump = { ...s.rawExif };
+    if (s.pngText && s.pngText.length) fullDump.__pngText = s.pngText;
+    body.textContent = JSON.stringify(fullDump, null, 2);
   }
 
   function applyZoom(mode, deltaPercent) {
@@ -277,6 +406,13 @@ export const CLIENT_SCRIPT = String.raw`
     document.querySelectorAll('[data-bg]').forEach(btn => {
       btn.addEventListener('click', () => setBackground(btn.dataset.bg));
     });
+    document.querySelectorAll('.tabbar .tab').forEach(btn => {
+      btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+    });
+
+    $('open-settings').addEventListener('click', () => {
+      vscode.postMessage({ type: 'openSettings' });
+    });
 
     $('raw-toggle').addEventListener('click', () => {
       const body = $('raw-body');
@@ -285,7 +421,9 @@ export const CLIENT_SCRIPT = String.raw`
       $('raw-toggle').textContent = isOpen ? l10n.showAll : l10n.hide;
     });
     $('raw-copy').addEventListener('click', () => {
-      const text = JSON.stringify(state.rawExif, null, 2);
+      const fullDump = { ...state.rawExif };
+      if (state.pngText && state.pngText.length) fullDump.__pngText = state.pngText;
+      const text = JSON.stringify(fullDump, null, 2);
       vscode.postMessage({ type: 'copyText', text, toast: l10n.jsonCopied });
       toast(l10n.jsonCopied);
     });
@@ -309,6 +447,7 @@ export const CLIENT_SCRIPT = String.raw`
     state = msg;
     applyL10n(msg.l10n);
     wireToolbar(msg.l10n);
+    renderTabBar(msg);
 
     setText('filename', msg.file.basename);
     setText('dim', msg.file.width !== null && msg.file.height !== null
@@ -336,13 +475,18 @@ export const CLIENT_SCRIPT = String.raw`
     }
 
     setBackground('checker');
-    renderCards(msg);
+    renderOverview(msg);
+    renderExif(msg);
+    renderPngText(msg);
     renderRaw(msg);
+
+    const initialTab = msg.settings && msg.settings.defaultTab ? msg.settings.defaultTab : 'overview';
+    setActiveTab(initialTab);
   }
 
   window.addEventListener('message', (event) => {
-    const msg = event.data;
-    if (msg && msg.type === 'init') init(msg);
+    const m = event.data;
+    if (m && m.type === 'init') init(m);
   });
 })();
 `;

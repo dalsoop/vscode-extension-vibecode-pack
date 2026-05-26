@@ -52,5 +52,19 @@
   "XMP": "XMP",
   "ICC Profile": "ICC 프로파일",
   "JFIF": "JFIF",
-  "PNG / IHDR": "PNG / IHDR"
+  "PNG / IHDR": "PNG / IHDR",
+  "Overview": "개요",
+  "EXIF / Segments": "EXIF / 세그먼트",
+  "PNG Text": "PNG 텍스트",
+  "Raw JSON": "전체 JSON",
+  "Settings": "설정",
+  "No PNG text chunks (tEXt / zTXt / iTXt) in this file.": "이 파일에는 PNG 텍스트 청크 (tEXt / zTXt / iTXt) 가 없습니다.",
+  "compressed": "압축됨",
+  "Text was zlib-compressed inside the chunk.": "청크 안에서 zlib 으로 압축된 텍스트입니다.",
+  "parse error": "파싱 오류",
+  "iTXt — UTF-8 text chunk. Supports any language (Korean, emoji, full Unicode).": "iTXt — UTF-8 텍스트 청크. 한국어·이모지·전체 유니코드를 모두 지원합니다.",
+  "tEXt — ASCII / Latin-1 only. Non-ASCII characters may be garbled.": "tEXt — ASCII / Latin-1 만 지원. 한국어 같은 비ASCII 문자는 깨질 수 있습니다.",
+  "zTXt — zlib-compressed tEXt. ASCII / Latin-1 only.": "zTXt — zlib 압축된 tEXt. ASCII / Latin-1 만 지원.",
+  "Copy": "복사",
+  "Copied.": "복사했습니다."
 }

@@ -1,8 +1,17 @@
 {
   "nls": {
     "ext.displayName": "Vibecode Image Viewer",
-    "ext.description": "Custom editor for PNG / JPG / WEBP / GIF / BMP / AVIF / HEIC / SVG / ICO with EXIF metadata, camera/lens summary, GPS-to-Google-Maps, and full raw EXIF dump.",
-    "editor.displayName": "Vibecode Image Viewer"
+    "ext.description": "Custom editor for PNG / JPG / WEBP / GIF / BMP / AVIF / HEIC / SVG / ICO with EXIF metadata, camera/lens summary, GPS-to-Google-Maps, PNG iTXt/tEXt/zTXt text chunks (Korean prompts supported), and full raw EXIF dump.",
+    "ext.category": "Vibecode",
+    "editor.displayName": "Vibecode Image Viewer",
+    "cmd.openSettings": "Vibecode - Open Image Viewer Settings",
+    "config.defaultTab": "Which tab the image viewer opens on first.",
+    "config.defaultTab.overview": "Overview — file info, camera summary, GPS.",
+    "config.defaultTab.exif": "EXIF / Segments — every IFD0/EXIF/IPTC/XMP/ICC/IHDR section as a card.",
+    "config.defaultTab.pngText": "PNG Text — tEXt / zTXt / iTXt chunks (AI prompts live here).",
+    "config.defaultTab.raw": "Raw JSON — the full metadata dump.",
+    "config.rawJsonExpanded": "Open the Raw JSON pane expanded by default. Off = collapsed under a Show button.",
+    "config.pngTextShowAiPromptFormatted": "Preserve line breaks for AI-prompt keywords (parameters, prompt, negative_prompt, workflow, comment) so Stable Diffusion / ComfyUI metadata stays readable."
   },
   "runtime": {
     "Image": "Image",
@@ -58,6 +67,20 @@
     "XMP": "XMP",
     "ICC Profile": "ICC Profile",
     "JFIF": "JFIF",
-    "PNG / IHDR": "PNG / IHDR"
+    "PNG / IHDR": "PNG / IHDR",
+    "Overview": "Overview",
+    "EXIF / Segments": "EXIF / Segments",
+    "PNG Text": "PNG Text",
+    "Raw JSON": "Raw JSON",
+    "Settings": "Settings",
+    "No PNG text chunks (tEXt / zTXt / iTXt) in this file.": "No PNG text chunks (tEXt / zTXt / iTXt) in this file.",
+    "compressed": "compressed",
+    "Text was zlib-compressed inside the chunk.": "Text was zlib-compressed inside the chunk.",
+    "parse error": "parse error",
+    "iTXt — UTF-8 text chunk. Supports any language (Korean, emoji, full Unicode).": "iTXt — UTF-8 text chunk. Supports any language (Korean, emoji, full Unicode).",
+    "tEXt — ASCII / Latin-1 only. Non-ASCII characters may be garbled.": "tEXt — ASCII / Latin-1 only. Non-ASCII characters may be garbled.",
+    "zTXt — zlib-compressed tEXt. ASCII / Latin-1 only.": "zTXt — zlib-compressed tEXt. ASCII / Latin-1 only.",
+    "Copy": "Copy",
+    "Copied.": "Copied."
   }
 }

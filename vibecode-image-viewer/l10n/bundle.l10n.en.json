@@ -52,5 +52,19 @@
   "XMP": "XMP",
   "ICC Profile": "ICC Profile",
   "JFIF": "JFIF",
-  "PNG / IHDR": "PNG / IHDR"
+  "PNG / IHDR": "PNG / IHDR",
+  "Overview": "Overview",
+  "EXIF / Segments": "EXIF / Segments",
+  "PNG Text": "PNG Text",
+  "Raw JSON": "Raw JSON",
+  "Settings": "Settings",
+  "No PNG text chunks (tEXt / zTXt / iTXt) in this file.": "No PNG text chunks (tEXt / zTXt / iTXt) in this file.",
+  "compressed": "compressed",
+  "Text was zlib-compressed inside the chunk.": "Text was zlib-compressed inside the chunk.",
+  "parse error": "parse error",
+  "iTXt — UTF-8 text chunk. Supports any language (Korean, emoji, full Unicode).": "iTXt — UTF-8 text chunk. Supports any language (Korean, emoji, full Unicode).",
+  "tEXt — ASCII / Latin-1 only. Non-ASCII characters may be garbled.": "tEXt — ASCII / Latin-1 only. Non-ASCII characters may be garbled.",
+  "zTXt — zlib-compressed tEXt. ASCII / Latin-1 only.": "zTXt — zlib-compressed tEXt. ASCII / Latin-1 only.",
+  "Copy": "Copy",
+  "Copied.": "Copied."
 }
