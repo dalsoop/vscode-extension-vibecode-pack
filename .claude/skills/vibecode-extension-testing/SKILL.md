@@ -257,7 +257,6 @@ monorepo 컨벤션상 패키징은 항상 `--no-dependencies` (skills-viewer 패
 
 - 작동하는 예시: `vibecode-vscode-extension-host-mcp-list/tests/activation.test.mjs`
 - esbuild + UMD fix 적용 예: `vibecode-vscode-extension-host-mcp-list/scripts/build-ext.mjs`
-- 사례 기록: `docs/superpowers/specs/2026-05-25-vibecode-vscode-extension-host-mcp-list-design.md` (§14 Testing)
 
 ## Example invocation
 

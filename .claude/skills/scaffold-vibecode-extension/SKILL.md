@@ -71,8 +71,7 @@ code --install-extension <이름>-0.1.0.vsix --force
 ## 6단계 — 루트 README 업데이트
 
 `/Users/jeonghan/Documents/WORK/WORKSPACE/apps/vscode-extension-mono/README.md` 편집:
-1. 구조 트리에 새 폴더 줄 추가 (기존 트리 엔트리와 `_seed/` 사이).
-2. 확장 표에 행 추가: `| [이름](이름/) | 0.1.0 | <설명> |`.
+1. 확장 표에 행 추가: `| [이름](이름/) | <설명> |`.
 
 ---
 

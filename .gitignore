@@ -4,7 +4,7 @@ out/
 node_modules/
 *.vsix
 
-# Secrets / env (commit .env.example only)
+# Secrets / env
 .env
 .env.local
 .env.*.local
@@ -17,6 +17,7 @@ node_modules/
 # Per-session scratch (test playgrounds, worktrees, transient state)
 .scratch-*/
 .claude/worktrees/
+.claude/compaction-snapshot.json
 
 # Empty/test artifacts that shouldn't ship
 index.html
