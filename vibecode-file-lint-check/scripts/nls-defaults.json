@@ -1,0 +1,8 @@
+{
+  "ext.displayName": "Vibecode File Lint Check",
+  "ext.description": "Run project file-quality checks from a VS Code sidebar. Scaffold default ESLint, Prettier, TypeScript, and JSON checks into .vibecode/file-lint, then run one or all checks with output captured in the extension channel.",
+  "ext.category": "Vibecode",
+  "view.container.title": "File Lint",
+  "view.checks.name": "Checks",
+  "config.checksRoot": "Workspace-relative folder that stores file lint check definitions. Default: .vibecode/file-lint."
+}

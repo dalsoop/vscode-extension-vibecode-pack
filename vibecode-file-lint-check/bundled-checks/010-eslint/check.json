@@ -1,0 +1,6 @@
+{
+  "label": "ESLint",
+  "description": "Run the workspace ESLint check through npm when package.json defines a lint script",
+  "command": "node -e \"const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));process.exit(p.scripts&&p.scripts.lint?0:78)\" && npm run lint || test $? -eq 78",
+  "shell": true
+}

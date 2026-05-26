@@ -1,0 +1,6 @@
+{
+  "label": "JSON parse",
+  "description": "Parse every tracked JSON file outside node_modules and dist",
+  "command": "node -e \"const fs=require('fs'),cp=require('child_process');const files=cp.execSync('git ls-files *.json',{encoding:'utf8'}).trim().split(/\\n/).filter(Boolean).filter(f=>!/(^|\\/)(node_modules|dist)\\//.test(f));for(const f of files){JSON.parse(fs.readFileSync(f,'utf8'))}console.log('checked '+files.length+' JSON files')\"",
+  "shell": true
+}

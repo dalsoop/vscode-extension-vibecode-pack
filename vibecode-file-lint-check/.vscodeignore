@@ -1,0 +1,16 @@
+.vscode/**
+.vscode-test/**
+src/**
+scripts/**
+i18n/**
+tests/**
+node_modules/**
+.gitignore
+.gitlab-ci.yml
+tsconfig.json
+eslint.config.mjs
+.prettierrc.json
+.prettierignore
+**/*.map
+**/*.ts
+!dist/**/*.js
