@@ -1,5 +1,16 @@
 
 import type { L10nBundle } from './l10n-bundle';
+import type { PngTextChunk } from './png-text';
+
+export type { PngTextChunk };
+
+export type ViewerTab = 'overview' | 'exif' | 'png-text' | 'raw';
+
+export interface UserSettings {
+  defaultTab: ViewerTab;
+  rawJsonExpanded: boolean;
+  pngTextShowAiPromptFormatted: boolean;
+}
 
 export interface FileInfo {
   path: string;
@@ -45,8 +56,12 @@ export interface InitMessage {
   rawExif: Record<string, unknown>;
   /** Per-segment metadata (ifd0, exif, gps, iptc, xmp, icc, jfif, ihdr, ...). */
   metaSegments: Record<string, Record<string, unknown>>;
+  /** PNG tEXt / zTXt / iTXt chunks (empty for non-PNG). */
+  pngText: PngTextChunk[];
   hasExif: boolean;
   metadataError: string | null;
+  /** User-configured defaults (initial tab, raw JSON expansion, AI prompt formatting). */
+  settings: UserSettings;
   l10n: L10nBundle;
 }
 
@@ -75,9 +90,14 @@ export interface OpenUrlRequest {
   url: string;
 }
 
+export interface OpenSettingsRequest {
+  type: 'openSettings';
+}
+
 export type WebviewToHost =
   | CopyTextRequest
   | RevealInOsRequest
   | OpenWithDefaultAppRequest
   | ReopenAsTextRequest
-  | OpenUrlRequest;
+  | OpenUrlRequest
+  | OpenSettingsRequest;

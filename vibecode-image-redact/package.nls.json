@@ -1,0 +1,6 @@
+{
+  "ext.displayName": "Vibecode Image Redact",
+  "ext.description": "Right-click an image to redact sensitive regions before sharing — drag rectangles, apply blur / pixelate / solid block. Multi-region accumulating, output is always PNG saved next to the source as <name>-<YYMMDDHHMMSS>.png.",
+  "ext.category": "Vibecode",
+  "cmd.open": "Vibecode Image - Redact"
+}

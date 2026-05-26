@@ -1,0 +1,20 @@
+{
+  "No image selected.": "No image selected.",
+  "Unsupported image format: {0}": "Unsupported image format: {0}",
+  "Saved: {0}": "Saved: {0}",
+  "Save failed: {0}": "Save failed: {0}",
+  "Loading…": "Loading…",
+  "Drag a rectangle to add a redaction. Esc to cancel current drag.": "Drag a rectangle to add a redaction. Esc to cancel current drag.",
+  "Style": "Style",
+  "Blur": "Blur",
+  "Pixelate": "Pixelate",
+  "Solid": "Solid",
+  "Strength": "Strength",
+  "Block size": "Block size",
+  "Color": "Color",
+  "Regions": "Regions",
+  "No regions yet — drag on the image to add one.": "No regions yet — drag on the image to add one.",
+  "Remove": "Remove",
+  "Clear all": "Clear all",
+  "Save PNG": "Save PNG"
+}

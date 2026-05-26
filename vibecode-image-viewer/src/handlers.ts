@@ -31,5 +31,11 @@ export async function handle(msg: WebviewToHost, ctx: HandlerContext): Promise<v
       } catch {
       }
       return;
+    case 'openSettings':
+      await vscode.commands.executeCommand(
+        'workbench.action.openSettings',
+        '@ext:dalsoop.vibecode-image-viewer'
+      );
+      return;
   }
 }

@@ -134,8 +134,136 @@ button.link {
   flex: 0 0 auto;
   max-height: 40vh;
   overflow-y: auto;
-  padding: 12px 16px;
+  padding: 0 16px 12px;
   background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+}
+
+.tabbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  gap: 0;
+  margin: 0 -16px 10px;
+  padding: 6px 16px 0;
+  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  border-bottom: 1px solid var(--vscode-panel-border, rgba(127,127,127,0.2));
+}
+.tabbar button.tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 6px 10px 8px;
+  font-size: 0.82em;
+  color: var(--vscode-descriptionForeground);
+  border-radius: 0;
+}
+.tabbar button.tab .count {
+  font-size: 0.85em;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+.tabbar button.tab:hover { background: transparent; color: var(--vscode-foreground); }
+.tabbar button.tab.active {
+  color: var(--vscode-foreground);
+  border-bottom-color: var(--vscode-focusBorder, var(--vscode-button-background));
+  background: transparent;
+}
+.tabbar .tabbar-spacer { flex: 1; }
+.tabbar .settings-link {
+  background: transparent;
+  border: none;
+  padding: 6px 8px;
+  font-size: 0.82em;
+  color: var(--vscode-descriptionForeground);
+}
+.tabbar .settings-link:hover { color: var(--vscode-foreground); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.png-text-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.png-text-chunk {
+  border: 1px solid var(--vscode-panel-border, rgba(127,127,127,0.2));
+  border-radius: 4px;
+  background: var(--vscode-editor-background);
+  overflow: hidden;
+}
+.png-text-chunk header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--vscode-textBlockQuote-background, rgba(127,127,127,0.06));
+  border-bottom: 1px solid var(--vscode-panel-border, rgba(127,127,127,0.2));
+  flex-wrap: wrap;
+}
+.png-text-chunk header .keyword {
+  font-family: var(--vscode-editor-font-family);
+  font-weight: 600;
+}
+.png-text-chunk header .keyword-translated {
+  font-size: 0.85em;
+  color: var(--vscode-descriptionForeground);
+}
+.png-text-chunk header .lang {
+  font-size: 0.78em;
+  color: var(--vscode-descriptionForeground);
+  font-family: var(--vscode-editor-font-family);
+}
+.png-text-chunk header .header-spacer { flex: 1; }
+.png-text-chunk header .actions { display: flex; gap: 4px; }
+.png-text-chunk .body {
+  padding: 10px 12px;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.85em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 280px;
+  overflow: auto;
+}
+.png-text-chunk.has-error .body {
+  color: var(--vscode-errorForeground, #d33);
+}
+
+.chip {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 0.72em;
+  font-family: var(--vscode-editor-font-family);
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.chip.chip-itxt {
+  background: rgba(54, 137, 255, 0.16);
+  color: var(--vscode-charts-blue, #3689ff);
+  border-color: rgba(54, 137, 255, 0.4);
+}
+.chip.chip-text {
+  background: rgba(127, 127, 127, 0.16);
+  color: var(--vscode-descriptionForeground);
+  border-color: rgba(127, 127, 127, 0.35);
+}
+.chip.chip-ztxt {
+  background: rgba(155, 89, 182, 0.16);
+  color: var(--vscode-charts-purple, #9b59b6);
+  border-color: rgba(155, 89, 182, 0.4);
+}
+.chip.chip-warn {
+  background: rgba(255, 152, 0, 0.16);
+  color: var(--vscode-charts-orange, #ff9800);
+  border-color: rgba(255, 152, 0, 0.4);
+}
+.chip.chip-compressed {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--vscode-descriptionForeground);
+  border-color: rgba(127, 127, 127, 0.3);
 }
 
 .cards {

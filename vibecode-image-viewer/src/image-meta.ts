@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as exifr from 'exifr';
 import sizeOf from 'image-size';
 import type { CameraSummary, FileInfo, GpsInfo } from './messages';
+import { extractPngTextChunks, isPng, type PngTextChunk } from './png-text';
 
 export interface ImageMeta {
   file: FileInfo;
@@ -11,6 +12,7 @@ export interface ImageMeta {
   gps: GpsInfo | null;
   rawExif: Record<string, unknown>;
   metaSegments: Record<string, Record<string, unknown>>;
+  pngText: PngTextChunk[];
   hasExif: boolean;
   error: string | null;
 }
@@ -114,6 +116,17 @@ export async function readImageMeta(filePath: string): Promise<ImageMeta> {
   const camera = summarizeCamera(rawExif);
   const gps = summarizeGps(rawExif);
 
+  let pngText: PngTextChunk[] = [];
+  if (buffer && isPng(buffer)) {
+    try {
+      pngText = extractPngTextChunks(buffer);
+    } catch (err) {
+      pngText = [];
+      const msg = String((err as Error)?.message ?? err);
+      parseError = parseError ? `${parseError}; png-text: ${msg}` : `png-text: ${msg}`;
+    }
+  }
+
   const errorParts: string[] = [];
   if (dimsError) errorParts.push(dimsError);
   if (parseError) errorParts.push(parseError);
@@ -124,6 +137,7 @@ export async function readImageMeta(filePath: string): Promise<ImageMeta> {
     gps,
     rawExif,
     metaSegments,
+    pngText,
     hasExif: Object.keys(rawExif).length > 0,
     error: errorParts.length ? errorParts.join('; ') : null,
   };
