@@ -1,0 +1,41 @@
+{
+  "ext": {
+    "displayName": "Vibecode Default Editor Manager",
+    "description": "Sidebar manager for VSCode's workbench.editorAssociations — see every installed custom editor (viewType + selectors), inspect current pattern → editor mappings, and add/remove mappings to Workspace or User settings.",
+    "category": "Vibecode"
+  },
+  "viewContainers": {
+    "vibecode": "Vibecode"
+  },
+  "views": {
+    "vibecodeDefaultEditor.sidebar": "Default Editor"
+  },
+  "commands": {},
+  "runtime": {
+    "Current Mappings": "Current Mappings",
+    "Add Mapping": "Add Mapping",
+    "Installed Custom Editors": "Installed Custom Editors",
+    "No mappings configured. VSCode is using priority-based defaults.": "No mappings configured. VSCode is using priority-based defaults.",
+    "No installed custom editors found.": "No installed custom editors found.",
+    "Pattern (e.g. *.png, **/*.svg, .env)": "Pattern (e.g. *.png, **/*.svg, .env)",
+    "Editor": "Editor",
+    "Add": "Add",
+    "Remove": "Remove",
+    "Refresh": "Refresh",
+    "Workspace settings": "Workspace settings",
+    "User settings": "User settings",
+    "Save to which scope?": "Save to which scope?",
+    "Scope: writes the mapping to .vscode/settings.json in this workspace.": "Scope: writes the mapping to .vscode/settings.json in this workspace.",
+    "Scope: writes the mapping to your global user settings.": "Scope: writes the mapping to your global user settings.",
+    "Saved to {0}.": "Saved to {0}.",
+    "Removed mapping {0}.": "Removed mapping {0}.",
+    "Pattern is required.": "Pattern is required.",
+    "Editor is required.": "Editor is required.",
+    "Built-in text editor (default)": "Built-in text editor (default)",
+    "Source: {0}": "Source: {0}",
+    "Patterns:": "Patterns:",
+    "Priority: {0}": "Priority: {0}",
+    "Open the underlying setting": "Open the underlying setting",
+    "Cancel": "Cancel"
+  }
+}

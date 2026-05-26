@@ -1,0 +1,7 @@
+{
+  "ext.displayName": "바이브코드 기본 에디터 매니저",
+  "ext.description": "VSCode 의 workbench.editorAssociations 를 사이드바에서 관리 — 설치된 모든 커스텀 에디터(viewType + selector)를 보고, 현재 패턴 → 에디터 매핑을 확인하고, Workspace / User 설정에 매핑을 추가/제거.",
+  "ext.category": "바이브코드",
+  "viewContainer.vibecode": "Vibecode",
+  "view.vibecodeDefaultEditor.sidebar": "기본 에디터"
+}
