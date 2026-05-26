@@ -118,6 +118,7 @@ Browse Vibecode commands, AI agent skills, and MCP server definitions from a sin
 | [vibecode-env-viewer-normal-import-only](vibecode-env-viewer-normal-import-only/) | `.env` editing without value exposure |
 | [vibecode-env-viewer-encryption-import-only](vibecode-env-viewer-encryption-import-only/) | `.env` editing with encrypted writes |
 | [vibecode-commit-lint-check](vibecode-commit-lint-check/) | Commit message checks and template scaffolding |
+| [vibecode-file-lint-check](vibecode-file-lint-check/) | Sidebar lint runner — ESLint, Prettier, TypeScript, JSON checks |
 | [vibecode-show-file-lines](vibecode-show-file-lines/) | Find refactor targets by line count |
 | [vibecode-right-click-action-open-to-file](vibecode-right-click-action-open-to-file/) | File and folder context-menu actions |
 | [vibecode-right-click-sh-actions](vibecode-right-click-sh-actions/) | Run `.sh` scripts from VSCode |
@@ -125,6 +126,7 @@ Browse Vibecode commands, AI agent skills, and MCP server definitions from a sin
 | [vibecode-extension-menu-list](vibecode-extension-menu-list/) | Launcher for Vibecode commands |
 | [vibecode-skills-viewer](vibecode-skills-viewer/) | Unified AI agent skill viewer |
 | [vibecode-vscode-extension-host-mcp-list](vibecode-vscode-extension-host-mcp-list/) | VSCode MCP server list |
+| [vibecode-md-file-browser](vibecode-md-file-browser/) | Explorer-side Markdown tree with preview / source open |
 | [packages/vibecode-core](packages/vibecode-core/) | Shared `.env` crypto strategy core |
 
 ## Build and Package

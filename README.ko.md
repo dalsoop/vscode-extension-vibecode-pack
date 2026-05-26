@@ -118,6 +118,7 @@ HTML 파일을 더블클릭하면 VSCode 안에서 바로 프리뷰가 열립니
 | [vibecode-env-viewer-normal-import-only](vibecode-env-viewer-normal-import-only/) | 값 노출 없는 `.env` 편집 |
 | [vibecode-env-viewer-encryption-import-only](vibecode-env-viewer-encryption-import-only/) | 암호화 저장을 지원하는 `.env` 편집 |
 | [vibecode-commit-lint-check](vibecode-commit-lint-check/) | 커밋 메시지 검사와 템플릿 스캐폴드 |
+| [vibecode-file-lint-check](vibecode-file-lint-check/) | 사이드바에서 ESLint·Prettier·TS·JSON 파일 품질 체크 실행 |
 | [vibecode-show-file-lines](vibecode-show-file-lines/) | 라인 수 기준 리팩토링 후보 탐색 |
 | [vibecode-right-click-action-open-to-file](vibecode-right-click-action-open-to-file/) | 파일과 폴더 우클릭 액션 |
 | [vibecode-right-click-sh-actions](vibecode-right-click-sh-actions/) | `.sh` 스크립트 실행 액션 |
@@ -125,6 +126,7 @@ HTML 파일을 더블클릭하면 VSCode 안에서 바로 프리뷰가 열립니
 | [vibecode-extension-menu-list](vibecode-extension-menu-list/) | Vibecode 명령 런처 |
 | [vibecode-skills-viewer](vibecode-skills-viewer/) | AI 에이전트 스킬 통합 뷰어 |
 | [vibecode-vscode-extension-host-mcp-list](vibecode-vscode-extension-host-mcp-list/) | VSCode MCP 서버 목록 |
+| [vibecode-md-file-browser](vibecode-md-file-browser/) | Explorer 사이드 Markdown 트리 + 미리보기·원본 열기 |
 | [packages/vibecode-core](packages/vibecode-core/) | `.env` 암호화 전략 공용 코어 |
 
 ## 개발과 패키징

@@ -1,0 +1,33 @@
+{
+  "ext": {
+    "displayName": "바이브코드 마크다운 파일 브라우저",
+    "description": "워크스페이스의 모든 Markdown 문서를 Explorer 사이드에 한 트리로 모아 보여주고, 클릭으로 미리보기 또는 원본을 엽니다.",
+    "category": "바이브코드"
+  },
+  "view": {
+    "files": { "name": "마크다운 파일" }
+  },
+  "config": {
+    "includeGlobs": "Markdown 문서를 찾을 때 사용하는 Glob 패턴 목록.",
+    "excludeGlob": "생성물·의존성·숨김 디렉터리 제외용 Glob 패턴.",
+    "openMode": "Markdown 파일 선택 시 기본 동작.",
+    "openMode.preview": "Markdown 미리보기 열기.",
+    "openMode.source": "원본 편집기 열기."
+  },
+  "commands": {
+    "refresh": "바이브코드 - 마크다운 파일 새로고침",
+    "openPreview": "바이브코드 - 마크다운 미리보기 열기",
+    "openSource": "바이브코드 - 마크다운 원본 열기",
+    "revealInExplorer": "바이브코드 - 마크다운 파일 Explorer 에서 보기",
+    "copyPath": "바이브코드 - 마크다운 경로 복사",
+    "openSettings": "바이브코드 - 마크다운 브라우저 설정 열기"
+  },
+  "runtime": {
+    "No workspace folder is open.": "열린 워크스페이스 폴더가 없습니다.",
+    "No Markdown files found.": "Markdown 파일이 없습니다.",
+    "Scanning Markdown files...": "Markdown 파일을 검색하는 중…",
+    "Found {0} Markdown files.": "Markdown 파일 {0}개를 찾았습니다.",
+    "Markdown path copied.": "Markdown 경로를 복사했습니다.",
+    "Select a Markdown file first.": "Markdown 파일을 먼저 선택하세요."
+  }
+}
