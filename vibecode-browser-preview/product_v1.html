@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Vibecode Browser Preview</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-2: #161b22;
+    --bg-3: #1c2128;
+    --fg: #e6edf3;
+    --muted: #7d8590;
+    --line: #30363d;
+    --accent: #58a6ff;
+    --pulse: #f0b429;
+    --ok: #3fb950;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .card {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(88,166,255,0.12), transparent 50%),
+      var(--bg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .header {
+    padding: 44px 64px 20px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .title {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 10px;
+    letter-spacing: -1px;
+  }
+  .subtitle {
+    font-size: 22px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* split view: editor ↔ preview */
+  .stage {
+    margin: 16px 64px 0;
+    height: 420px;
+    display: grid;
+    grid-template-columns: 1fr 100px 1fr;
+    gap: 0;
+    align-items: stretch;
+  }
+  .pane {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .pane-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--bg-3);
+    font-size: 12px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+  }
+  .pane-tab .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .pane-body {
+    padding: 18px 18px;
+    font-size: 13px;
+    line-height: 1.6;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* Editor side */
+  .code { font-family: ui-monospace, "JetBrains Mono", monospace; font-size: 12.5px; }
+  .code .kw { color: #ff7b72; }
+  .code .tag { color: #7ee787; }
+  .code .attr { color: #d2a8ff; }
+  .code .str { color: #a5d6ff; }
+  .code .num { color: var(--pulse); }
+  .code .ln { color: var(--muted); display: inline-block; width: 24px; }
+
+  /* Connector arrow */
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--pulse);
+  }
+  .arrow .glyph {
+    font-size: 50px;
+    font-weight: 700;
+    text-shadow: 0 0 30px rgba(240,180,41,0.6);
+  }
+  .arrow .label {
+    font-size: 12px;
+    color: var(--pulse);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* Preview side */
+  .preview-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+  }
+  .tb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 22px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .url {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 4px 10px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 11.5px;
+  }
+  .render {
+    flex: 1;
+    background: #fff;
+    color: #111;
+    padding: 28px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+  .render h2 { margin: 0; font-size: 28px; color: #1a1a1a; }
+  .render p { margin: 0; font-size: 13px; color: #555; }
+  .render .btn {
+    align-self: center;
+    background: #2563eb;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Footer */
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 28px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid var(--line);
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
+  }
+  .hook {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .hook .em { color: var(--pulse); }
+  .wordmark {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="badge">VIBECODE · BROWSER PREVIEW</div>
+    <h1 class="title">HTML 더블클릭 = 즉시 라이브 프리뷰.</h1>
+    <p class="subtitle">저장하면 자동 리로드. dev server 필요 없음.</p>
+  </div>
+
+  <div class="stage">
+    <!-- Editor -->
+    <div class="pane">
+      <div class="pane-tab">
+        <span class="dot"></span>
+        <span>index.html</span>
+      </div>
+      <div class="pane-body code">
+        <div><span class="ln">1</span><span class="kw">&lt;!DOCTYPE</span> <span class="tag">html</span><span class="kw">&gt;</span></div>
+        <div><span class="ln">2</span><span class="kw">&lt;</span><span class="tag">html</span><span class="kw">&gt;</span></div>
+        <div><span class="ln">3</span>&nbsp;&nbsp;<span class="kw">&lt;</span><span class="tag">body</span><span class="kw">&gt;</span></div>
+        <div><span class="ln">4</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">&lt;</span><span class="tag">h1</span><span class="kw">&gt;</span>Hello<span class="kw">&lt;/</span><span class="tag">h1</span><span class="kw">&gt;</span></div>
+        <div><span class="ln">5</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">&lt;</span><span class="tag">button</span> <span class="attr">class</span>=<span class="str">"btn"</span><span class="kw">&gt;</span>Try<span class="kw">&lt;/</span><span class="tag">button</span><span class="kw">&gt;</span></div>
+        <div><span class="ln">6</span>&nbsp;&nbsp;<span class="kw">&lt;/</span><span class="tag">body</span><span class="kw">&gt;</span></div>
+        <div><span class="ln">7</span><span class="kw">&lt;/</span><span class="tag">html</span><span class="kw">&gt;</span></div>
+        <div style="margin-top:14px; color:var(--muted); font-size:11px;">⌘S</div>
+      </div>
+    </div>
+
+    <!-- Arrow / Reload pulse -->
+    <div class="arrow">
+      <div class="glyph">↻</div>
+      <div class="label">save = reload<br/>200ms</div>
+    </div>
+
+    <!-- Preview -->
+    <div class="pane">
+      <div class="pane-tab">
+        <span class="dot"></span>
+        <span>Preview</span>
+      </div>
+      <div class="preview-toolbar">
+        <span class="tb-btn">↻</span>
+        <span class="tb-btn">▤</span>
+        <span class="tb-btn">↗</span>
+        <span class="url">http://127.0.0.1:54321/index.html</span>
+      </div>
+      <div class="render">
+        <h2>Hello</h2>
+        <p>This page reloads when you save.</p>
+        <span class="btn">Try</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="hook">Save → <span class="em">Reload.</span> 그게 전부.</p>
+    <div class="wordmark">VIBECODE / BROWSER · PREVIEW</div>
+  </div>
+</div>
+</body>
+</html>

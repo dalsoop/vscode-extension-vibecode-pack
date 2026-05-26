@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Vibecode Browser Preview Pro</title>
+<style>
+  :root {
+    --bg: #0a0d14;
+    --bg-2: #161b22;
+    --bg-3: #1c2128;
+    --fg: #e6edf3;
+    --muted: #7d8590;
+    --line: #30363d;
+    --gold: #f0b429;
+    --pin: #fde68a;
+    --pin-bd: #f59e0b;
+    --deep: #1e3a8a;
+    --accent: #38bdf8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .card {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    background:
+      radial-gradient(circle at 75% 10%, rgba(240,180,41,0.15), transparent 55%),
+      radial-gradient(circle at 0% 100%, rgba(30,58,138,0.4), transparent 55%),
+      var(--bg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .header {
+    padding: 40px 64px 18px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .title {
+    font-size: 46px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 10px;
+    letter-spacing: -1px;
+  }
+  .title .pro {
+    background: linear-gradient(135deg, var(--gold), #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .subtitle {
+    font-size: 20px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .stage {
+    margin: 18px 64px 0;
+    height: 460px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  /* Left: rendered page with inspector overlay */
+  .browser {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .browser-tb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 11.5px;
+  }
+  .url-pill {
+    flex: 1;
+    background: #fff;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-family: ui-monospace, monospace;
+    color: #64748b;
+  }
+  .device-row {
+    display: flex;
+    gap: 4px;
+  }
+  .dev {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+  }
+  .dev.on {
+    background: #1e3a8a;
+    color: #fff;
+    border-color: #1e3a8a;
+  }
+
+  .canvas {
+    flex: 1;
+    color: #111;
+    padding: 38px 30px;
+    position: relative;
+    background:
+      linear-gradient(to bottom, #fff, #f8fafc);
+  }
+  .h-block {
+    font-size: 26px;
+    color: #0f172a;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .p-block {
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .btn-target {
+    display: inline-block;
+    background: #2563eb;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.45);
+    outline: 2px dashed var(--pin-bd);
+    outline-offset: 6px;
+  }
+  .pointer {
+    position: absolute;
+    left: 165px;
+    top: 168px;
+    font-size: 28px;
+    color: #111;
+    transform: rotate(-25deg);
+  }
+  .selector-tip {
+    position: absolute;
+    left: 100px;
+    top: 220px;
+    background: #0f172a;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+  }
+
+  /* Right: inspector panel */
+  .panel {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    color: var(--muted);
+    border-right: 1px solid var(--line);
+  }
+  .tab.on {
+    color: var(--gold);
+    border-bottom: 2px solid var(--gold);
+    background: var(--bg-2);
+  }
+  .panel-body {
+    padding: 14px;
+    flex: 1;
+    overflow: hidden;
+    font-size: 13px;
+  }
+
+  /* Pin sticky note */
+  .pin {
+    background: var(--pin);
+    color: #1f2937;
+    border-radius: 6px;
+    padding: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    transform: rotate(-1.2deg);
+    margin-bottom: 14px;
+    border: 1px solid var(--pin-bd);
+  }
+  .pin-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .pin-sel {
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    color: #7c2d12;
+    font-size: 13px;
+  }
+  .pin-badge {
+    background: #b45309;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .pin-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: #44403c;
+    margin: 3px 0;
+  }
+  .pin-row b { color: #7c2d12; font-family: ui-monospace, monospace; }
+  .force-row {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+  }
+  .chip {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    background: #fff;
+    border: 1px solid #d6d3d1;
+    color: #57534e;
+    font-family: ui-monospace, monospace;
+  }
+  .chip.on {
+    background: #7c2d12;
+    color: #fff;
+    border-color: #7c2d12;
+  }
+  .pin-notes {
+    margin-top: 10px;
+    background: rgba(255,255,255,0.5);
+    border: 1px dashed #b45309;
+    padding: 6px 8px;
+    font-size: 11.5px;
+    color: #44403c;
+    font-style: italic;
+  }
+  .pin-notes::before { content: "▤ Notes — "; font-style: normal; color: #7c2d12; font-weight: 700;}
+
+  .changes-hint {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11.5px;
+    padding: 8px 10px;
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+  }
+  .changes-hint b { color: var(--accent); }
+
+  /* Footer */
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 28px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid var(--line);
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
+  }
+  .hook {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .hook .em { color: var(--gold); }
+  .wordmark {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="badge">VIBECODE · BROWSER PREVIEW <span style="color:var(--gold)">PRO</span></div>
+    <h1 class="title">Inspect · Annotate · <span class="pro">Ship.</span></h1>
+    <p class="subtitle">라이브 프리뷰 위에 인스펙터 + 핀 메모 + Snapshot.</p>
+  </div>
+
+  <div class="stage">
+    <!-- Browser pane with inspector overlay -->
+    <div class="browser">
+      <div class="browser-tb">
+        <span class="url-pill">127.0.0.1:54321/page.html</span>
+        <div class="device-row">
+          <span class="dev">▭ 1280</span>
+          <span class="dev on">⌨ 768</span>
+          <span class="dev">▯ 375</span>
+        </div>
+      </div>
+      <div class="canvas">
+        <div class="h-block">Pricing</div>
+        <div class="p-block">Simple, transparent pricing for every team size.</div>
+        <span class="btn-target">Sign up</span>
+        <div class="pointer">↖</div>
+        <div class="selector-tip">.btn-primary</div>
+      </div>
+    </div>
+
+    <!-- Inspector panel -->
+    <div class="panel">
+      <div class="tabs">
+        <div class="tab on">Pins</div>
+        <div class="tab">Changes</div>
+        <div class="tab">Assets</div>
+      </div>
+      <div class="panel-body">
+        <div class="pin">
+          <div class="pin-head">
+            <span class="pin-sel">.btn-primary</span>
+            <span class="pin-badge">▲ 2</span>
+          </div>
+          <div class="pin-row"><b>padding</b> &nbsp;16px → 24px</div>
+          <div class="pin-row"><b>border-radius</b> &nbsp;4px → 8px</div>
+          <div class="force-row">
+            <span class="chip on">:hover</span>
+            <span class="chip">:focus</span>
+            <span class="chip">:focus-visible</span>
+            <span class="chip">:active</span>
+          </div>
+          <div class="pin-notes">더 크게, 호버 시 살짝 들어올리기</div>
+        </div>
+        <div class="changes-hint">
+          <b>▣ Save Snapshot</b> · <span style="font-family:ui-monospace,monospace">.vibecode/browser-preview/20260526143012/</span><br/>
+          6 files + ZIP · <span style="color:var(--gold)">changes.md</span> 자동 생성
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="hook">디자이너 핸드오프 문서까지 <span class="em">1클릭.</span></p>
+    <div class="wordmark">VIBECODE / BROWSER · PREVIEW · PRO</div>
+  </div>
+</div>
+</body>
+</html>
