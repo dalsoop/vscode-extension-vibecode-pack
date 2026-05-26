@@ -47,6 +47,7 @@ export interface L10nBundle {
   noExif: string;
 
   segIfd0: string;
+  segIfd1: string;
   segExif: string;
   segGps: string;
   segInterop: string;
@@ -115,6 +116,7 @@ export function getL10nBundle(): L10nBundle {
     noExif: vscode.l10n.t('No EXIF metadata in this file.'),
 
     segIfd0: vscode.l10n.t('TIFF / IFD0'),
+    segIfd1: vscode.l10n.t('Thumbnail IFD (IFD1)'),
     segExif: vscode.l10n.t('EXIF'),
     segGps: vscode.l10n.t('GPS'),
     segInterop: vscode.l10n.t('Interop'),

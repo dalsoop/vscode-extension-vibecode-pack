@@ -111,7 +111,7 @@ export const CLIENT_SCRIPT = String.raw`
     }
 
     if (s.metaSegments) {
-      const segOrder = ['ifd0', 'exif', 'gps', 'interop', 'thumbnail', 'iptc', 'xmp', 'icc', 'jfif', 'ihdr'];
+      const segOrder = ['ifd0', 'ifd1', 'exif', 'gps', 'interop', 'thumbnail', 'iptc', 'xmp', 'icc', 'jfif', 'ihdr'];
       const seen = new Set();
       const renderSegment = (key) => {
         seen.add(key);
@@ -139,6 +139,7 @@ export const CLIENT_SCRIPT = String.raw`
   function segmentLabel(key, l) {
     const map = {
       ifd0: l.segIfd0 || 'TIFF / IFD0',
+      ifd1: l.segIfd1 || 'Thumbnail IFD (IFD1)',
       exif: l.segExif || 'EXIF',
       gps: l.segGps || 'GPS',
       interop: l.segInterop || 'Interop',
