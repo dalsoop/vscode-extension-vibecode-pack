@@ -1,0 +1,6 @@
+{
+  "label": "TypeScript noEmit",
+  "description": "Run the workspace TypeScript typecheck when package.json defines typecheck",
+  "command": "node -e \"const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));process.exit(p.scripts&&p.scripts.typecheck?0:78)\" && npm run typecheck || test $? -eq 78",
+  "shell": true
+}

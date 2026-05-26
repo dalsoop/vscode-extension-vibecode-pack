@@ -1,62 +1,155 @@
-# vscode-extension-mono
+# Vibecode
 
-VSCode 확장 모노레포 (dalsoop).
+[한국어](README.ko.md)
 
-## 구조
+Vibecode is a set of VSCode extensions that turns repeated developer chores into right-click actions, sidebars, and focused in-editor tools. It covers AI tool setup, HTML preview, secure `.env` editing, commit checks, file actions, MCP visibility, and agent skill management.
 
-각 확장은 루트 직속 폴더로 둔다.
+## Why Vibecode
 
-```
-vscode-extension-mono/
-├── vibecode-skills-viewer/           # Claude/Codex/Copilot 등 스킬 통합 사이드바
-├── vibecode-right-click-action-open-to-file/  # 파일/폴더 우클릭 컨텍스트 메뉴 액션 모음
-├── vibecode-right-click-sh-actions/           # .sh 우클릭 → 터미널 실행 + 에디터 상단 ▶ 버튼
-├── vibecode-ai-md-system-init-this-folder/    # 사이드바에서 템플릿×도구(claude/codex/gemini/cursor) 체크박스로 골라 새 폴더에 설치
-├── vibecode-env-viewer-normal-import-only/    # .env 평문 paste-only 보안 뷰 (값 비표시)
-├── vibecode-env-viewer-encryption-import-only/ # .env + 암호화 paste-only 뷰 (.env.keys 감지 시 활성)
-├── vibecode-commit-lint-check/                # 폴더 우클릭 → commitlint 템플릿 스캐폴드 + CLI 로 직전 커밋 검사
-├── vibecode-extension-menu-list/              # Activity Bar 사이드바에 설치된 vibecode-* 확장과 명령을 트리로 표시 + 카탈로그 팔레트 명령
-├── _seed/                             # 새 확장 시작용 placeholder
-├── tools/                             # 공용 스크립트 (pre-commit, secret-scan 등)
-├── .gitlab-ci.yml                     # 푸시 시 CI (typecheck/lint/test, allow_failure)
-└── .policy-ci.yml                     # MR/default branch CI (+ secret-scan hard-gate)
+Developers repeat the same small tasks all day: opening folders, copying paths, running shell scripts, previewing HTML output, hiding `.env` values, checking commit messages, and keeping AI agent instruction files in sync.
+
+Vibecode keeps those workflows inside VSCode. It is not one large application. It is a collection of focused extensions you can install and combine as needed.
+
+## Product Assets
+
+Each extension includes a selling thumbnail and a product positioning brief.
+
+```text
+vibecode-*/selling-thumbnail.png
+vibecode-*/product_v2.md
 ```
 
-## 새 확장 추가
+## Highlights
+
+### Standardize AI Coding Setup
+
+Install instruction files for Claude, Codex, Cursor, Gemini, and related AI coding tools from reusable templates.
+
+- Pick a template
+- Pick target tools
+- Choose the destination folder
+- Generate `.claude/`, `AGENTS.md`, `.cursorrules`, `.gemini/`, `.codex/`
+
+[Product brief](vibecode-ai-md-system-init-this-folder/product_v2.md)
+
+![AI MD System](vibecode-ai-md-system-init-this-folder/selling-thumbnail.png)
+
+### Preview HTML Inside VSCode
+
+Open an HTML file and preview it directly inside VSCode. Saves trigger an automatic reload.
+
+- Managed local HTTP server
+- Workspace save detection
+- Edit source and open in external browser
+- Pro edition adds inspector, notes, device presets, and snapshot export
+
+[Browser Preview brief](vibecode-browser-preview/product_v2.md)  
+[Browser Preview Pro brief](vibecode-browser-preview-pro/product_v2.md)
+
+![Browser Preview](vibecode-browser-preview/selling-thumbnail.png)
+
+### Edit `.env` Without Revealing Secrets
+
+Show `.env` keys while keeping values off screen. The encrypted variant stores ciphertext on disk.
+
+- Paste-only input
+- Fixed masking that does not reveal value length
+- Schema comparison against `.env.example`
+- dotenvx-compatible encrypted writes
+
+[Import-Only brief](vibecode-env-viewer-normal-import-only/product_v2.md)  
+[Encrypted brief](vibecode-env-viewer-encryption-import-only/product_v2.md)
+
+![Env Viewer](vibecode-env-viewer-normal-import-only/selling-thumbnail.png)
+
+### Check Commits and Refactor Targets
+
+Lint commit messages and surface oversized files before they become maintenance problems.
+
+- Conventional Commits checks
+- Node, PHP/Laravel, and Python templates
+- Last-commit validation
+- Workspace file ranking by line count
+
+[Commit Lint brief](vibecode-commit-lint-check/product_v2.md)  
+[File Lines brief](vibecode-show-file-lines/product_v2.md)
+
+![Commit Lint](vibecode-commit-lint-check/selling-thumbnail.png)
+
+### Right-Click Productivity Actions
+
+Add practical file and folder actions to the VSCode context menu.
+
+- Open in browser
+- Reveal in Finder or Explorer
+- Copy absolute path
+- Open terminal here
+- Run `.sh` scripts
+- Package and install a VSCode extension folder as `.vsix`
+
+[File Actions brief](vibecode-right-click-action-open-to-file/product_v2.md)  
+[Shell Actions brief](vibecode-right-click-sh-actions/product_v2.md)  
+[VSIX Package brief](vibecode-right-click-vscode-extension-vsix-packege-and-install/product_v2.md)
+
+![Right Click Actions](vibecode-right-click-action-open-to-file/selling-thumbnail.png)
+
+### See Extensions, Skills, and MCP Servers in One Place
+
+Browse Vibecode commands, AI agent skills, and MCP server definitions from a single VSCode workspace.
+
+- Card launcher for installed `vibecode-*` extension commands
+- Unified skill browser for Claude, Codex, Cursor, Windsurf, and Cline
+- Instruction-file sync
+- MCP server list grouped by User, Workspace, and Extension sources
+
+[Extension Menu brief](vibecode-extension-menu-list/product_v2.md)  
+[Skills Viewer brief](vibecode-skills-viewer/product_v2.md)  
+[MCP List brief](vibecode-vscode-extension-host-mcp-list/product_v2.md)
+
+![Skills Viewer](vibecode-skills-viewer/selling-thumbnail.png)
+
+## Extension Catalog
+
+| Extension | Purpose |
+|---|---|
+| [vibecode-ai-md-system-init-this-folder](vibecode-ai-md-system-init-this-folder/) | Install AI tool instruction-file templates |
+| [vibecode-browser-preview](vibecode-browser-preview/) | Live HTML preview |
+| [vibecode-browser-preview-pro](vibecode-browser-preview-pro/) | Pro preview with inspector and snapshot handoff |
+| [vibecode-env-viewer-normal-import-only](vibecode-env-viewer-normal-import-only/) | `.env` editing without value exposure |
+| [vibecode-env-viewer-encryption-import-only](vibecode-env-viewer-encryption-import-only/) | `.env` editing with encrypted writes |
+| [vibecode-commit-lint-check](vibecode-commit-lint-check/) | Commit message checks and template scaffolding |
+| [vibecode-file-lint-check](vibecode-file-lint-check/) | Sidebar lint runner — ESLint, Prettier, TypeScript, JSON checks |
+| [vibecode-show-file-lines](vibecode-show-file-lines/) | Find refactor targets by line count |
+| [vibecode-right-click-action-open-to-file](vibecode-right-click-action-open-to-file/) | File and folder context-menu actions |
+| [vibecode-right-click-sh-actions](vibecode-right-click-sh-actions/) | Run `.sh` scripts from VSCode |
+| [vibecode-right-click-vscode-extension-vsix-packege-and-install](vibecode-right-click-vscode-extension-vsix-packege-and-install/) | Package and install VSIX files |
+| [vibecode-extension-menu-list](vibecode-extension-menu-list/) | Launcher for Vibecode commands |
+| [vibecode-skills-viewer](vibecode-skills-viewer/) | Unified AI agent skill viewer |
+| [vibecode-vscode-extension-host-mcp-list](vibecode-vscode-extension-host-mcp-list/) | VSCode MCP server list |
+| [vibecode-md-file-browser](vibecode-md-file-browser/) | Explorer-side Markdown tree with preview / source open |
+| [vibecode-image-viewer](vibecode-image-viewer/) | Image custom editor with EXIF metadata, camera summary, and GPS-to-Google-Maps |
+| [vibecode-image-edit](vibecode-image-edit/) | Right-click image editor — eyedropper, chroma-key background removal, and crop. Saves as `<name>-<YYMMDDHHMMSS>.png` |
+| [vibecode-default-editor-manager](vibecode-default-editor-manager/) | Sidebar manager for `workbench.editorAssociations` — installed custom editors, current mappings, add/remove with scope picker |
+| [packages/vibecode-core](packages/vibecode-core/) | Shared `.env` crypto strategy core |
+
+## Build and Package
+
+Each extension is an independent VSCode extension folder.
 
 ```bash
-# 1. 루트 직속으로 폴더 생성
-mkdir my-new-extension
-cd my-new-extension
-
-# 2. VSCode 확장 스캐폴드 (package.json + extension.js 등)
-#    또는 yo code 사용
-
-# 3. 패키징
-npx @vscode/vsce package --allow-missing-repository --skip-license
-
-# 4. 로컬 설치
-code --install-extension my-new-extension-0.1.0.vsix --force
+cd <extension>
+npm install
+npm run build
+npm run package
 ```
 
-## 빌드/패키징
-
-각 확장 폴더에서:
+Install locally:
 
 ```bash
-cd <extension>/
-npx @vscode/vsce package --allow-missing-repository --skip-license
+code --install-extension <extension>-<version>.vsix --force
 ```
 
-## 확장 목록
+## Marketing Material
 
-| 확장 | 버전 | 설명 |
-|---|---|---|
-| [vibecode-skills-viewer](vibecode-skills-viewer/) | 2.3.0 | Claude/Codex/Copilot/Cursor/Windsurf/Cline 스킬을 통합 사이드바로 표시. 프리뷰, 검색, 원격 카탈로그, AI 채팅 참가자, 인스트럭션 파일 동기화. |
-| [vibecode-right-click-action-open-to-file](vibecode-right-click-action-open-to-file/) | 0.1.0 | 파일/폴더 우클릭 컨텍스트 메뉴 액션 (브라우저 열기, 새 창 열기, Finder 열기, 경로 복사, 터미널 열기). 각 액션이 `src/apps/<name>/` 모듈 묶음. |
-| [vibecode-right-click-sh-actions](vibecode-right-click-sh-actions/) | 0.1.0 | `.sh` 파일 우클릭 또는 에디터 상단 ▶ 플레이 버튼으로 통합 터미널에서 스크립트 실행. |
-| [vibecode-ai-md-system-init-this-folder](vibecode-ai-md-system-init-this-folder/) | 0.1.0 | 사이드바에 템플릿(use-case 레시피) 카탈로그. 각 템플릿은 도구별(claude/codex/gemini/cursor) 변형 체크박스. 체크 후 "Apply Selected" → 폴더 picker → 한 번에 재귀 복사 설치. 기본 도구 setting · SSOT 폴더 열기 · agent-definitions(`.template_md` → 다중 target render) 시스템 포함. |
-| [vibecode-env-viewer-normal-import-only](vibecode-env-viewer-normal-import-only/) | 0.2.0 | `.env` 파일을 paste-only 커스텀 에디터로 인터셉트. 키만 노출, 값은 화면에 표시되지 않음 (타이핑 차단, ⌘V 만 허용). 일반 텍스트 에디터는 "Open With…" 우회로만. 디스크에는 평문 저장. |
-| [vibecode-env-viewer-encryption-import-only](vibecode-env-viewer-encryption-import-only/) | 0.1.0 | `vibecode-env-viewer-normal-import-only` 의 암호화 변형. `.env.keys` 형제 파일이 있을 때만 활성 — paste-only 입력값을 즉시 암호화해 `.env` 에 `encrypted:` 프리픽스로 저장. |
-| [vibecode-commit-lint-check](vibecode-commit-lint-check/) | 0.1.0 | 폴더 우클릭으로 commitlint 설정을 템플릿(Conventional / PHP·Laravel / Node·husky / Python·pre-commit)으로 스캐폴드하고, 팔레트에서 `npx commitlint --from HEAD~1 --to HEAD` 로 직전 커밋을 검사. 사용자 정의 템플릿 추가 가능. |
-| [vibecode-extension-menu-list](vibecode-extension-menu-list/) | 0.1.0 | 상태바의 `🚀 Vibecode` 버튼 클릭 → Walkthrough 스타일 webview 패널이 에디터 옆으로 슬라이드인. 설치된 모든 vibecode-* 확장(publisher 무관)의 commands 를 카드로 표시, 클릭 시 즉시 실행. 필터 + 자동 새로고침. |
+Each `product_v2.md` contains the selling message and thumbnail direction for an extension. Each `selling-thumbnail.png` is a raster thumbnail that can be used in marketplace pages, release notes, and product overview pages.
+

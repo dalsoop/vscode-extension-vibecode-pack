@@ -1,0 +1,17 @@
+.vscode/**
+.vscode-test/**
+.gitignore
+.gitlab-ci.yml
+.github/**
+.husky/**
+node_modules/**
+src/**
+tests/**
+scripts/**
+tsconfig*.json
+eslint.config.mjs
+package-lock.json
+**/*.vsix
+**/*.map
+**/*.ts
+!dist/**/*.js

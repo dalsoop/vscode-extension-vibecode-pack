@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "바이브코드 이미지 뷰어",
+  "ext.description": "PNG / JPG / WEBP / GIF / BMP / AVIF / HEIC / SVG / ICO 를 위한 커스텀 에디터 — EXIF 메타데이터, 카메라/렌즈 요약, GPS → 구글맵 링크, 전체 EXIF raw dump 포함.",
+  "editor.displayName": "바이브코드 이미지 뷰어"
+}

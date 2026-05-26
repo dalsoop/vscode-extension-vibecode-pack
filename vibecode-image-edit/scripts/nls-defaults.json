@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode Image Edit",
+  "ext.description": "Lightweight image editor for PNG/JPG/WEBP/GIF/BMP — chroma-key background removal, color eyedropper, and crop. Right-click any image to open. Output is always PNG, saved alongside the source as <name>-<YYMMDDHHMMSS>.png.",
+  "ext.category": "Vibecode"
+}

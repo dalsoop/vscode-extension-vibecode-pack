@@ -1,0 +1,34 @@
+{
+  "ext": {
+    "displayName": "Vibecode Markdown File Browser",
+    "description": "Explorer-side view that collects every Markdown file in the workspace and opens it as preview or source on click.",
+    "category": "Vibecode"
+  },
+  "view": {
+    "files": { "name": "Markdown Files" }
+  },
+  "config": {
+    "includeGlobs": "Glob patterns used to find Markdown documents.",
+    "excludeGlob": "Glob pattern used to exclude generated, dependency, and hidden directories.",
+    "openMode": "Default action when selecting a Markdown file.",
+    "openMode.preview": "Open the rendered Markdown preview.",
+    "openMode.source": "Open the source editor."
+  },
+  "commands": {
+    "refresh": "Vibecode - Refresh Markdown Files",
+    "openPreview": "Vibecode - Open Markdown Preview",
+    "openSource": "Vibecode - Open Markdown Source",
+    "revealInExplorer": "Vibecode - Reveal Markdown File",
+    "copyPath": "Vibecode - Copy Markdown Path",
+    "openSettings": "Vibecode - Open Markdown Browser Settings"
+  },
+  "runtime": {
+    "No workspace folder is open.": "No workspace folder is open.",
+    "No Markdown files found.": "No Markdown files found.",
+    "Scanning Markdown files...": "Scanning Markdown files...",
+    "Found {0} Markdown files.": "Found {0} Markdown files.",
+    "Markdown path copied.": "Markdown path copied.",
+    "Select a Markdown file first.": "Select a Markdown file first.",
+    "Could not open: {0}": "Could not open: {0}"
+  }
+}

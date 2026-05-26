@@ -1,0 +1,178 @@
+{
+  "name": "vibecode-md-file-browser",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "0.1.0",
+  "publisher": "dalsoop",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "npm run sync && node ../tools/build-ext.mjs --production --main-fields module,main",
+    "build:dev": "npm run sync && node ../tools/build-ext.mjs --main-fields module,main",
+    "watch": "node ../tools/build-ext.mjs --watch --main-fields module,main",
+    "sync": "node scripts/sync-contributions.mjs",
+    "sync:check": "node scripts/sync-contributions.mjs --check",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vscode:prepublish": "npm run build",
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license --baseContentUrl https://dalsoop.com"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "configuration": {
+      "title": "%ext.category%",
+      "properties": {
+        "vibecodeMdFileBrowser.includeGlobs": {
+          "type": "array",
+          "default": [
+            "**/*.md",
+            "**/*.mdx",
+            "**/*.markdown"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "%config.includeGlobs%"
+        },
+        "vibecodeMdFileBrowser.excludeGlob": {
+          "type": "string",
+          "default": "{**/node_modules/**,**/.git/**,**/dist/**,**/out/**,**/.next/**}",
+          "description": "%config.excludeGlob%"
+        },
+        "vibecodeMdFileBrowser.openMode": {
+          "type": "string",
+          "default": "preview",
+          "enum": [
+            "preview",
+            "source"
+          ],
+          "enumDescriptions": [
+            "%config.openMode.preview%",
+            "%config.openMode.source%"
+          ],
+          "description": "%config.openMode%"
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "vibecodeMdFileBrowser.files",
+          "name": "%view.files.name%",
+          "type": "tree"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vibecodeMdFileBrowser.copyPath",
+        "title": "%cmd.copyPath%",
+        "category": "%ext.category%",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "vibecodeMdFileBrowser.openPreview",
+        "title": "%cmd.openPreview%",
+        "category": "%ext.category%",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "vibecodeMdFileBrowser.openSettings",
+        "title": "%cmd.openSettings%",
+        "category": "%ext.category%",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "vibecodeMdFileBrowser.openSource",
+        "title": "%cmd.openSource%",
+        "category": "%ext.category%",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "vibecodeMdFileBrowser.refresh",
+        "title": "%cmd.refresh%",
+        "category": "%ext.category%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecodeMdFileBrowser.revealInExplorer",
+        "title": "%cmd.revealInExplorer%",
+        "category": "%ext.category%",
+        "icon": "$(folder-opened)"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "vibecodeMdFileBrowser.copyPath",
+          "when": "view == vibecodeMdFileBrowser.files && viewItem == markdownFile",
+          "group": "navigation@4"
+        },
+        {
+          "command": "vibecodeMdFileBrowser.openPreview",
+          "when": "view == vibecodeMdFileBrowser.files && viewItem == markdownFile",
+          "group": "navigation@1"
+        },
+        {
+          "command": "vibecodeMdFileBrowser.openSource",
+          "when": "view == vibecodeMdFileBrowser.files && viewItem == markdownFile",
+          "group": "navigation@2"
+        },
+        {
+          "command": "vibecodeMdFileBrowser.revealInExplorer",
+          "when": "view == vibecodeMdFileBrowser.files && viewItem == markdownFile",
+          "group": "navigation@3"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "vibecodeMdFileBrowser.openSettings",
+          "when": "view == vibecodeMdFileBrowser.files",
+          "group": "navigation@9"
+        },
+        {
+          "command": "vibecodeMdFileBrowser.refresh",
+          "when": "view == vibecodeMdFileBrowser.files",
+          "group": "navigation@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecodeMdFileBrowser.openPreview"
+        },
+        {
+          "command": "vibecodeMdFileBrowser.openSettings"
+        },
+        {
+          "command": "vibecodeMdFileBrowser.openSource"
+        },
+        {
+          "command": "vibecodeMdFileBrowser.refresh"
+        }
+      ]
+    }
+  },
+  "license": "MIT"
+}

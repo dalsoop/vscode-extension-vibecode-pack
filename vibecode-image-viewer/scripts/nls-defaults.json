@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode Image Viewer",
+  "ext.description": "Custom editor for PNG / JPG / WEBP / GIF / BMP / AVIF / HEIC / SVG / ICO with EXIF metadata, camera/lens summary, GPS-to-Google-Maps, and full raw EXIF dump.",
+  "editor.displayName": "Vibecode Image Viewer"
+}
