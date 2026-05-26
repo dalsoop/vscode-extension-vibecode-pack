@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "바이브코드 PDF 뷰어",
+  "ext.description": "PDF 커스텀 에디터 — 페이지 네비/줌, 메타데이터 사이드바, 목차(Outline), 페이지 단위 텍스트 추출. pdf.js 기반.",
+  "editor.displayName": "바이브코드 PDF 뷰어"
+}

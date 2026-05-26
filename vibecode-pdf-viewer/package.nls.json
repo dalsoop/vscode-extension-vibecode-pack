@@ -1,0 +1,5 @@
+{
+  "ext.displayName": "Vibecode PDF Viewer",
+  "ext.description": "Custom editor for PDF — page navigation, zoom, metadata sidebar, outline, and per-page text extraction. Powered by pdf.js.",
+  "editor.displayName": "Vibecode PDF Viewer"
+}

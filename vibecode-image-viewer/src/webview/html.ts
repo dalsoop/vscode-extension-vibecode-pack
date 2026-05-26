@@ -47,18 +47,42 @@ export function buildHtml(webview: vscode.Webview): string {
   </div>
 
   <div class="meta-panel" id="meta-panel">
-    <div class="cards" id="cards"></div>
-    <div class="raw-section">
-      <div class="raw-header">
-        <h3 id="raw-title"></h3>
-        <div class="raw-actions">
-          <button id="raw-toggle"></button>
-          <button id="raw-copy"></button>
-        </div>
-      </div>
-      <pre id="raw-body" class="raw-body"></pre>
-      <div id="raw-empty" class="raw-empty" style="display:none"></div>
+    <div class="tabbar" id="tabbar">
+      <button class="tab" data-tab="overview" id="tab-overview"></button>
+      <button class="tab" data-tab="exif" id="tab-exif"></button>
+      <button class="tab" data-tab="png-text" id="tab-png-text"></button>
+      <button class="tab" data-tab="raw" id="tab-raw"></button>
+      <span class="tabbar-spacer"></span>
+      <button class="settings-link" id="open-settings" title=""></button>
     </div>
+
+    <div class="tab-panel" id="panel-overview">
+      <div class="cards" id="cards-overview"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-exif">
+      <div class="cards" id="cards-exif"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-png-text">
+      <div class="png-text-list" id="png-text-list"></div>
+      <div class="raw-empty" id="png-text-empty" style="display:none"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-raw">
+      <div class="raw-section">
+        <div class="raw-header">
+          <h3 id="raw-title"></h3>
+          <div class="raw-actions">
+            <button id="raw-toggle"></button>
+            <button id="raw-copy"></button>
+          </div>
+        </div>
+        <pre id="raw-body" class="raw-body"></pre>
+        <div id="raw-empty" class="raw-empty" style="display:none"></div>
+      </div>
+    </div>
+
     <div class="footer-actions">
       <button id="action-reveal"></button>
       <button id="action-copy-path"></button>

@@ -1,0 +1,20 @@
+{
+  "No image selected.": "선택된 이미지가 없습니다.",
+  "Unsupported image format: {0}": "지원하지 않는 이미지 포맷: {0}",
+  "Saved: {0}": "저장됨: {0}",
+  "Save failed: {0}": "저장 실패: {0}",
+  "Loading…": "불러오는 중…",
+  "Drag a rectangle to add a redaction. Esc to cancel current drag.": "박스 드래그로 가림 영역 추가. Esc 로 현재 드래그 취소.",
+  "Style": "스타일",
+  "Blur": "블러",
+  "Pixelate": "픽셀화",
+  "Solid": "단색",
+  "Strength": "강도",
+  "Block size": "블록 크기",
+  "Color": "색",
+  "Regions": "영역 목록",
+  "No regions yet — drag on the image to add one.": "아직 영역이 없습니다 — 이미지에 박스를 드래그하세요.",
+  "Remove": "제거",
+  "Clear all": "모두 지우기",
+  "Save PNG": "PNG 저장"
+}

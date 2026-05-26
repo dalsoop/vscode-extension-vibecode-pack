@@ -1,0 +1,75 @@
+{
+  "name": "vibecode-image-redact",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "0.1.0",
+  "publisher": "dalsoop",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "npm run sync && node scripts/build-ext.mjs --production",
+    "watch": "node scripts/build-ext.mjs --watch",
+    "sync": "node scripts/sync-contributions.mjs",
+    "sync:check": "node scripts/sync-contributions.mjs --check",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vscode:prepublish": "npm run build",
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license --baseContentUrl https://dalsoop.com",
+    "build:dev": "npm run sync && node scripts/build-ext.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "vibecodeImageRedact.open",
+        "title": "%cmd.open%",
+        "category": "%ext.category%",
+        "icon": "$(shield)"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "vibecodeImageRedact.open",
+          "when": "resourceExtname == '.png' || resourceExtname == '.jpg' || resourceExtname == '.jpeg' || resourceExtname == '.webp' || resourceExtname == '.gif' || resourceExtname == '.bmp' || resourceExtname == '.PNG' || resourceExtname == '.JPG' || resourceExtname == '.JPEG'",
+          "group": "6_vibecode"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "vibecodeImageRedact.open",
+          "when": "resourceExtname == '.png' || resourceExtname == '.jpg' || resourceExtname == '.jpeg' || resourceExtname == '.webp' || resourceExtname == '.gif' || resourceExtname == '.bmp' || resourceExtname == '.PNG' || resourceExtname == '.JPG' || resourceExtname == '.JPEG'",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecodeImageRedact.open"
+        }
+      ]
+    }
+  },
+  "license": "MIT"
+}

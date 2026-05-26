@@ -1,0 +1,37 @@
+{
+  "nls": {
+    "ext.displayName": "Vibecode PDF Viewer",
+    "ext.description": "Custom editor for PDF — page navigation, zoom, metadata sidebar, outline, and per-page text extraction. Powered by pdf.js.",
+    "editor.displayName": "Vibecode PDF Viewer"
+  },
+  "runtime": {
+    "Loading…": "Loading…",
+    "Failed to load PDF: {0}": "Failed to load PDF: {0}",
+    "Page": "Page",
+    "of {0}": "of {0}",
+    "Previous page": "Previous page",
+    "Next page": "Next page",
+    "Fit width": "Fit width",
+    "Fit page": "Fit page",
+    "Zoom out": "Zoom out",
+    "Zoom in": "Zoom in",
+    "Copy page text": "Copy page text",
+    "Page text copied.": "Page text copied.",
+    "Metadata": "Metadata",
+    "Title": "Title",
+    "Author": "Author",
+    "Subject": "Subject",
+    "Keywords": "Keywords",
+    "Creator": "Creator",
+    "Producer": "Producer",
+    "Created": "Created",
+    "Modified": "Modified",
+    "PDF version": "PDF version",
+    "Pages": "Pages",
+    "Encrypted": "Encrypted",
+    "Yes": "Yes",
+    "No": "No",
+    "Outline": "Outline",
+    "No outline.": "No outline."
+  }
+}

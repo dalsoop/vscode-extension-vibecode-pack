@@ -1,0 +1,37 @@
+{
+  "nls": {
+    "ext.displayName": "바이브코드 PDF 뷰어",
+    "ext.description": "PDF 커스텀 에디터 — 페이지 네비/줌, 메타데이터 사이드바, 목차(Outline), 페이지 단위 텍스트 추출. pdf.js 기반.",
+    "editor.displayName": "바이브코드 PDF 뷰어"
+  },
+  "runtime": {
+    "Loading…": "불러오는 중…",
+    "Failed to load PDF: {0}": "PDF 로드 실패: {0}",
+    "Page": "페이지",
+    "of {0}": "/ {0}",
+    "Previous page": "이전 페이지",
+    "Next page": "다음 페이지",
+    "Fit width": "너비 맞춤",
+    "Fit page": "페이지 맞춤",
+    "Zoom out": "축소",
+    "Zoom in": "확대",
+    "Copy page text": "현재 페이지 텍스트 복사",
+    "Page text copied.": "페이지 텍스트를 복사했습니다.",
+    "Metadata": "메타데이터",
+    "Title": "제목",
+    "Author": "저자",
+    "Subject": "주제",
+    "Keywords": "키워드",
+    "Creator": "생성 도구",
+    "Producer": "생성기",
+    "Created": "생성일",
+    "Modified": "수정일",
+    "PDF version": "PDF 버전",
+    "Pages": "페이지 수",
+    "Encrypted": "암호화됨",
+    "Yes": "예",
+    "No": "아니오",
+    "Outline": "목차",
+    "No outline.": "목차 없음."
+  }
+}

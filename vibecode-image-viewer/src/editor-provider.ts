@@ -5,7 +5,23 @@ import { handle } from './handlers';
 import { isUnsupportedForPreview, readImageMeta } from './image-meta';
 import { getL10nBundle } from './l10n-bundle';
 import { buildHtml } from './webview/html';
-import type { InitMessage, WebviewToHost } from './messages';
+import type { InitMessage, UserSettings, ViewerTab, WebviewToHost } from './messages';
+
+const CONFIG_SECTION = 'vibecodeImageViewer';
+
+function readUserSettings(): UserSettings {
+  const cfg = vscode.workspace.getConfiguration(CONFIG_SECTION);
+  const defaultTabRaw = cfg.get<string>('defaultTab', 'overview');
+  const defaultTab: ViewerTab =
+    defaultTabRaw === 'exif' || defaultTabRaw === 'png-text' || defaultTabRaw === 'raw'
+      ? defaultTabRaw
+      : 'overview';
+  return {
+    defaultTab,
+    rawJsonExpanded: cfg.get<boolean>('rawJsonExpanded', true),
+    pngTextShowAiPromptFormatted: cfg.get<boolean>('pngTextShowAiPromptFormatted', true)
+  };
+}
 
 export const VIEW_TYPE = 'vibecodeImageViewer.editor';
 
@@ -73,8 +89,10 @@ export class ImageEditorProvider implements vscode.CustomReadonlyEditorProvider<
         gps: null,
         rawExif: {},
         metaSegments: {},
+        pngText: [],
         hasExif: false,
         metadataError: String((err as Error)?.message ?? err),
+        settings: readUserSettings(),
         l10n: getL10nBundle(),
       };
       panel.webview.postMessage(init);
@@ -90,8 +108,10 @@ export class ImageEditorProvider implements vscode.CustomReadonlyEditorProvider<
       gps: metaPayload.gps,
       rawExif: stripUnserializable(metaPayload.rawExif),
       metaSegments: stripSegments(metaPayload.metaSegments),
+      pngText: metaPayload.pngText,
       hasExif: metaPayload.hasExif,
       metadataError: metaPayload.error,
+      settings: readUserSettings(),
       l10n: getL10nBundle(),
     };
     panel.webview.postMessage(init);

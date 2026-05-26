@@ -13,7 +13,9 @@
     "Other",
     "Visualization"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "scripts": {
     "build": "npm run sync && node scripts/build-ext.mjs --production",
@@ -43,6 +45,41 @@
     "image-size": "^1.1.1"
   },
   "contributes": {
+    "configuration": {
+      "title": "%ext.category%",
+      "properties": {
+        "vibecodeImageViewer.defaultTab": {
+          "type": "string",
+          "default": "overview",
+          "enum": ["overview", "exif", "png-text", "raw"],
+          "enumDescriptions": [
+            "%config.defaultTab.overview%",
+            "%config.defaultTab.exif%",
+            "%config.defaultTab.pngText%",
+            "%config.defaultTab.raw%"
+          ],
+          "description": "%config.defaultTab%"
+        },
+        "vibecodeImageViewer.rawJsonExpanded": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.rawJsonExpanded%"
+        },
+        "vibecodeImageViewer.pngTextShowAiPromptFormatted": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.pngTextShowAiPromptFormatted%"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "vibecodeImageViewer.openSettings",
+        "title": "%cmd.openSettings%",
+        "category": "%ext.category%",
+        "icon": "$(gear)"
+      }
+    ],
     "customEditors": [
       {
         "viewType": "vibecodeImageViewer.editor",
