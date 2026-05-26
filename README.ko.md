@@ -127,6 +127,7 @@ HTML 파일을 더블클릭하면 VSCode 안에서 바로 프리뷰가 열립니
 | [vibecode-skills-viewer](vibecode-skills-viewer/) | AI 에이전트 스킬 통합 뷰어 |
 | [vibecode-vscode-extension-host-mcp-list](vibecode-vscode-extension-host-mcp-list/) | VSCode MCP 서버 목록 |
 | [vibecode-md-file-browser](vibecode-md-file-browser/) | Explorer 사이드 Markdown 트리 + 미리보기·원본 열기 |
+| [vibecode-image-viewer](vibecode-image-viewer/) | 이미지 커스텀 에디터 + EXIF 메타데이터 + 카메라 요약 + GPS→구글맵 |
 | [packages/vibecode-core](packages/vibecode-core/) | `.env` 암호화 전략 공용 코어 |
 
 ## 개발과 패키징

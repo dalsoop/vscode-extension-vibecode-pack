@@ -127,6 +127,7 @@ Browse Vibecode commands, AI agent skills, and MCP server definitions from a sin
 | [vibecode-skills-viewer](vibecode-skills-viewer/) | Unified AI agent skill viewer |
 | [vibecode-vscode-extension-host-mcp-list](vibecode-vscode-extension-host-mcp-list/) | VSCode MCP server list |
 | [vibecode-md-file-browser](vibecode-md-file-browser/) | Explorer-side Markdown tree with preview / source open |
+| [vibecode-image-viewer](vibecode-image-viewer/) | Image custom editor with EXIF metadata, camera summary, and GPS-to-Google-Maps |
 | [packages/vibecode-core](packages/vibecode-core/) | Shared `.env` crypto strategy core |
 
 ## Build and Package
