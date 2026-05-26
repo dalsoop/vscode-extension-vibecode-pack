@@ -1,5 +1,7 @@
 # Vibecode
 
+[English](README.md)
+
 VSCode 안에서 반복 작업을 줄이는 개발자 생산성 확장 모음입니다. AI 도구 셋업, HTML 프리뷰, 보안 `.env` 편집, 커밋 검사, 파일 액션, MCP 목록 확인까지 자주 쓰는 흐름을 우클릭과 사이드바로 정리합니다.
 
 ## 왜 Vibecode인가
