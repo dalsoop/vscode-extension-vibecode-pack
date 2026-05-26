@@ -1,0 +1,17 @@
+{
+  "ext.displayName": "바이브코드 마크다운 파일 브라우저",
+  "ext.description": "워크스페이스의 모든 Markdown 문서를 Explorer 사이드에 한 트리로 모아 보여주고, 클릭으로 미리보기 또는 원본을 엽니다.",
+  "ext.category": "바이브코드",
+  "view.files.name": "마크다운 파일",
+  "config.includeGlobs": "Markdown 문서를 찾을 때 사용하는 Glob 패턴 목록.",
+  "config.excludeGlob": "생성물·의존성·숨김 디렉터리 제외용 Glob 패턴.",
+  "config.openMode": "Markdown 파일 선택 시 기본 동작.",
+  "config.openMode.preview": "Markdown 미리보기 열기.",
+  "config.openMode.source": "원본 편집기 열기.",
+  "cmd.copyPath": "바이브코드 - 마크다운 경로 복사",
+  "cmd.openPreview": "바이브코드 - 마크다운 미리보기 열기",
+  "cmd.openSettings": "바이브코드 - 마크다운 브라우저 설정 열기",
+  "cmd.openSource": "바이브코드 - 마크다운 원본 열기",
+  "cmd.refresh": "바이브코드 - 마크다운 파일 새로고침",
+  "cmd.revealInExplorer": "바이브코드 - 마크다운 파일 Explorer 에서 보기"
+}

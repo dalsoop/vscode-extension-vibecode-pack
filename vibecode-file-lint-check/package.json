@@ -1,0 +1,164 @@
+{
+  "name": "vibecode-file-lint-check",
+  "displayName": "%ext.displayName%",
+  "description": "%ext.description%",
+  "version": "0.1.0",
+  "publisher": "dalsoop",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "l10n": "./l10n",
+  "categories": [
+    "Other",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "npm run sync && node ../tools/build-ext.mjs --production --main-fields module,main",
+    "build:dev": "npm run sync && node ../tools/build-ext.mjs --main-fields module,main",
+    "watch": "node ../tools/build-ext.mjs --watch --main-fields module,main",
+    "test": "node --test tests/*.test.mjs",
+    "sync": "node scripts/sync-contributions.mjs",
+    "sync:check": "node scripts/sync-contributions.mjs --check",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vscode:prepublish": "npm run build",
+    "package": "npx --yes @vscode/vsce@latest package --no-dependencies --allow-missing-repository --skip-license --baseContentUrl https://dalsoop.com"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "esbuild": "^0.28.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.59.4"
+  },
+  "contributes": {
+    "configuration": {
+      "title": "%ext.category%",
+      "properties": {
+        "vibecodeFileLint.checksRoot": {
+          "type": "string",
+          "default": ".vibecode/file-lint",
+          "description": "%config.checksRoot%"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vibecodeFileLint",
+          "title": "%view.container.title%",
+          "icon": "icons/lint.svg"
+        }
+      ]
+    },
+    "views": {
+      "vibecodeFileLint": [
+        {
+          "id": "vibecodeFileLint.checks",
+          "name": "%view.checks.name%",
+          "type": "tree"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vibecodeFileLint.openSettings",
+        "title": "%cmd.openSettings%",
+        "category": "%ext.category%",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "vibecodeFileLint.refreshChecks",
+        "title": "%cmd.refreshChecks%",
+        "category": "%ext.category%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "vibecodeFileLint.revealChecksFolder",
+        "title": "%cmd.revealChecksFolder%",
+        "category": "%ext.category%",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "vibecodeFileLint.runAllChecks",
+        "title": "%cmd.runAllChecks%",
+        "category": "%ext.category%",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "vibecodeFileLint.runCheck",
+        "title": "%cmd.runCheck%",
+        "category": "%ext.category%",
+        "icon": "$(play)"
+      },
+      {
+        "command": "vibecodeFileLint.scaffoldDefaultChecks",
+        "title": "%cmd.scaffoldDefaultChecks%",
+        "category": "%ext.category%",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "vibecodeFileLint.showCheckOutput",
+        "title": "%cmd.showCheckOutput%",
+        "category": "%ext.category%"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "vibecodeFileLint.openSettings",
+          "when": "view == vibecodeFileLint.checks",
+          "group": "navigation@9"
+        },
+        {
+          "command": "vibecodeFileLint.refreshChecks",
+          "when": "view == vibecodeFileLint.checks",
+          "group": "navigation@2"
+        },
+        {
+          "command": "vibecodeFileLint.revealChecksFolder",
+          "when": "view == vibecodeFileLint.checks",
+          "group": "navigation@3"
+        },
+        {
+          "command": "vibecodeFileLint.runAllChecks",
+          "when": "view == vibecodeFileLint.checks",
+          "group": "navigation@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "vibecodeFileLint.runCheck",
+          "when": "view == vibecodeFileLint.checks && viewItem == fileLintCheck",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vibecodeFileLint.openSettings"
+        },
+        {
+          "command": "vibecodeFileLint.refreshChecks"
+        },
+        {
+          "command": "vibecodeFileLint.revealChecksFolder"
+        },
+        {
+          "command": "vibecodeFileLint.runAllChecks"
+        },
+        {
+          "command": "vibecodeFileLint.scaffoldDefaultChecks"
+        }
+      ]
+    }
+  }
+}

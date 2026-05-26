@@ -1,0 +1,8 @@
+{
+  "No workspace folder open.": "열린 워크스페이스 폴더가 없습니다.",
+  "Click to scaffold default checks": "기본 체크를 생성하려면 클릭하세요",
+  "parse error": "구문 오류",
+  "Show Last Output": "마지막 출력 보기",
+  "Scaffolded {0} default check(s).": "기본 체크 {0}개를 생성했습니다.",
+  "Default checks already present.": "기본 체크가 이미 존재합니다."
+}

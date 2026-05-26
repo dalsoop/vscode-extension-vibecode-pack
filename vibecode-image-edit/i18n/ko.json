@@ -1,0 +1,35 @@
+{
+  "ext": {
+    "displayName": "바이브코드 이미지 편집",
+    "description": "PNG/JPG/WEBP/GIF/BMP 를 위한 경량 이미지 에디터 — 크로마키 배경 제거, 색 아이드롭퍼, 크롭. 이미지 우클릭으로 열기. 결과는 원본 옆에 `<이름>-<YYMMDDHHMMSS>.png` 로 항상 PNG 저장.",
+    "category": "바이브코드"
+  },
+  "commands": {
+    "open": "바이브코드 이미지 - 편집"
+  },
+  "runtime": {
+    "No image selected.": "선택된 이미지가 없습니다.",
+    "Unsupported image format: {0}": "지원하지 않는 이미지 포맷: {0}",
+    "Saved: {0}": "저장됨: {0}",
+    "Save failed: {0}": "저장 실패: {0}",
+    "Copied to clipboard.": "클립보드에 복사했습니다.",
+    "Eyedropper": "아이드롭퍼",
+    "Chroma Key": "크로마키",
+    "Crop": "크롭",
+    "Loading…": "불러오는 중…",
+    "Hex": "Hex",
+    "RGB": "RGB",
+    "HSL": "HSL",
+    "Hover the image to sample, click to copy hex.": "이미지 위에서 마우스로 색 확인, 클릭하면 hex 복사.",
+    "Target color": "대상 색",
+    "Pick from image": "이미지에서 선택",
+    "Tolerance": "허용 오차",
+    "Soften edges": "경계 부드럽게",
+    "Save PNG": "PNG 저장",
+    "Reset": "초기화",
+    "Drag a rectangle on the image. Esc to clear.": "이미지 위에서 박스 드래그. Esc 로 취소.",
+    "Selection: {0} × {1} px": "선택 영역: {0} × {1} px",
+    "No selection.": "선택 영역 없음.",
+    "Crop & Save PNG": "크롭 + PNG 저장"
+  }
+}

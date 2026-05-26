@@ -1,0 +1,41 @@
+{
+  "ext": {
+    "displayName": "바이브코드 기본 에디터 매니저",
+    "description": "VSCode 의 workbench.editorAssociations 를 사이드바에서 관리 — 설치된 모든 커스텀 에디터(viewType + selector)를 보고, 현재 패턴 → 에디터 매핑을 확인하고, Workspace / User 설정에 매핑을 추가/제거.",
+    "category": "바이브코드"
+  },
+  "viewContainers": {
+    "vibecode": "Vibecode"
+  },
+  "views": {
+    "vibecodeDefaultEditor.sidebar": "기본 에디터"
+  },
+  "commands": {},
+  "runtime": {
+    "Current Mappings": "현재 매핑",
+    "Add Mapping": "매핑 추가",
+    "Installed Custom Editors": "설치된 커스텀 에디터",
+    "No mappings configured. VSCode is using priority-based defaults.": "설정된 매핑 없음. VSCode 기본 우선순위로 동작 중.",
+    "No installed custom editors found.": "설치된 커스텀 에디터가 없습니다.",
+    "Pattern (e.g. *.png, **/*.svg, .env)": "패턴 (예- *.png, **/*.svg, .env)",
+    "Editor": "에디터",
+    "Add": "추가",
+    "Remove": "제거",
+    "Refresh": "새로고침",
+    "Workspace settings": "Workspace 설정",
+    "User settings": "User 설정",
+    "Save to which scope?": "어디에 저장할까요?",
+    "Scope: writes the mapping to .vscode/settings.json in this workspace.": "이 워크스페이스의 .vscode/settings.json 에 기록합니다.",
+    "Scope: writes the mapping to your global user settings.": "사용자 전역 설정에 기록합니다.",
+    "Saved to {0}.": "{0} 에 저장했습니다.",
+    "Removed mapping {0}.": "매핑 {0} 을(를) 제거했습니다.",
+    "Pattern is required.": "패턴을 입력하세요.",
+    "Editor is required.": "에디터를 선택하세요.",
+    "Built-in text editor (default)": "내장 텍스트 에디터 (default)",
+    "Source: {0}": "출처: {0}",
+    "Patterns:": "패턴:",
+    "Priority: {0}": "우선순위: {0}",
+    "Open the underlying setting": "raw 설정 열기",
+    "Cancel": "취소"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "ext.displayName": "Vibecode Default Editor Manager",
+  "ext.description": "Sidebar manager for VSCode's workbench.editorAssociations — see every installed custom editor (viewType + selectors), inspect current pattern → editor mappings, and add/remove mappings to Workspace or User settings.",
+  "ext.category": "Vibecode",
+  "viewContainer.vibecode": "Vibecode",
+  "view.vibecodeDefaultEditor.sidebar": "Default Editor"
+}

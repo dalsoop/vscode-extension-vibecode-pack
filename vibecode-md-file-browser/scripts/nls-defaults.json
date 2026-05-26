@@ -1,0 +1,11 @@
+{
+  "ext.displayName": "Vibecode Markdown File Browser",
+  "ext.description": "Explorer-side view that collects every Markdown file in the workspace and opens it as preview or source on click.",
+  "ext.category": "Vibecode",
+  "view.files.name": "Markdown Files",
+  "config.includeGlobs": "Glob patterns used to find Markdown documents.",
+  "config.excludeGlob": "Glob pattern used to exclude generated, dependency, and hidden directories.",
+  "config.openMode": "Default action when selecting a Markdown file.",
+  "config.openMode.preview": "Open the rendered Markdown preview.",
+  "config.openMode.source": "Open the source editor."
+}

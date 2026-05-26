@@ -1,0 +1,6 @@
+{
+  "ext.displayName": "바이브코드 이미지 편집",
+  "ext.description": "PNG/JPG/WEBP/GIF/BMP 를 위한 경량 이미지 에디터 — 크로마키 배경 제거, 색 아이드롭퍼, 크롭. 이미지 우클릭으로 열기. 결과는 원본 옆에 `<이름>-<YYMMDDHHMMSS>.png` 로 항상 PNG 저장.",
+  "ext.category": "바이브코드",
+  "cmd.open": "바이브코드 이미지 - 편집"
+}

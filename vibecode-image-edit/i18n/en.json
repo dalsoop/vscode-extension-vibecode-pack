@@ -1,0 +1,35 @@
+{
+  "ext": {
+    "displayName": "Vibecode Image Edit",
+    "description": "Lightweight image editor for PNG/JPG/WEBP/GIF/BMP — chroma-key background removal, color eyedropper, and crop. Right-click any image to open. Output is always PNG, saved alongside the source as <name>-<YYMMDDHHMMSS>.png.",
+    "category": "Vibecode"
+  },
+  "commands": {
+    "open": "Vibecode Image - Edit"
+  },
+  "runtime": {
+    "No image selected.": "No image selected.",
+    "Unsupported image format: {0}": "Unsupported image format: {0}",
+    "Saved: {0}": "Saved: {0}",
+    "Save failed: {0}": "Save failed: {0}",
+    "Copied to clipboard.": "Copied to clipboard.",
+    "Eyedropper": "Eyedropper",
+    "Chroma Key": "Chroma Key",
+    "Crop": "Crop",
+    "Loading…": "Loading…",
+    "Hex": "Hex",
+    "RGB": "RGB",
+    "HSL": "HSL",
+    "Hover the image to sample, click to copy hex.": "Hover the image to sample, click to copy hex.",
+    "Target color": "Target color",
+    "Pick from image": "Pick from image",
+    "Tolerance": "Tolerance",
+    "Soften edges": "Soften edges",
+    "Save PNG": "Save PNG",
+    "Reset": "Reset",
+    "Drag a rectangle on the image. Esc to clear.": "Drag a rectangle on the image. Esc to clear.",
+    "Selection: {0} × {1} px": "Selection: {0} × {1} px",
+    "No selection.": "No selection.",
+    "Crop & Save PNG": "Crop & Save PNG"
+  }
+}
