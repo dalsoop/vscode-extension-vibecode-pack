@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Vibecode VSCode Host — MCP List</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-2: #161b22;
+    --bg-3: #1c2128;
+    --bg-card: #1f2530;
+    --fg: #e6edf3;
+    --muted: #7d8590;
+    --line: #30363d;
+    --user: #38bdf8;
+    --workspace: #a78bfa;
+    --extension: #fbbf24;
+    --gold: #f59e0b;
+    --green: #3fb950;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .card {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    background:
+      radial-gradient(circle at 80% 15%, rgba(56,189,248,0.15), transparent 50%),
+      radial-gradient(circle at 0% 100%, rgba(167,139,250,0.12), transparent 50%),
+      var(--bg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .header { padding: 40px 64px 14px; }
+  .badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid var(--user);
+    color: var(--user);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .title {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 8px;
+    letter-spacing: -1px;
+  }
+  .title .em { color: var(--gold); }
+  .subtitle { font-size: 19px; color: var(--muted); margin: 0; }
+  .subtitle .ts { color: var(--muted); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+
+  .stage {
+    margin: 16px 64px 0;
+    height: 470px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+
+  /* Left: tree */
+  .panel {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .p-tab {
+    padding: 12px 16px;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .p-tab .actions { display: flex; gap: 8px; }
+  .p-tab .actions span {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--fg);
+  }
+  .tree-body {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  .group {
+    margin-bottom: 12px;
+  }
+  .group-head {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 4px 6px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .group-head.user { background: rgba(56,189,248,0.15); color: var(--user); }
+  .group-head.workspace { background: rgba(167,139,250,0.15); color: var(--workspace); }
+  .group-head.extension { background: rgba(251,191,36,0.15); color: var(--extension); }
+  .mcp-item {
+    display: grid;
+    grid-template-columns: 14px 1fr 26px;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+  }
+  .mcp-item:hover, .mcp-item.sel {
+    background: rgba(255,255,255,0.04);
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .dot.green { background: var(--green); box-shadow: 0 0 6px rgba(63,185,113,0.6); }
+  .dot.amber { background: var(--gold); }
+  .copy-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: var(--bg-3);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 0 8px rgba(245,158,11,0.3);
+  }
+
+  /* Right: detail view */
+  .detail {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .d-tab {
+    padding: 12px 16px;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .d-tab .name { color: var(--gold); font-family: ui-monospace, monospace; font-weight: 700;}
+  .d-body {
+    padding: 18px 22px;
+    flex: 1;
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    line-height: 1.85;
+  }
+  .d-body .k { color: var(--muted); display: inline-block; min-width: 80px; }
+  .d-body .v { color: var(--fg); }
+  .d-body .v.dim { color: var(--muted); }
+  .d-body .v.path { color: var(--user); }
+
+  .copy-banner {
+    margin: 0 22px 18px;
+    background: rgba(245,158,11,0.10);
+    border: 1px dashed var(--gold);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12.5px;
+  }
+  .copy-banner .ic {
+    width: 32px; height: 32px;
+    background: var(--gold);
+    color: #1f2937;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .copy-banner .lbl { color: var(--gold); font-weight: 700; }
+  .copy-banner .cmd {
+    font-family: ui-monospace, monospace;
+    color: var(--fg);
+    background: var(--bg);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 4px;
+  }
+
+  /* Footer */
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+  }
+  .hook { font-size: 23px; font-weight: 700; margin: 0; }
+  .hook .em { color: var(--gold); }
+  .wordmark { font-size: 13px; color: var(--muted); letter-spacing: 2px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="badge">VIBECODE · HOST MCP LIST</div>
+    <h1 class="title">VSCode 호스트의 모든 MCP, <span class="em">한 트리.</span></h1>
+    <p class="subtitle">User · Workspace · Extension — <span class="ts">model context protocol</span></p>
+  </div>
+
+  <div class="stage">
+    <div class="panel">
+      <div class="p-tab">
+        <span>MCP 서버</span>
+        <div class="actions">
+          <span title="user mcp.json">▸ user</span>
+          <span title="workspace mcp.json">▸ ws</span>
+          <span title="refresh">↻</span>
+        </div>
+      </div>
+      <div class="tree-body">
+        <div class="group">
+          <div class="group-head user">▾ USER</div>
+          <div class="mcp-item">
+            <span class="dot green"></span>
+            <span>filesystem</span>
+            <span class="copy-btn">⎘</span>
+          </div>
+          <div class="mcp-item sel">
+            <span class="dot green"></span>
+            <span>github</span>
+            <span class="copy-btn">⎘</span>
+          </div>
+          <div class="mcp-item">
+            <span class="dot amber"></span>
+            <span>memory</span>
+            <span class="copy-btn">⎘</span>
+          </div>
+        </div>
+        <div class="group">
+          <div class="group-head workspace">▾ WORKSPACE</div>
+          <div class="mcp-item">
+            <span class="dot green"></span>
+            <span>project-tools</span>
+            <span class="copy-btn">⎘</span>
+          </div>
+        </div>
+        <div class="group">
+          <div class="group-head extension">▾ EXTENSION</div>
+          <div class="mcp-item">
+            <span class="dot green"></span>
+            <span style="font-size: 12.5px;">dalsoop.vibecode-foo / bar</span>
+            <span class="copy-btn">⎘</span>
+          </div>
+          <div class="mcp-item">
+            <span class="dot green"></span>
+            <span style="font-size: 12.5px;">other-pub.tool-mcp / baz</span>
+            <span class="copy-btn">⎘</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail">
+      <div class="d-tab">
+        <span>MCP 서버 상세</span>
+        <span class="name">github</span>
+      </div>
+      <div class="d-body">
+        <div><span class="k">name:</span> <span class="v">github</span></div>
+        <div><span class="k">command:</span> <span class="v">npx</span></div>
+        <div><span class="k">args:</span> <span class="v">[ "-y", "@modelcontextprotocol/server-github" ]</span></div>
+        <div><span class="k">env:</span> <span class="v dim">GITHUB_TOKEN=•••</span></div>
+        <div><span class="k">cwd:</span> <span class="v dim">(default)</span></div>
+        <div><span class="k">source:</span> <span class="v path">~/.../Code/User/mcp.json:12</span></div>
+      </div>
+      <div class="copy-banner">
+        <div class="ic">⎘</div>
+        <div>
+          <div class="lbl">명령어 복사</div>
+          <div style="margin-top: 2px; color: var(--muted)">→ 클립보드로 <span class="cmd">npx -y @modelcontextprotocol/server-github</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="hook">다른 도구 (Claude Desktop · Cline …) 에 그대로 <span class="em">붙여넣기.</span></p>
+    <div class="wordmark">VIBECODE / HOST · MCP · LIST</div>
+  </div>
+</div>
+</body>
+</html>

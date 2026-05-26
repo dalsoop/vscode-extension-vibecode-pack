@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Vibecode .env Viewer Encrypted</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --bg-2: #11161f;
+    --bg-3: #1a1f2b;
+    --fg: #e6edf3;
+    --muted: #7d8590;
+    --line: #2d3340;
+    --gold: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --accent: #38bdf8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .card {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    background:
+      radial-gradient(circle at 75% 15%, rgba(245,158,11,0.18), transparent 55%),
+      radial-gradient(circle at 0% 100%, rgba(16,185,129,0.10), transparent 50%),
+      var(--bg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .header { padding: 44px 64px 18px; }
+  .badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .title {
+    font-size: 46px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 10px;
+    letter-spacing: -1px;
+  }
+  .title .gold { color: var(--gold); }
+  .subtitle {
+    font-size: 20px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .stage {
+    margin: 16px 64px 0;
+    height: 460px;
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    align-items: center;
+  }
+
+  /* Editor: encrypted view */
+  .editor {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 1px rgba(245,158,11,0.4), 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .editor::before {
+    content: "▣";
+    position: absolute;
+    top: -16px;
+    right: 16px;
+    font-size: 32px;
+    background: var(--bg-2);
+    border: 1px solid var(--gold);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ed-tab {
+    padding: 12px 16px;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ed-tab .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .ed-body { padding: 14px 18px; }
+  .kv {
+    display: grid;
+    grid-template-columns: 130px 1fr 80px;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .kv:last-child { border-bottom: 0; }
+  .key { font-family: ui-monospace, monospace; font-size: 13px; color: var(--fg); }
+  .paste-input {
+    background: var(--bg-3);
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--muted);
+    font-size: 11.5px;
+    font-family: ui-monospace, monospace;
+    text-align: center;
+  }
+  .state { text-align: right; font-size: 12px; }
+  .state.set { color: var(--green); font-family: ui-monospace, monospace; }
+  .state.empty { color: var(--muted); }
+
+  /* Connector */
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold);
+  }
+  .arrow .glyph { font-size: 40px; }
+  .arrow .label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* Disk: ciphertext */
+  .disk {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .disk-title {
+    font-size: 11.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .disk-title::before { content: "▤"; font-size: 18px; }
+  .cipher-line {
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    padding: 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cipher-line .k { color: var(--accent); }
+  .cipher-line .prefix { color: var(--gold); font-weight: 700; }
+  .cipher-line .cipher { color: #c084fc; }
+  .compat {
+    margin-top: 18px;
+    padding: 12px;
+    border: 1px dashed var(--green);
+    border-radius: 8px;
+    background: rgba(16,185,129,0.06);
+  }
+  .compat-title {
+    color: var(--green);
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .compat-cmd {
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    color: var(--fg);
+  }
+  .compat-cmd .pr { color: var(--muted); }
+
+  /* Footer */
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 28px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid var(--line);
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
+  }
+  .hook {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .hook .em { color: var(--gold); }
+  .wordmark { font-size: 14px; color: var(--muted); letter-spacing: 2px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="badge">VIBECODE · ENV VIEWER · ENCRYPTED</div>
+    <h1 class="title">값은 안 보이고,<br/>디스크엔 <span class="gold">암호문만.</span></h1>
+    <p class="subtitle">Paste-only · Disk-encrypted · dotenvx-compatible.</p>
+  </div>
+
+  <div class="stage">
+    <div class="editor">
+      <div class="ed-tab">
+        <span class="dot"></span>
+        <span>▦ .env (Encrypted)</span>
+      </div>
+      <div class="ed-body">
+        <div class="kv">
+          <span class="key">DATABASE_URL</span>
+          <span class="paste-input">⌘V to paste</span>
+          <span class="state set">••• (set)</span>
+        </div>
+        <div class="kv">
+          <span class="key">STRIPE_SECRET</span>
+          <span class="paste-input">⌘V to paste</span>
+          <span class="state set">••• (set)</span>
+        </div>
+        <div class="kv">
+          <span class="key">API_KEY</span>
+          <span class="paste-input">⌘V to paste</span>
+          <span class="state empty">(empty)</span>
+        </div>
+        <div class="kv">
+          <span class="key">DEBUG</span>
+          <span class="paste-input">⌘V to paste</span>
+          <span class="state set">••• (set)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">
+      <div class="glyph">▣</div>
+      <div class="label">encrypt<br/>(secp256k1)</div>
+    </div>
+
+    <div class="disk">
+      <div class="disk-title">.env on disk</div>
+      <div class="cipher-line"><span class="k">DATABASE_URL=</span><span class="prefix">encrypted:</span><span class="cipher">BAa1Z7kqL9...</span></div>
+      <div class="cipher-line"><span class="k">STRIPE_SECRET=</span><span class="prefix">encrypted:</span><span class="cipher">BAxR2pH4mz...</span></div>
+      <div class="cipher-line"><span class="k">DEBUG=</span><span class="prefix">encrypted:</span><span class="cipher">BAcLn0qWyf...</span></div>
+      <div class="cipher-line"><span class="k">DOTENV_PUBLIC_KEY=</span><span style="color:var(--fg)">0395f8c2...</span></div>
+
+      <div class="compat">
+        <div class="compat-title">↻ RUNTIME · dotenvx 호환</div>
+        <div class="compat-cmd"><span class="pr">$</span> npx dotenvx run -- node app.js</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="hook">시크릿이 어깨너머로도 <span class="em">디스크에서도</span> 안 샌다.</p>
+    <div class="wordmark">VIBECODE / ENV · ENCRYPTED</div>
+  </div>
+</div>
+</body>
+</html>
