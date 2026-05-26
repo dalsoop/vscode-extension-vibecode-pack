@@ -128,6 +128,7 @@ Browse Vibecode commands, AI agent skills, and MCP server definitions from a sin
 | [vibecode-vscode-extension-host-mcp-list](vibecode-vscode-extension-host-mcp-list/) | VSCode MCP server list |
 | [vibecode-md-file-browser](vibecode-md-file-browser/) | Explorer-side Markdown tree with preview / source open |
 | [vibecode-image-viewer](vibecode-image-viewer/) | Image custom editor with EXIF metadata, camera summary, and GPS-to-Google-Maps |
+| [vibecode-image-edit](vibecode-image-edit/) | Right-click image editor — eyedropper, chroma-key background removal, and crop. Saves as `<name>-<YYMMDDHHMMSS>.png` |
 | [vibecode-default-editor-manager](vibecode-default-editor-manager/) | Sidebar manager for `workbench.editorAssociations` — installed custom editors, current mappings, add/remove with scope picker |
 | [packages/vibecode-core](packages/vibecode-core/) | Shared `.env` crypto strategy core |
 

@@ -128,6 +128,7 @@ HTML 파일을 더블클릭하면 VSCode 안에서 바로 프리뷰가 열립니
 | [vibecode-vscode-extension-host-mcp-list](vibecode-vscode-extension-host-mcp-list/) | VSCode MCP 서버 목록 |
 | [vibecode-md-file-browser](vibecode-md-file-browser/) | Explorer 사이드 Markdown 트리 + 미리보기·원본 열기 |
 | [vibecode-image-viewer](vibecode-image-viewer/) | 이미지 커스텀 에디터 + EXIF 메타데이터 + 카메라 요약 + GPS→구글맵 |
+| [vibecode-image-edit](vibecode-image-edit/) | 우클릭 이미지 에디터 — 아이드롭퍼·크로마키 배경 제거·크롭. `<이름>-<YYMMDDHHMMSS>.png` 로 저장 |
 | [vibecode-default-editor-manager](vibecode-default-editor-manager/) | `workbench.editorAssociations` 사이드바 매니저 — 설치된 커스텀 에디터·현재 매핑·scope 선택 추가/제거 |
 | [packages/vibecode-core](packages/vibecode-core/) | `.env` 암호화 전략 공용 코어 |
 

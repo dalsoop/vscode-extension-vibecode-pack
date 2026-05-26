@@ -4,9 +4,7 @@ export type MenuLocation =
   | 'explorer/context'
   | 'editor/context'
   | 'editor/title'
-  | 'editor/title/context'
-  | 'view/title'
-  | 'view/item/context';
+  | 'editor/title/context';
 
 export interface MenuContribution {
   where: MenuLocation;
@@ -40,4 +38,24 @@ export const COMMAND_PREFIX = 'vibecodeDefaultEditor';
 
 export function fullCommandId(id: string): string {
   return `${COMMAND_PREFIX}.${id}`;
+}
+
+/**
+ * Name-part prefix used to identify sibling extensions. VSCode extension ids are
+ * `<publisher>.<name>` — we match on the `<name>` part so any publisher works
+ * (dalsoop.vibecode-foo, otheruser.vibecode-bar, ...).
+ */
+export const VIBECODE_NAME_PREFIX = 'vibecode-';
+
+/**
+ * Return the `<name>` part of `<publisher>.<name>`, or '' if malformed.
+ */
+export function extensionNamePart(extensionId: string): string {
+  const dot = extensionId.indexOf('.');
+  return dot === -1 ? '' : extensionId.slice(dot + 1);
+}
+
+/** True if this extension id matches the vibecode-* naming convention (any publisher). */
+export function isVibecodeExtensionId(extensionId: string): boolean {
+  return extensionNamePart(extensionId).startsWith(VIBECODE_NAME_PREFIX);
 }
