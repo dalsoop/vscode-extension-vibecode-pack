@@ -7,14 +7,10 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const EXTENSION_JS = join(__dirname, '..', 'dist', 'extension.js');
 
-// Expected contributions — must stay in sync with src/apps/*/manifest.ts and
-// src/extension.ts. If the extension grows views or inline-registered commands,
-// add them here.
 const EXPECTED_VIEWS = [
   'vibecodeFileLint.checks',
 ];
 const EXPECTED_COMMANDS = [
-  // From src/apps/*/manifest.ts plus inline commands in src/extension.ts.
   'vibecodeFileLint.openSettings',
   'vibecodeFileLint.revealChecksFolder',
   'vibecodeFileLint.refreshChecks',

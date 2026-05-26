@@ -20,7 +20,6 @@ async function readManifest(appDir) {
   const src = await fs.readFile(file, 'utf8');
   const match = src.match(/export const manifest[^=]*=\s*(\{[\s\S]*?\n\});/);
   if (!match) throw new Error(`Cannot parse manifest in ${file}`);
-  // Manifests are pure data literals — safe to eval in a Function sandbox.
   return new Function(`return (${match[1]});`)();
 }
 
@@ -83,15 +82,11 @@ function buildDefaultNls(manifests, defaults) {
 }
 
 function buildLocaleNls(localeData, defaults, manifests) {
-  // Start from English defaults so VSCode can fall back per-key if a translation is missing.
   const out = { ...defaults };
   for (const m of manifests) out[nlsKeyForCommand(m.id)] = m.title;
   if (localeData.commands) {
     for (const [id, v] of Object.entries(localeData.commands)) out[nlsKeyForCommand(id)] = v;
   }
-  // Flatten every other non-special top-level block into dotted nls keys
-  // (`view.container.title`, `ext.displayName`, `config.someKey`, etc.) so the
-  // sync script doesn't need to know about each section by name.
   for (const [section, value] of Object.entries(localeData)) {
     if (section === 'commands' || section === 'runtime') continue;
     flattenInto(out, value, section);
@@ -140,17 +135,14 @@ async function main() {
   const { commands, menus } = buildContributes(manifests);
   const defaults = await readJson(DEFAULTS_PATH);
 
-  // package.json
   const pkgRaw = await fs.readFile(PKG_PATH, 'utf8');
   const pkg = JSON.parse(pkgRaw);
   pkg.contributes = { ...(pkg.contributes ?? {}), commands, menus };
   const nextPkg = JSON.stringify(pkg, null, 2) + '\n';
 
-  // Default NLS
   const defaultNls = buildDefaultNls(manifests, defaults);
   const nextDefaultNls = JSON.stringify(defaultNls, null, 2) + '\n';
 
-  // Per-locale NLS + l10n bundles
   const locales = await listLocales();
   const localeOutputs = [];
   for (const locale of locales) {
