@@ -38,7 +38,7 @@ export const CLIENT_SCRIPT = String.raw`
     document.querySelectorAll('[data-bg="dark"]').forEach(b => b.textContent = l10n.bgDark);
     document.querySelectorAll('[data-bg="light"]').forEach(b => b.textContent = l10n.bgLight);
     $('raw-title').textContent = l10n.rawTitle;
-    $('raw-toggle').textContent = l10n.showAll;
+    $('raw-toggle').textContent = l10n.hide;
     $('raw-copy').textContent = l10n.copyAsJson;
     $('action-reveal').textContent = l10n.openFolder;
     $('action-copy-path').textContent = l10n.copyPath;
@@ -110,9 +110,62 @@ export const CLIENT_SCRIPT = String.raw`
       cards.push(c);
     }
 
+    if (s.metaSegments) {
+      const segOrder = ['ifd0', 'exif', 'gps', 'interop', 'thumbnail', 'iptc', 'xmp', 'icc', 'jfif', 'ihdr'];
+      const seen = new Set();
+      const renderSegment = (key) => {
+        seen.add(key);
+        const obj = s.metaSegments[key];
+        if (!obj || typeof obj !== 'object') return;
+        const rows = [];
+        for (const [k, v] of Object.entries(obj)) {
+          rows.push([k, formatValue(v)]);
+        }
+        if (rows.length) cards.push(card(segmentLabel(key, l), rows));
+      };
+      for (const key of segOrder) {
+        if (key in s.metaSegments) renderSegment(key);
+      }
+      for (const key of Object.keys(s.metaSegments)) {
+        if (!seen.has(key)) renderSegment(key);
+      }
+    }
+
     const host = $('cards');
     host.innerHTML = '';
     cards.forEach(el => host.appendChild(el));
+  }
+
+  function segmentLabel(key, l) {
+    const map = {
+      ifd0: l.segIfd0 || 'TIFF / IFD0',
+      exif: l.segExif || 'EXIF',
+      gps: l.segGps || 'GPS',
+      interop: l.segInterop || 'Interop',
+      thumbnail: l.segThumbnail || 'Thumbnail',
+      iptc: l.segIptc || 'IPTC',
+      xmp: l.segXmp || 'XMP',
+      icc: l.segIcc || 'ICC Profile',
+      jfif: l.segJfif || 'JFIF',
+      ihdr: l.segIhdr || 'PNG / IHDR'
+    };
+    return map[key] || key.toUpperCase();
+  }
+
+  function formatValue(v) {
+    if (v == null) return '—';
+    if (typeof v === 'string') return v.length > 200 ? v.slice(0, 200) + '…' : v;
+    if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+    if (Array.isArray(v)) return v.length <= 8 ? v.map(formatValue).join(', ') : v.slice(0, 8).map(formatValue).join(', ') + ' …(+' + (v.length - 8) + ')';
+    if (typeof v === 'object') {
+      try {
+        const s = JSON.stringify(v);
+        return s.length > 200 ? s.slice(0, 200) + '…' : s;
+      } catch {
+        return String(v);
+      }
+    }
+    return String(v);
   }
 
   function card(title, rows) {
@@ -148,6 +201,8 @@ export const CLIENT_SCRIPT = String.raw`
     $('raw-toggle').style.display = '';
     $('raw-copy').style.display = '';
     empty.style.display = 'none';
+    body.style.display = 'block';
+    $('raw-toggle').textContent = s.l10n.hide;
     body.textContent = JSON.stringify(s.rawExif, null, 2);
   }
 
@@ -224,9 +279,9 @@ export const CLIENT_SCRIPT = String.raw`
 
     $('raw-toggle').addEventListener('click', () => {
       const body = $('raw-body');
-      const open = body.style.display !== 'none';
-      body.style.display = open ? 'none' : 'block';
-      $('raw-toggle').textContent = open ? l10n.showAll : l10n.hide;
+      const isOpen = body.style.display !== 'none';
+      body.style.display = isOpen ? 'none' : 'block';
+      $('raw-toggle').textContent = isOpen ? l10n.showAll : l10n.hide;
     });
     $('raw-copy').addEventListener('click', () => {
       const text = JSON.stringify(state.rawExif, null, 2);

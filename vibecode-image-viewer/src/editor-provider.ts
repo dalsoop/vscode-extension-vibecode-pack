@@ -72,6 +72,7 @@ export class ImageEditorProvider implements vscode.CustomReadonlyEditorProvider<
         camera: emptyCamera(),
         gps: null,
         rawExif: {},
+        metaSegments: {},
         hasExif: false,
         metadataError: String((err as Error)?.message ?? err),
         l10n: getL10nBundle(),
@@ -88,12 +89,25 @@ export class ImageEditorProvider implements vscode.CustomReadonlyEditorProvider<
       camera: metaPayload.camera,
       gps: metaPayload.gps,
       rawExif: stripUnserializable(metaPayload.rawExif),
+      metaSegments: stripSegments(metaPayload.metaSegments),
       hasExif: metaPayload.hasExif,
       metadataError: metaPayload.error,
       l10n: getL10nBundle(),
     };
     panel.webview.postMessage(init);
   }
+}
+
+function stripSegments(
+  segments: Record<string, Record<string, unknown>>
+): Record<string, Record<string, unknown>> {
+  const out: Record<string, Record<string, unknown>> = {};
+  for (const [k, v] of Object.entries(segments)) {
+    if (v && typeof v === 'object' && Object.keys(v).length > 0) {
+      out[k] = stripUnserializable(v);
+    }
+  }
+  return out;
 }
 
 function emptyCamera() {

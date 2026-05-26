@@ -42,5 +42,14 @@
   "Copy path": "Copy path",
   "Path copied.": "Path copied.",
   "Open with default OS app": "Open with default OS app",
-  "Reopen as Text Editor": "Reopen as Text Editor"
+  "Reopen as Text Editor": "Reopen as Text Editor",
+  "TIFF / IFD0": "TIFF / IFD0",
+  "EXIF": "EXIF",
+  "Interop": "Interop",
+  "Thumbnail": "Thumbnail",
+  "IPTC": "IPTC",
+  "XMP": "XMP",
+  "ICC Profile": "ICC Profile",
+  "JFIF": "JFIF",
+  "PNG / IHDR": "PNG / IHDR"
 }

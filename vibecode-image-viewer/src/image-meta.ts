@@ -10,8 +10,26 @@ export interface ImageMeta {
   camera: CameraSummary;
   gps: GpsInfo | null;
   rawExif: Record<string, unknown>;
+  metaSegments: Record<string, Record<string, unknown>>;
   hasExif: boolean;
   error: string | null;
+}
+
+const SEGMENT_LABELS: Record<string, string> = {
+  ifd0: 'TIFF / IFD0',
+  exif: 'EXIF',
+  gps: 'GPS',
+  interop: 'Interop',
+  thumbnail: 'Thumbnail',
+  iptc: 'IPTC',
+  xmp: 'XMP',
+  icc: 'ICC Profile',
+  jfif: 'JFIF',
+  ihdr: 'PNG / IHDR'
+};
+
+export function segmentLabel(key: string): string {
+  return SEGMENT_LABELS[key] ?? key.toUpperCase();
 }
 
 const HEIF_EXTS = new Set(['.heic', '.heif']);
@@ -57,25 +75,36 @@ export async function readImageMeta(filePath: string): Promise<ImageMeta> {
   };
 
   let rawExif: Record<string, unknown> = {};
+  const metaSegments: Record<string, Record<string, unknown>> = {};
   let parseError: string | null = null;
   if (buffer) {
+    const parseOpts = {
+      tiff: true,
+      exif: true,
+      gps: true,
+      xmp: true,
+      iptc: true,
+      icc: true,
+      jfif: true,
+      ihdr: true,
+      interop: true,
+      thumbnail: false,
+      translateKeys: true,
+      translateValues: true,
+      reviveValues: true
+    };
     try {
-      const parsed = await exifr.parse(buffer, {
-        tiff: true,
-        exif: true,
-        gps: true,
-        xmp: true,
-        iptc: true,
-        icc: true,
-        jfif: true,
-        ihdr: true,
-        translateKeys: true,
-        translateValues: true,
-        reviveValues: true,
-        mergeOutput: true,
-      });
-      if (parsed && typeof parsed === 'object') {
-        rawExif = parsed as Record<string, unknown>;
+      const merged = await exifr.parse(buffer, { ...parseOpts, mergeOutput: true });
+      if (merged && typeof merged === 'object') {
+        rawExif = merged as Record<string, unknown>;
+      }
+      const segmented = await exifr.parse(buffer, { ...parseOpts, mergeOutput: false });
+      if (segmented && typeof segmented === 'object') {
+        for (const [k, v] of Object.entries(segmented as Record<string, unknown>)) {
+          if (v && typeof v === 'object' && !Array.isArray(v)) {
+            metaSegments[k] = v as Record<string, unknown>;
+          }
+        }
       }
     } catch (err) {
       parseError = String((err as Error)?.message ?? err);
@@ -84,9 +113,6 @@ export async function readImageMeta(filePath: string): Promise<ImageMeta> {
 
   const camera = summarizeCamera(rawExif);
   const gps = summarizeGps(rawExif);
-
-  if (rawExif.ColorSpace || rawExif.BitsPerSample || rawExif.BitDepth) {
-  }
 
   const errorParts: string[] = [];
   if (dimsError) errorParts.push(dimsError);
@@ -97,6 +123,7 @@ export async function readImageMeta(filePath: string): Promise<ImageMeta> {
     camera,
     gps,
     rawExif,
+    metaSegments,
     hasExif: Object.keys(rawExif).length > 0,
     error: errorParts.length ? errorParts.join('; ') : null,
   };

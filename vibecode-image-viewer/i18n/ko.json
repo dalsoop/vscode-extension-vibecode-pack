@@ -48,6 +48,15 @@
     "Copy path": "경로 복사",
     "Path copied.": "경로를 복사했습니다.",
     "Open with default OS app": "기본 앱으로 열기",
-    "Reopen as Text Editor": "텍스트 에디터로 다시 열기"
+    "Reopen as Text Editor": "텍스트 에디터로 다시 열기",
+    "TIFF / IFD0": "TIFF / IFD0",
+    "EXIF": "EXIF",
+    "Interop": "상호운용",
+    "Thumbnail": "썸네일",
+    "IPTC": "IPTC",
+    "XMP": "XMP",
+    "ICC Profile": "ICC 프로파일",
+    "JFIF": "JFIF",
+    "PNG / IHDR": "PNG / IHDR"
   }
 }

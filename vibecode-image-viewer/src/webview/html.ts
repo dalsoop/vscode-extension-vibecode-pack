@@ -56,7 +56,7 @@ export function buildHtml(webview: vscode.Webview): string {
           <button id="raw-copy"></button>
         </div>
       </div>
-      <pre id="raw-body" class="raw-body" style="display:none"></pre>
+      <pre id="raw-body" class="raw-body"></pre>
       <div id="raw-empty" class="raw-empty" style="display:none"></div>
     </div>
     <div class="footer-actions">

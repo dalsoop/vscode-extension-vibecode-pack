@@ -46,6 +46,17 @@ export interface L10nBundle {
   copyAsJson: string;
   noExif: string;
 
+  segIfd0: string;
+  segExif: string;
+  segGps: string;
+  segInterop: string;
+  segThumbnail: string;
+  segIptc: string;
+  segXmp: string;
+  segIcc: string;
+  segJfif: string;
+  segIhdr: string;
+
   coordsCopied: string;
   jsonCopied: string;
   pathCopied: string;
@@ -102,6 +113,17 @@ export function getL10nBundle(): L10nBundle {
     hide: vscode.l10n.t('Hide'),
     copyAsJson: vscode.l10n.t('Copy as JSON'),
     noExif: vscode.l10n.t('No EXIF metadata in this file.'),
+
+    segIfd0: vscode.l10n.t('TIFF / IFD0'),
+    segExif: vscode.l10n.t('EXIF'),
+    segGps: vscode.l10n.t('GPS'),
+    segInterop: vscode.l10n.t('Interop'),
+    segThumbnail: vscode.l10n.t('Thumbnail'),
+    segIptc: vscode.l10n.t('IPTC'),
+    segXmp: vscode.l10n.t('XMP'),
+    segIcc: vscode.l10n.t('ICC Profile'),
+    segJfif: vscode.l10n.t('JFIF'),
+    segIhdr: vscode.l10n.t('PNG / IHDR'),
 
     coordsCopied: vscode.l10n.t('Coordinates copied.'),
     jsonCopied: vscode.l10n.t('Metadata copied as JSON.'),

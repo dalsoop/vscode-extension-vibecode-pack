@@ -41,8 +41,10 @@ export interface InitMessage {
   unsupportedPreview: boolean;
   camera: CameraSummary;
   gps: GpsInfo | null;
-  /** Full parsed metadata object. Empty if none. */
+  /** Full parsed metadata object (all segments merged). Empty if none. */
   rawExif: Record<string, unknown>;
+  /** Per-segment metadata (ifd0, exif, gps, iptc, xmp, icc, jfif, ihdr, ...). */
+  metaSegments: Record<string, Record<string, unknown>>;
   hasExif: boolean;
   metadataError: string | null;
   l10n: L10nBundle;
